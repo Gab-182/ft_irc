@@ -23,7 +23,7 @@ void server::create_socket(char *av)
 		std::cout << "Error listen" << std::endl;
 		exit(1);
 	}
-		
+	//loop for the accept()	
 }
 
 // socket -> bind -> listen -> accpet(pre req (master socket))
