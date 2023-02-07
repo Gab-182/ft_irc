@@ -1,5 +1,5 @@
 
-SRC =	main.c server.cpp
+SRC =	main.cpp server.cpp
 
 OBJ = ${SRC:.cpp=.o}
 

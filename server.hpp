@@ -14,14 +14,23 @@
 class server
 {
 	private:
+		int master_socket;
+		int client_socket;
 		int port;
-		int addres;
+		int adr;
+		//vector of sockets ..
+		
 	public:
 		server();
 		~server();
-		void create_socket(char *av); 
+		void create_socket(char *av);
+		void accept_connection(); 
+		int getPort();
+		int getAdr();
+		int getMasterSocket();
+		void setMasterSocket(int socket);
 
-}
+};
 
 
 #endif
