@@ -13,8 +13,16 @@ void server::create_socket(char *av)
 		AF_INET = ipv4 , SOCK_STREAM = tcp 
 	*/
 	int newsocket = socket(AF_INET,SOCK_STREAM,0);
-	bind(newsocket,(sockaddr*)&sockin,sizeof(sockin));
-	
+	if(bind(newsocket,(sockaddr*)&sockin,sizeof(sockin)) == -1)
+	{
+		std::cout << "Error bind" << std::endl;
+		exit(1);
+	}
+	if(listen(newsocket,10) == -1)
+	{
+		std::cout << "Error listen" << std::endl;
+		exit(1);
+	}
 		
 }
 

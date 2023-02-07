@@ -14,7 +14,8 @@
 class server
 {
 	private:
-
+		int port;
+		int addres;
 	public:
 		server();
 		~server();
