@@ -60,3 +60,5 @@ void server::accept_connection()
 	}
 	close(this->master_socket);
 }
+
+//poll() -> select() -> epoll() 
