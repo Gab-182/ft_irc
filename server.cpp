@@ -89,25 +89,17 @@ void server::multi_connection()
 	fd_set fdset;
 	struct sockaddr_in clientadd;
 	socklen_t size = sizeof(clientadd);
-	int client[30];
-
-    for (int i = 0; i < 30; i++)  
-    {  
-       client[i] = 0;  
-    }  
 	for(;;)
 	{
 		FD_ZERO(&fdset);//clear the socket set
 		FD_SET(this->master_socket,&fdset);//add master socket to set
 		max_sd = this->master_socket; //set the max sd to the master socket
 		//add child sockets to set
-		for(int i = 0; i < 30; i++)
+		for(std::vector<int>::iterator it = this->sockets.begin(); it != this->sockets.end(); it++)
 		{
-			sd = client[i];
+			sd = *it;
 			if(sd > 0)
-			{
 				FD_SET(sd,&fdset);
-			}
 			if(sd > max_sd)
 				max_sd = sd;
 		}
@@ -124,28 +116,19 @@ void server::multi_connection()
 				std::cout << "Error accept" << std::endl;
 				exit(1);
 			}
-				std::cout << "Connection accepted" << std::endl; 
-			for(int i = 0; i < 30 ; i++)
-			{
-				if(client[i] == 0)
-				{
-					client[i] = this->client_socket;
-                    printf("Adding to list of sockets as %d\n" , i);  
-					break;
-				}
-			}
+			std::cout << "Connection accepted" << std::endl; 
+			this->sockets.push_back(this->client_socket);
 		}
-		for (int i = 0 ; i < 30; i++)
+		for(std::vector<int>::iterator it = this->sockets.begin(); it != this->sockets.end(); it++)
 		{
-			sd = client[i];
-
+			sd = *it;
 			if(FD_ISSET(sd,&fdset))
-			{				
+			{
 				if((res = read(sd,buffer,4096)) == 0)
 				{
 					std::cout << "Client disconnected" << std::endl;
 					close(sd);
-					client[i] = 0;
+					this->sockets.erase(it);
 				}
 				else
 				{

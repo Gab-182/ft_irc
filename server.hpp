@@ -10,12 +10,14 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <vector>
 
 class server
 {
 	private:
 		int master_socket;
 		int client_socket;
+		std::vector <int> sockets;
 		int port;
 		int adr;
 		//vector of sockets ..
