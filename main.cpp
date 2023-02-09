@@ -9,8 +9,8 @@ int main(int ac,char **av)
 	if(ac == 2)
 	{
 		s.create_socket(av[1]);
-		s.accept_connection();
-
+		// s.accept_connection();
+		s.multi_connection();
 		//loop for the accept()
 	}
 	else

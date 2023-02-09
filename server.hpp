@@ -24,7 +24,8 @@ class server
 		server();
 		~server();
 		void create_socket(char *av);
-		void accept_connection(); 
+		void accept_connection();
+		void multi_connection();
 		int getPort();
 		int getAdr();
 		int getMasterSocket();
