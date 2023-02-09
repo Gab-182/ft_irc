@@ -20,8 +20,6 @@ class server
 		std::vector <int> sockets;
 		int port;
 		int adr;
-		//vector of sockets ..
-		
 	public:
 		server();
 		~server();

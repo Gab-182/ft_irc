@@ -119,16 +119,16 @@ void server::multi_connection()
 			std::cout << "Connection accepted" << std::endl; 
 			this->sockets.push_back(this->client_socket);
 		}
-		for(std::vector<int>::iterator it = this->sockets.begin(); it != this->sockets.end(); it++)
+		for(size_t i = 0; i < this->sockets.size(); i++)
 		{
-			sd = *it;
-			if(FD_ISSET(sd,&fdset))
+			// sd = this->sockets[i];
+			if(FD_ISSET(this->sockets[i],&fdset))
 			{
-				if((res = read(sd,buffer,4096)) == 0)
+				if((res = read(*(this->sockets.begin() + i),buffer,4096)) == 0)
 				{
 					std::cout << "Client disconnected" << std::endl;
 					close(sd);
-					this->sockets.erase(it);
+					this->sockets.erase(this->sockets.begin() + i);
 				}
 				else
 				{
