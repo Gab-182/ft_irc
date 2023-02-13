@@ -1,6 +1,5 @@
 #include "server.hpp"
 
-
 server::server(){}
 server::~server(){}
 int server::getPort(){return port;}
@@ -116,24 +115,26 @@ void server::multi_connection()
 				std::cout << "Error accept" << std::endl;
 				exit(1);
 			}
-			std::cout << "Connection accepted" << std::endl; 
+			std::cout << "Connection accepted" << std::endl;
 			this->sockets.push_back(this->client_socket);
 		}
 		for(size_t i = 0; i < this->sockets.size(); i++)
 		{
-			// sd = this->sockets[i];
 			if(FD_ISSET(this->sockets[i],&fdset))
 			{
-				if((res = read(*(this->sockets.begin() + i),buffer,4096)) == 0)
+				if((res = recv(this->sockets[i],buffer,4096,0)) == 0)
 				{
 					std::cout << "Client disconnected" << std::endl;
-					close(sd);
+					close(this->sockets[i]);
 					this->sockets.erase(this->sockets.begin() + i);
 				}
 				else
 				{
+					//save this message in a vector of messages and 
+					//spacify each client
 					std::cout << "Message received" << std::endl;
-					std::cout << buffer << std::endl;
+					std::cout << buffer << i << std::endl;
+					std::memset(buffer,0,4096);
 				}
 			}
 		}

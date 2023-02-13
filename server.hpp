@@ -8,10 +8,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <cstring>
 #include <sys/socket.h>
 #include <unistd.h>
 #include <vector>
-
+#include <bitset>
+#include <climits>
 class server
 {
 	private:
@@ -20,6 +22,7 @@ class server
 		std::vector <int> sockets;
 		int port;
 		int adr;
+		char msg[4096];
 	public:
 		server();
 		~server();
