@@ -20,9 +20,10 @@ class server
 		int master_socket;
 		int client_socket;
 		std::vector <int> sockets;
+		std::vector <std::string> msg;
 		int port;
 		int adr;
-		char msg[4096];
+		// char msg[4096];
 	public:
 		server();
 		~server();
@@ -33,6 +34,7 @@ class server
 		int getAdr();
 		int getMasterSocket();
 		void setMasterSocket(int socket);
+
 
 };
 

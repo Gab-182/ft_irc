@@ -1,5 +1,7 @@
 #include "server.hpp"
 
+
+std::string storage = "";
 server::server(){}
 server::~server(){}
 int server::getPort(){return port;}
@@ -84,7 +86,7 @@ void server::multi_connection()
 	int res;
 	int max_sd = 0;
 	int sd;
-	char buffer[4096];
+	char buffer[1024];
 	fd_set fdset;
 	struct sockaddr_in clientadd;
 	socklen_t size = sizeof(clientadd);
@@ -117,12 +119,14 @@ void server::multi_connection()
 			}
 			std::cout << "Connection accepted" << std::endl;
 			this->sockets.push_back(this->client_socket);
+			this->msg.push_back("");
 		}
 		for(size_t i = 0; i < this->sockets.size(); i++)
 		{
+			std::cout << "--------------------------\n";
 			if(FD_ISSET(this->sockets[i],&fdset))
 			{
-				if((res = recv(this->sockets[i],buffer,4096,0)) == 0)
+				if((res = recv(this->sockets[i],buffer,1024,0)) == 0)
 				{
 					std::cout << "Client disconnected" << std::endl;
 					close(this->sockets[i]);
@@ -130,15 +134,25 @@ void server::multi_connection()
 				}
 				else
 				{
-					//save this message in a vector of messages and 
-					//spacify each client
-					std::cout << "Message received" << std::endl;
-					std::cout << buffer << i << std::endl;
-					std::memset(buffer,0,4096);
+					buffer[res]= '\0';
+					std::cout << "Message received" << this->sockets.size() << std::endl;
+					this->msg[i] += buffer;
+					std::cout <<  "+- "<< buffer <<  " -+ "<<std::endl;
+					std::string msg = "CAP * LS :multi-prefix sasl\r\n";
+					if(send(this->sockets[i],msg.c_str(),msg.size(),0) == -1)
+						std::cout<< "this is not SEND WHY\n";
+					// std::cout << "Message ended" << std::endl;
+					std::memset(buffer,0,1024);
 				}
+			}
+			for(size_t i = 0 ; i != this->msg.size(); i++)
+			{
+				std::cout << "---> ("<<i<<")"<<this->msg[i] << "<----" <<std::endl;
 			}
 		}
 	}
 	close(this->master_socket);
+
+
 }
 
