@@ -14,29 +14,37 @@
 #include <vector>
 #include <bitset>
 #include <climits>
-class server
+#include <algorithm>
+#include "message.hpp"
+#include "client.hpp"
+namespace irc
 {
-	private:
-		int master_socket;
-		int client_socket;
-		std::vector <int> sockets;
-		std::vector <std::string> msg;
-		int port;
-		int adr;
-		// char msg[4096];
-	public:
-		server();
-		~server();
-		void create_socket(char *av);
-		void accept_connection();
-		void multi_connection();
-		int getPort();
-		int getAdr();
-		int getMasterSocket();
-		void setMasterSocket(int socket);
+	class client;
+	class message;
+	class server
+	{
+		private:
+			int master_socket;
+			int client_socket;
+			std::vector <int> sockets;
+			std::vector <std::string> msg;
+			int port;
+			int adr;
+			// char msg[4096];
+		public:
+			// std::vector<Msg *>
+			server();
+			~server();
+			void create_socket(char *av);
+			void accept_connection();
+			void multi_connection();
+			int getPort();
+			int getAdr();
+			int getMasterSocket();
+			void setMasterSocket(int socket);
+			void split_msg();
 
-
-};
-
+	};
+}
 
 #endif

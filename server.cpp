@@ -2,15 +2,15 @@
 
 
 std::string storage = "";
-server::server(){}
-server::~server(){}
-int server::getPort(){return port;}
-int server::getAdr(){return adr;}
-int server::getMasterSocket(){return master_socket;}
-void server::setMasterSocket(int socket){master_socket = socket;}
+irc::server::server(){}
+irc::server::~server(){}
+int irc::server::getPort(){return port;}
+int irc::server::getAdr(){return adr;}
+int irc::server::getMasterSocket(){return master_socket;}
+void irc::server::setMasterSocket(int socket){master_socket = socket;}
 
 // socket -> bind -> listen 
-void server::create_socket(char *av)
+void irc::server::create_socket(char *av)
 {
 	struct sockaddr_in sockin; 
 	this->port = atoi(av);
@@ -38,7 +38,7 @@ void server::create_socket(char *av)
 	
 }
 
-void server::accept_connection()
+void irc::server::accept_connection()
 {
 		int res;
 	char buffer[4096];
@@ -81,7 +81,29 @@ void server::accept_connection()
 
 */
 
-void server::multi_connection()
+
+void irc::server::split_msg()
+{
+	// std::vector<std::string>::iterator i = std::find(this->msg.begin(),this->msg.end(),"CAP");
+	// if(strcmp((*i).c_str(),"CAP") ==0)
+	// 	std::cout<< "YESS CAP " << *i<< std::endl; 
+
+	for(std::vector<std::string>::iterator it = this->msg.begin(); it != this->msg.end(); it++)
+	{
+		std::cout << "------------>"<<*it << std::endl;
+		if(strcmp((*it).c_str(),"CAP") == 0)
+		{
+			std::cout << "==>USER" << std::endl;
+		}
+		else if (strcmp((*it).c_str(),"PASS") == 0)
+			std::cout << "==>PASS" << std::endl;
+		else if (strcmp((*it).c_str(),"NICK") == 0)
+			std::cout << "==>NICK" << std::endl;
+		else {std::cout << "==>ERROR" << std::endl;}
+	}
+}
+
+void irc::server::multi_connection()
 {
 	int res;
 	int max_sd = 0;
@@ -121,6 +143,7 @@ void server::multi_connection()
 			this->sockets.push_back(this->client_socket);
 			this->msg.push_back("");
 		}
+		//new function get_msg() 
 		for(size_t i = 0; i < this->sockets.size(); i++)
 		{
 			std::cout << "--------------------------\n";
@@ -135,6 +158,7 @@ void server::multi_connection()
 				else
 				{
 					buffer[res]= '\0';
+					 
 					std::cout << "Message received" << this->sockets.size() << std::endl;
 					this->msg[i] += buffer;
 					std::cout <<  "+- "<< buffer <<  " -+ "<<std::endl;
@@ -142,12 +166,16 @@ void server::multi_connection()
 					if(send(this->sockets[i],msg.c_str(),msg.size(),0) == -1)
 						std::cout<< "this is not SEND WHY\n";
 					// std::cout << "Message ended" << std::endl;
+					     
 					std::memset(buffer,0,1024);
+
+					for(std::vector<std::string>::iterator it = this->msg.begin(); it != this->msg.end(); it++)
+					{
+						std::cout << "==<"<<*it << std::endl;
+					}
+					std::cout << "==============<"<< std::endl;
+					split_msg();
 				}
-			}
-			for(size_t i = 0 ; i != this->msg.size(); i++)
-			{
-				std::cout << "---> ("<<i<<")"<<this->msg[i] << "<----" <<std::endl;
 			}
 		}
 	}
