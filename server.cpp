@@ -9,6 +9,9 @@ int irc::server::getAdr(){return adr;}
 int irc::server::getMasterSocket(){return master_socket;}
 void irc::server::setMasterSocket(int socket){master_socket = socket;}
 
+void irc::server::setServPass(int pass){servpass = pass;}
+int irc::server::getServPass(){return servpass;}
+
 // socket -> bind -> listen 
 void irc::server::create_socket(char *av)
 {
@@ -84,23 +87,30 @@ void irc::server::accept_connection()
 
 void irc::server::split_msg()
 {
-	// std::vector<std::string>::iterator i = std::find(this->msg.begin(),this->msg.end(),"CAP");
-	// if(strcmp((*i).c_str(),"CAP") ==0)
-	// 	std::cout<< "YESS CAP " << *i<< std::endl; 
-
-	for(std::vector<std::string>::iterator it = this->msg.begin(); it != this->msg.end(); it++)
+	// this->msgtmp.push_back(this->msg.back());
+	std::stringstream ss(this->msg.back());
+	std::string split;
+	while(std::getline(ss,split,'\n'))
 	{
-		std::cout << "------------>"<<*it << std::endl;
-		if(strcmp((*it).c_str(),"CAP") == 0)
-		{
-			std::cout << "==>USER" << std::endl;
-		}
-		else if (strcmp((*it).c_str(),"PASS") == 0)
-			std::cout << "==>PASS" << std::endl;
-		else if (strcmp((*it).c_str(),"NICK") == 0)
-			std::cout << "==>NICK" << std::endl;
-		else {std::cout << "==>ERROR" << std::endl;}
+		this->msgtmp.push_back(split);
 	}
+	int i = 0;
+	for(std::vector<std::string>::iterator it = this->msgtmp.begin(); it != this->msgtmp.end(); it++)
+	{
+		std::cout << "=)"<< i <<*it << std::endl;
+		i++;
+	}
+	if (this->msgtmp.size() == 4)  // when client replay with CAP,PASS,NICK,USER
+	{
+		//slpit PASS
+
+		//split NICK
+
+		//split USER
+			
+	}
+	//erase all elem in msgtmp
+	this->msgtmp.clear();
 }
 
 void irc::server::multi_connection()
@@ -174,8 +184,8 @@ void irc::server::multi_connection()
 						std::cout << "==<"<<*it << std::endl;
 					}
 					std::cout << "==============<"<< std::endl;
-					split_msg();
 				}
+				split_msg();
 			}
 		}
 	}

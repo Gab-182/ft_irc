@@ -3,7 +3,7 @@ SRC =	main.cpp server.cpp
 
 OBJ = ${SRC:.cpp=.o}
 
-NAME = serv
+NAME = ircserv
 
 CXX = c++
 
