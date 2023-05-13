@@ -83,7 +83,41 @@ void irc::server::accept_connection()
 
 
 */
+void irc::server::passCheck()
+{
+	int pass;
+	std::string tmp = this->msgtmp[1];
+	std::stringstream ss(tmp);
+	std::string split;
+	
+	while(std::getline(ss,split,' '))
+	{
+		if(split == "PASS")
+		{
+			std::getline(ss,split,' ');
+			pass = atoi(split.c_str());
+			if(pass == this->servpass)
+			{
+				std::cout << "Password is correct" << std::endl;
+				std::string msg = "CAP * LS :multi-prefix sasl\r\n";
+				if(send(this->sockets[0],msg.c_str(),msg.size(),0) == -1)
+					std::cout<< "this is not SEND WHY\n";
+				// std::cout << "Message sent" << std::endl;
+				std::string wlcome = ":oobn 001 oobn :Welcome to the Internet Relay Network oobn!~oobn@localhost\r\n";
+				if(send(this->sockets[0],wlcome.c_str(),wlcome.size(),0) == -1)
+					std::cout<< "this is not SEND WHY\n";
+			}
+			else
+			{
+				std::cout << "Password is incorrect" << std::endl;
+				std::string msg = "ERROR :Invalid password\r\n";
+				if(send(this->sockets[0],msg.c_str(),msg.size(),0) == -1)
+					std::cout<< "this is not SEND WHY\n";
+			}
+		}
+	}
 
+}
 
 void irc::server::split_msg()
 {
@@ -94,20 +128,14 @@ void irc::server::split_msg()
 	{
 		this->msgtmp.push_back(split);
 	}
-	int i = 0;
-	for(std::vector<std::string>::iterator it = this->msgtmp.begin(); it != this->msgtmp.end(); it++)
-	{
-		std::cout << "=)"<< i <<*it << std::endl;
-		i++;
-	}
 	if (this->msgtmp.size() == 4)  // when client replay with CAP,PASS,NICK,USER
 	{
 		//slpit PASS
-
+		passCheck();
 		//split NICK
 
 		//split USER
-			
+
 	}
 	//erase all elem in msgtmp
 	this->msgtmp.clear();
@@ -156,7 +184,7 @@ void irc::server::multi_connection()
 		//new function get_msg() 
 		for(size_t i = 0; i < this->sockets.size(); i++)
 		{
-			std::cout << "--------------------------\n";
+			
 			if(FD_ISSET(this->sockets[i],&fdset))
 			{
 				if((res = recv(this->sockets[i],buffer,1024,0)) == 0)
@@ -172,18 +200,16 @@ void irc::server::multi_connection()
 					std::cout << "Message received" << this->sockets.size() << std::endl;
 					this->msg[i] += buffer;
 					std::cout <<  "+- "<< buffer <<  " -+ "<<std::endl;
-					std::string msg = "CAP * LS :multi-prefix sasl\r\n";
-					if(send(this->sockets[i],msg.c_str(),msg.size(),0) == -1)
-						std::cout<< "this is not SEND WHY\n";
+					// if(send(this->sockets[i],msg.c_str(),msg.size(),0) == -1)
+					// 	std::cout<< "this is not SEND WHY\n";
 					// std::cout << "Message ended" << std::endl;
 					     
 					std::memset(buffer,0,1024);
 
 					for(std::vector<std::string>::iterator it = this->msg.begin(); it != this->msg.end(); it++)
 					{
-						std::cout << "==<"<<*it << std::endl;
+						std::cout <<*it << std::endl;
 					}
-					std::cout << "==============<"<< std::endl;
 				}
 				split_msg();
 			}

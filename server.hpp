@@ -49,6 +49,7 @@ namespace irc
 			int getMasterSocket();
 			void setMasterSocket(int socket);
 			void split_msg();
+			void passCheck();
 
 	};
 }
