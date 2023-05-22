@@ -83,7 +83,12 @@ void irc::server::accept_connection()
 
 
 */
-void irc::server::passCheck()
+
+/*check the password and send the welcome message
+	if the password is correct return 1
+	else return 0
+*/
+int irc::server::passCheck()
 {
 	int pass;
 	std::string tmp = this->msgtmp[1];
@@ -98,14 +103,7 @@ void irc::server::passCheck()
 			pass = atoi(split.c_str());
 			if(pass == this->servpass)
 			{
-				std::cout << "Password is correct" << std::endl;
-				std::string msg = "CAP * LS :multi-prefix sasl\r\n";
-				if(send(this->sockets[0],msg.c_str(),msg.size(),0) == -1)
-					std::cout<< "this is not SEND WHY\n";
-				// std::cout << "Message sent" << std::endl;
-				std::string wlcome = ":oobn 001 oobn :Welcome to the Internet Relay Network oobn!~oobn@localhost\r\n";
-				if(send(this->sockets[0],wlcome.c_str(),wlcome.size(),0) == -1)
-					std::cout<< "this is not SEND WHY\n";
+				return(1);
 			}
 			else
 			{
@@ -113,29 +111,95 @@ void irc::server::passCheck()
 				std::string msg = "ERROR :Invalid password\r\n";
 				if(send(this->sockets[0],msg.c_str(),msg.size(),0) == -1)
 					std::cout<< "this is not SEND WHY\n";
+				return(0);
 			}
 		}
 	}
+	return(0);
 
 }
 
+std::string irc::server::nickCheck()
+{
+	std::string tmp = this->msgtmp[2];
+	std::stringstream ss(tmp);
+	std::string split;
+	while(std::getline(ss,split,' '))
+	{
+		if(split == "NICK")
+		{
+			std::getline(ss,split,' ');
+			if(split.empty())
+			{
+				// std::cout << "Nick is empty" << std::endl;
+				// std::string msg = "ERROR :Invalid nickname\r\n";
+				return("");
+			}
+			else
+			{
+				std::cout << "Nick is not empty" << std::endl;
+				return(split);
+
+			}
+		}
+	}
+	return("");
+}
+
+std::string irc::server::userCheck()
+{
+	std::string tmp = this->msgtmp[3];
+	std::stringstream ss(tmp);
+	std::string split;
+	while(std::getline(ss,split,' '))
+	{
+		if(split == "USER")
+		{
+			std::getline(ss,split,' ');
+			if(split.empty())
+			{
+				return("");
+			}
+			else
+			{
+				std::cout << "User is not empty" << std::endl;
+				return(split);
+			}
+		}
+	}
+	return("");
+}
+
+/*
+	check id passCheck return 1 && nick is not empty && user is not empty 
+	then push_back the client to the vector of clients and fill client info in the client class
+	socket.back() to send as the last socket
+	?should i check if the nick is already taken or not
+	?chekc if there is error msgs to send
+*/
 void irc::server::split_msg()
 {
-	// this->msgtmp.push_back(this->msg.back());
 	std::stringstream ss(this->msg.back());
-	std::string split;
+	std::string split, nick, user;
 	while(std::getline(ss,split,'\n'))
 	{
 		this->msgtmp.push_back(split);
 	}
 	if (this->msgtmp.size() == 4)  // when client replay with CAP,PASS,NICK,USER
 	{
-		//slpit PASS
-		passCheck();
-		//split NICK
-
-		//split USER
-
+		if(passCheck() == 1)
+		{
+			//split NICK
+			nick = nickCheck();
+			//split USER
+			user = userCheck();
+			std::string msg = "CAP * LS :multi-prefix sasl\r\n";
+			std::string wlcome = ":"+ nick +" 001 "+nick+" :Welcome to the Internet Relay Network "+nick+"!~"+user+"@localhost\r\n";
+			if(send(this->sockets.back(),msg.c_str(),msg.size(),0) == -1)
+				std::cout<< "error occured while sending CAP LS\n";
+			if(send(this->sockets.back(),wlcome.c_str(),wlcome.size(),0) == -1)
+				std::cout<< "error occured while sending welcome msg\n";
+		}
 	}
 	//erase all elem in msgtmp
 	this->msgtmp.clear();
@@ -200,10 +264,6 @@ void irc::server::multi_connection()
 					std::cout << "Message received" << this->sockets.size() << std::endl;
 					this->msg[i] += buffer;
 					std::cout <<  "+- "<< buffer <<  " -+ "<<std::endl;
-					// if(send(this->sockets[i],msg.c_str(),msg.size(),0) == -1)
-					// 	std::cout<< "this is not SEND WHY\n";
-					// std::cout << "Message ended" << std::endl;
-					     
 					std::memset(buffer,0,1024);
 
 					for(std::vector<std::string>::iterator it = this->msg.begin(); it != this->msg.end(); it++)

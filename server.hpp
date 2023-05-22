@@ -34,6 +34,7 @@ namespace irc
 			int port;
 			int adr;
 			int servpass;
+			// std::vector <client> clients;
 			// char msg[4096];
 		public:
 			// std::vector<Msg *>
@@ -49,7 +50,9 @@ namespace irc
 			int getMasterSocket();
 			void setMasterSocket(int socket);
 			void split_msg();
-			void passCheck();
+			int passCheck();
+			std::string nickCheck();
+			std::string userCheck();
 
 	};
 }
