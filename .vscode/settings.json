@@ -68,7 +68,11 @@
     "mutex": "cpp",
     "optional": "cpp",
     "ratio": "cpp",
-    "sstream": "cpp"
+    "sstream": "cpp",
+    "__bits": "cpp",
+    "variant": "cpp",
+    "__tree": "cpp",
+    "map": "cpp"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",

@@ -15,9 +15,10 @@
 #include <bitset>
 #include <climits>
 #include <algorithm>
+#include <sstream>
+
 #include "message.hpp"
 #include "client.hpp"
-#include <sstream>
 
 namespace irc
 {
@@ -28,6 +29,7 @@ namespace irc
 		private:
 			int master_socket;
 			int client_socket;
+			
 			std::vector <int> sockets;
 			std::vector <std::string> msg;
 			std::vector <std::string> msgtmp;
