@@ -1,3 +1,5 @@
+
+=========================================================================
 # Connect to free node server for testing purpose
 ❯❯ /connect irc.freenode.net
 
@@ -6,3 +8,9 @@
 
 # To register the nickname
 ❯❯ /msg NickServ IDENTIFY <password>
+
+
+
+
+
+=========================================================================

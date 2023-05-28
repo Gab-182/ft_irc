@@ -154,9 +154,8 @@ std::string irc::server::nickCheck()
 				// std::string msg = "ERROR :Invalid nickname\r\n";
 				return("");
 			}
-			else
-			{
-				std::cout << "Nick is not empty" << std::endl;
+			else {
+				// std::cout << "Nick is not empty" << std::endl;
 				return(split);
 
 			}
@@ -180,9 +179,8 @@ std::string irc::server::userCheck()
 			{
 				return("");
 			}
-			else
-			{
-				std::cout << "User is not empty" << std::endl;
+			else {
+				// std::cout << "User is not empty" << std::endl;
 				return(split);
 			}
 		}
@@ -227,79 +225,172 @@ void irc::server::split_msg()
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-void irc::server::multi_connection()
+/**
+ * The [clientMsgMap] is a map that associates each client socket with its corresponding message.
+ * When a client disconnects (when recv() returns 0), the code prints a message indicating the 
+ * disconnection, closes the socket, removes the socket from the sockets vector, and erases the 
+ * message entry from the clientMsgMap.
+ * The continue statement is added after removing the socket from the vector to skip the remaining 
+ * code in the loop and proceed to the next iteration.
+ * Inside the loop, the parser.setMsg() function is called with the specific socket and its associated 
+ * message from the clientMsgMap.
+ */
+void irc::server::multi_connection(irc::MsgParser parser)
 {
 	int res;
 	int max_sd = 0;
-	int sd;
 	char buffer[1024];
 	fd_set fdset;
 	struct sockaddr_in clientadd;
 	socklen_t size = sizeof(clientadd);
-	for(;;)
+	std::map<int, std::string> clientMsgMap; // Map to store client messages with their socket
+
+	for (;;)
 	{
-		FD_ZERO(&fdset);//clear the socket set
-		FD_SET(this->master_socket,&fdset);//add master socket to set
-		max_sd = this->master_socket; //set the max sd to the master socket
-		//add child sockets to set
-		for(std::vector<int>::iterator it = this->sockets.begin(); it != this->sockets.end(); it++)
+		FD_ZERO(&fdset);						// Clear the socket set
+		FD_SET(this->master_socket, &fdset);	// Add master socket to set
+		max_sd = this->master_socket;			// Set the max sd to the master socket
+
+		// Add child sockets to set
+		std::vector<int>::iterator it;
+		for (it = this->sockets.begin(); it != this->sockets.end(); it++)
 		{
-			sd = *it;
-			if(sd > 0)
-				FD_SET(sd,&fdset);
-			if(sd > max_sd)
+			int sd = *it;
+			if (sd > 0)
+				FD_SET(sd, &fdset);
+			if (sd > max_sd)
 				max_sd = sd;
 		}
-		if(select(max_sd +1,&fdset,NULL,NULL,NULL) == -1)
+
+		if (select(max_sd + 1, &fdset, NULL, NULL, NULL) == -1)
 		{
 			std::cout << "Error select" << std::endl;
 			exit(1);
 		}
-		if(FD_ISSET(this->master_socket,&fdset))
-		{			
-			if((this->client_socket = accept(this->master_socket,(sockaddr*)&clientadd,&size)) == -1)
+
+		if (FD_ISSET(this->master_socket, &fdset))
+		{
+			if ((this->client_socket = accept(this->master_socket, (sockaddr *)&clientadd, &size)) == -1)
 			{
 				std::cout << "Error accept" << std::endl;
 				exit(1);
 			}
 			std::cout << "Connection accepted" << std::endl;
 			this->sockets.push_back(this->client_socket);
-			this->msg.push_back("");
+			clientMsgMap[this->client_socket] = ""; // Initialize message for new client socket
 		}
-		//new function get_msg() 
-		for(size_t i = 0; i < this->sockets.size(); i++)
-		{	
-			if(FD_ISSET(this->sockets[i],&fdset))
+
+		for (size_t i = 0; i < this->sockets.size(); i++)
+		{
+			int socket = this->sockets[i];
+			if (FD_ISSET(socket, &fdset))
 			{
-				if((res = recv(this->sockets[i],buffer,1024,0)) == 0)
+				if ((res = recv(socket, buffer, 1024, 0)) == 0)
 				{
-					std::cout << "Client disconnected" << std::endl;
-					close(this->sockets[i]);
+					std::cout << "Client disconnected from socket " << socket << std::endl;
+					close(socket);
 					this->sockets.erase(this->sockets.begin() + i);
+					clientMsgMap.erase(socket); // Remove message for disconnected socket
+					continue; // Continue to the next iteration
 				}
 
-				/**
-				 * @TODO: Consider changing the messages vector to a map,
-				 * so that we can store the messages with the socket as the key.
-				 * This way we can keep track of the messages for each client. 
-				 */
-				else
-				{
-					buffer[res]= '\0';				 
-					std::cout << "Message received" << this->sockets.size() << std::endl;
-					this->msg[i] += buffer;
-					std::cout <<  "+- "<< buffer <<  " -+ "<<std::endl;
-					std::memset(buffer,0,1024);
-					for(std::vector<std::string>::iterator it = this->msg.begin(); it != this->msg.end(); it++)
-					{
-						std::cout <<*it << std::endl;
-					}
-				}
-				split_msg();
+				buffer[res] = '\0';
+				std::cout << "========================================" << std::endl;
+				std::cout << "Message received from socket " << socket << std::endl;
+				clientMsgMap[socket] += buffer;
+				std::memset(buffer, 0, 1024);
 			}
+
+			parser.setMsg(socket, clientMsgMap[socket]);
 		}
+
+		parser.printMsg();
 	}
+
 	close(this->master_socket);
+}
+
+/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+// void irc::server::multi_connection(irc::MsgParser parser)
+// {
+// 	int res;
+// 	int max_sd = 0;
+// 	int sd;
+// 	char buffer[1024];
+// 	fd_set fdset;
+// 	struct sockaddr_in clientadd;
+// 	socklen_t size = sizeof(clientadd);
+// 	for(;;)
+// 	{
+// 		FD_ZERO(&fdset);//clear the socket set
+// 		FD_SET(this->master_socket,&fdset);//add master socket to set
+// 		max_sd = this->master_socket; //set the max sd to the master socket
+// 		//add child sockets to set
+// 		for(std::vector<int>::iterator it = this->sockets.begin(); it != this->sockets.end(); it++)
+// 		{
+// 			sd = *it;
+// 			if(sd > 0)
+// 				FD_SET(sd,&fdset);
+// 			if(sd > max_sd)
+// 				max_sd = sd;
+// 		}
+// 		if(select(max_sd +1,&fdset,NULL,NULL,NULL) == -1)
+// 		{
+// 			std::cout << "Error select" << std::endl;
+// 			exit(1);
+// 		}
+// 		if(FD_ISSET(this->master_socket,&fdset))
+// 		{			
+// 			if((this->client_socket = accept(this->master_socket,(sockaddr*)&clientadd,&size)) == -1)
+// 			{
+// 				std::cout << "Error accept" << std::endl;
+// 				exit(1);
+// 			}
+// 			std::cout << "Connection accepted" << std::endl;
+// 			this->sockets.push_back(this->client_socket);
+// 			this->msg.push_back("");
+// 		}
+// 		//new function get_msg() 
+// 		for(size_t i = 0; i < this->sockets.size(); i++)
+// 		{	
+// 			if(FD_ISSET(this->sockets[i],&fdset))
+// 			{
+// 				if((res = recv(this->sockets[i],buffer,1024,0)) == 0)
+// 				{
+// 					std::cout << "Client disconnected" << std::endl;
+// 					close(this->sockets[i]);
+// 					this->sockets.erase(this->sockets.begin() + i);
+// 				}
+// 				/**
+// 				 * @TODO: Consider changing the messages vector to a map,
+// 				 * so that we can store the messages with the socket as the key.
+// 				 * This way we can keep track of the messages for each client. 
+// 				 */
+// 				else
+// 				{
+// 					buffer[res]= '\0';
+// 					std::cout << "========================================" << std::endl;
+// 					std::cout << "Message received" << this->sockets.size() << std::endl;
+// 					this->msg[i] += buffer;
+// 					// std::cout <<  "++++++++++ "<< buffer <<  " ++++++++++ "<<std::endl;
+// 					std::memset(buffer,0,1024);
+// 					// for(std::vector<std::string>::iterator it = this->msg.begin(); it != this->msg.end(); it++)
+// 					// {
+// 					// 	std::cout <<*it << std::endl;
+// 					// }
+// 				}
+// 				// split_msg();
+// 			}
+// 			parser.setMsg(this->sockets[i],this->msg[i]);
+// 		}
+// 		parser.printMsg();
+// 	}
+// 	close(this->master_socket);
+// }
+
+/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+std::vector <std::string> irc::server::getMsg() {
+	return this->msg;
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/

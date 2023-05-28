@@ -1,5 +1,7 @@
 
-SRC =	main.cpp server.cpp
+SRC =	main.cpp \
+		server.cpp\
+		./parser/MsgParser.cpp\
 
 OBJ = ${SRC:.cpp=.o}
 
@@ -7,7 +9,7 @@ NAME = ircserv
 
 CXX = c++
 
-CXXFLAGS =  -Wall -Werror -Wextra -std=c++98
+CXXFLAGS =  -Wall -Werror -Wextra -g3 -std=c++98
 
 RM = rm -rf
 

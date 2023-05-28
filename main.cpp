@@ -1,20 +1,19 @@
 #include "server.hpp"
-
-
+#include "./parser/MsgParser.hpp"
 
 // socket -> bind -> listen -> accpet(pre req (master socket))
-int main(int ac,char **av)
-{
-	irc::server s;
-	if(ac == 3)
-	{
+int main(int ac,char **av) {
+	irc::server ircServer;
+	irc::MsgParser parser;
+	if(ac == 3) {
 		//todo: check if the port is a number and if the password is a number
-		s.setServPass(atoi(av[2]));
-		s.create_socket(av[1]);
-		// s.accept_connection();
-		s.multi_connection();
-		//loop for the accept()
+		ircServer.setServPass(atoi(av[2]));
+		ircServer.create_socket(av[1]);
+		ircServer.multi_connection(parser);
 	}
-	else
-		std::cout << "Not the right argument"<< std::endl;
+	else {
+		std::cout << "Please provide the following arguments:" << std::endl;
+		std::cout << "  <port>     : The port number to listen on." << std::endl;
+		std::cout << "  <password> : The password for the server." << std::endl;
+	}
 }

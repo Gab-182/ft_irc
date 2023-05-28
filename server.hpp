@@ -17,6 +17,7 @@
 #include <algorithm>
 #include <sstream>
 
+#include "./parser/MsgParser.hpp"
 #include "message.hpp"
 #include "client.hpp"
 
@@ -42,20 +43,23 @@ namespace irc
 			// std::vector<Msg *>
 			server();
 			~server();
+			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 			void setServPass(int pass); 
 			void create_socket(char *av);
 			void accept_connection();
-			void multi_connection();
-			int getServPass();
-			int getPort();
-			int getAdr();
+			void multi_connection(irc::MsgParser parser);
 			int getMasterSocket();
 			void setMasterSocket(int socket);
 			void split_msg();
 			int passCheck();
 			std::string nickCheck();
 			std::string userCheck();
-
+			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+			int getServPass();
+			int getPort();
+			int getAdr();
+			std::vector <std::string> getMsg();
+			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	};
 }
 

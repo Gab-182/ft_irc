@@ -2,23 +2,17 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "C/C++ Runner: Debug Session",
+      "name": "(lldb) Launch",
       "type": "cppdbg",
       "request": "launch",
-      "args": [],
+      "program": "${workspaceFolder}/ircserv",
+      "args": ["12", "12345"],
       "stopAtEntry": false,
+      "cwd": "${fileDirname}",
+      "environment": [],
       "externalConsole": false,
-      "cwd": "/home/oobn/ft_ircc",
-      "program": "/home/oobn/ft_ircc/build/Debug/outDebug",
-      "MIMode": "gdb",
-      "miDebuggerPath": "gdb",
-      "setupCommands": [
-        {
-          "description": "Enable pretty-printing for gdb",
-          "text": "-enable-pretty-printing",
-          "ignoreFailures": true
-        }
-      ]
+      "MIMode": "lldb"
     }
+
   ]
 }
