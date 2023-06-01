@@ -1,29 +1,41 @@
-
-SRC =	main.cpp \
-		server.cpp\
-		./parser/MsgParser.cpp\
-
-OBJ = ${SRC:.cpp=.o}
-
+#❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄
 NAME = ircserv
 
-CXX = c++
+INCLUDE_DIR := ./include
 
-CXXFLAGS =  -Wall -Werror -Wextra -g3 -std=c++98
+SRC = main.cpp \
+		src/server/server.cpp \
+		src/parser/MsgParser.cpp
+
+OBJ = $(SRC:.cpp=.o)
+
+CXX = c++
+CXXFLAGS = -Wall -Werror -Wextra -g3 -std=c++98 -I$(INCLUDE_DIR)
 
 RM = rm -rf
 
-all : ${NAME}
+.DEFAULT_GOAL := help
 
-${NAME} : ${OBJ}
-		${CXX} ${CXXFLAGS} ${OBJ} -o ${NAME}
+.PHONY: all clean fclean re help
 
-clean : 
-		${RM} ${OBJ}
+all: $(NAME)
 
-fclean : clean
-		${RM} ${NAME}
- 
-re : fclean all
+$(NAME): $(OBJ)
+	$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
 
-.PHONY: clean fclean all re
+clean:
+	$(RM) $(OBJ)
+
+fclean: clean
+	$(RM) $(NAME)
+
+re: fclean all
+
+help:
+	@echo "\n\033[1;32mAvailable rules:\033[0m"
+	@echo "  \033[1;36mall\033[0m       : Compile and build IRC server"
+	@echo "  \033[1;36mclean\033[0m     : Remove object files"
+	@echo "  \033[1;36mfclean\033[0m    : Remove object files and executable"
+	@echo "  \033[1;36mre\033[0m        : Clean and rebuild the executable"
+
+#❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄
