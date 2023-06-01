@@ -1,0 +1,24 @@
+
+=========================================================================
+# Connect to free node server for testing purpose
+❯❯ /connect irc.freenode.net
+
+❯❯ /join #(channel name)
+❯❯ /msg nickserv register [password] [email address]
+
+# To register the nickname
+❯❯ /msg NickServ IDENTIFY <password>
+
+
+
+
+
+=========================================================================
+
+Create Client class that will contain:
+
+client socket
+client nick
+client username
+map of <channel name, client messages to that channel>
+

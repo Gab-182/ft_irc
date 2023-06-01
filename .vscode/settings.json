@@ -72,7 +72,8 @@
     "__bits": "cpp",
     "variant": "cpp",
     "__tree": "cpp",
-    "map": "cpp"
+    "map": "cpp",
+    "__verbose_abort": "cpp"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",
