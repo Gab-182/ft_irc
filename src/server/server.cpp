@@ -352,6 +352,7 @@ void Server::multi_connection(MsgParser parser)
 					std::memset(buffer,0,1024);
 				}
 //				split_msg();
+				std::cout << this->msg[i] << std::endl;
 				parser.processClientMessage(this->sockets[i], this->msg[i], this->getServPass());
 			}
 		}

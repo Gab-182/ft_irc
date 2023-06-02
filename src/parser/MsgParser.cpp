@@ -45,27 +45,27 @@ void MsgParser::parseNick(int clientSocket, const std::string& clientNick) {
 			std::cout << "Failed to send error message" << std::endl;
 		}
 	}
-	else if (clientsNicks.empty()) {
-		clientsNicks.push_back(clientNick);
-		std::cout << "Nickname accepted" << std::endl;
-	}
-	else if (std::find(clientsNicks.begin(), clientsNicks.end(), clientNick) != clientsNicks.end()) {
-		std::cout << "Nickname already taken" << std::endl;
-		
-		std::string errorMsg = "ERROR :Invalid nickname\r\n";
-		if (send(clientSocket, errorMsg.c_str(), errorMsg.size(), 0) == -1) {
-			std::cout << "Failed to send error message" << std::endl;
-		}
-	}
+//	else if (clientsNicks.empty()) {
+//		clientsNicks.push_back(clientNick);
+//		std::cout << "Nickname accepted" << std::endl;
+//	}
+//	else if (std::find(clientsNicks.begin(), clientsNicks.end(), clientNick) != clientsNicks.end()) {
+//		std::cout << "Nickname already taken" << std::endl;
+//
+//		std::string errorMsg = "ERROR :Invalid nickname\r\n";
+//		if (send(clientSocket, errorMsg.c_str(), errorMsg.size(), 0) == -1) {
+//			std::cout << "Failed to send error message" << std::endl;
+//		}
+//	}
 	else {
-		clientsNicks.push_back(clientNick);
-		std::cout << "Nickname accepted" << std::endl;
+		clientsNicks.insert(std::make_pair(clientSocket, clientNick));
+		std::cout << "Nickname ["<< clientsNicks[clientSocket] << "] accepted" << std::endl;
 	}
 }
 
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-void MsgParser::processClientMessage(int clientSocket, std::string clientMsg, const int& serverPass) {
+void MsgParser::processClientMessage(int clientSocket, const std::string& clientMsg, const int& serverPass) {
 	std::stringstream ss(clientMsg);
 	std::string command;
 	
@@ -76,31 +76,30 @@ void MsgParser::processClientMessage(int clientSocket, std::string clientMsg, co
 				std::string password;
 				ss >> password;
 				std::cout << "PASS: " << password << std::endl;
-				passCheck(clientSocket, password, serverPass);
-			} else if (command == "NICK") {
+				if (!passCheck(clientSocket, password, serverPass))
+					return ;
+			}
+			else if (command == "NICK") {
 				std::string clientNick;
 				ss >> clientNick;
+				std::cout << clientNick << std::endl;
 				parseNick(clientSocket, clientNick);
 			}
-			//		else if (command == "USER") {
-			//			std::string username, realName;
-			//			ss >> username >> realName;
-			////			saveName(clientSocket, username, realName);
-			//		}
+//					else if (command == "USER") {
+//						std::string username, realName;
+//						ss >> username >> realName;
+//						saveName(clientSocket, username, realName);
+//					}
 		}
+		std::cout << "client: "<< clientSocket << " -> " << "nick: " << clientsNicks[clientSocket] << std::endl;
 //		std::string msg = "CAP * LS :multi-prefix sasl\r\n";
-		std::string msg = "ERROR\r\n";
-		
-		std::string welcomeClient = ":" + clientsNicks.back() + \
-									" 001 " + clientsNicks.back() + \
-									" :Welcome to the Internet Relay Network " + \
-									"\r\n";
-
-		// Send the welcome message to the client
-		if(send(clientSocket,msg.c_str(),msg.size(),0) == -1)
-			std::cout<< "error occurred while sending CAP LS\n";
-		if(send(clientSocket,welcomeClient.c_str(),welcomeClient.size(),0) == -1)
-			std::cout<< "error occurred while sending welcome msg\n";
+//		std::string welcomeClient = ":"+clientsNicks[clientSocket]+" 001 "+clientsNicks[clientSocket]+" :Welcome to the Internet Relay Network " + "\r\n";
+//
+//		// Send the [CAP && welcome] messages to the client
+//		if(send(clientSocket,msg.c_str(),msg.size(),0) == -1)
+//			std::cout<< "error occurred while sending CAP LS\n";
+//		if(send(clientSocket,welcomeClient.c_str(),welcomeClient.size(),0) == -1)
+//			std::cout<< "error occurred while sending welcome msg\n";
 	}
 }
 
