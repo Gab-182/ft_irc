@@ -303,8 +303,8 @@ statusbar = {
 settings = {
   core = {
     real_name = "Ghaiath Abdoush";
-    user_name = "ghaiathabdoush";
-    nick = "ghaiathabdoush";
+    user_name = "gab";
+    nick = "gab";
   };
   "fe-text" = { actlist_sort = "refnum"; };
   "fe-common/core" = { theme = "rain"; };
