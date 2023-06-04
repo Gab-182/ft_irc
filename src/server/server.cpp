@@ -225,140 +225,158 @@ void Server::split_msg()
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-// void Server::multi_connection(MsgParser parser)
-// {
-// 	int res;
-// 	int max_sd = 0;
-// 	char buffer[1024];
-// 	fd_set fdset;
-// 	struct sockaddr_in clientadd;
-// 	socklen_t size = sizeof(clientadd);
-// 	std::string clientMsg; // String to store client messages
-//
-// 	for (;;)
-// 	{
-// 		FD_ZERO(&fdset);						// Clear the socket set
-// 		FD_SET(this->master_socket, &fdset);	// Add master socket to set
-// 		max_sd = this->master_socket;			// Set the max sd to the master socket
-//
-// 		// Add child sockets to set
-// 		std::vector<int>::iterator it;
-// 		for (it = this->sockets.begin(); it != this->sockets.end(); it++)
-// 		{
-// 			int sd = *it;
-// 			if (sd > 0)
-// 				FD_SET(sd, &fdset);
-// 			if (sd > max_sd)
-// 				max_sd = sd;
-// 		}
-//
-// 		if (select(max_sd + 1, &fdset, NULL, NULL, NULL) == -1)
-// 		{
-// 			std::cout << "Error select" << std::endl;
-// 			exit(1);
-// 		}
-//
-// 		if (FD_ISSET(this->master_socket, &fdset))
-// 		{
-// 			if ((this->client_socket = accept(this->master_socket, (sockaddr *)&clientadd, &size)) == -1)
-// 			{
-// 				std::cout << "Error accept" << std::endl;
-// 				exit(1);
-// 			}
-// 			std::cout << "Connection accepted" << std::endl;
-// 			this->sockets.push_back(this->client_socket);
-// 			clientMsg = ""; // Initialize message for new client socket
-// 		}
-//
-// 		for (size_t i = 0; i < this->sockets.size(); i++)
-// 		{
-// 			int clientSocket = this->sockets[i];
-// 			if (FD_ISSET(clientSocket, &fdset))
-// 			{
-// 				if ((res = recv(clientSocket, buffer, 1024, 0)) == 0)
-// 				{
-// 					std::cout << "Client disconnected from socket " << clientSocket << std::endl;
-// 					close(clientSocket);
-// 					this->sockets.erase(this->sockets.begin() + i);
-// 					continue; // Continue to the next iteration
-// 				}
-// 				buffer[res] = '\0';
-// 				clientMsg += buffer;
-// 				std::memset(buffer, 0, 1024);
-//				 parser.processClientMessage(clientSocket, clientMsg, this->getServPass());
-// 			}
-// 		}
-// 	}
-// 	close(this->master_socket);
-// }
+ void Server::multi_connection(MsgParser parser)
+ {
+ 	int res;
+ 	int max_sd = 0;
+ 	char buffer[1024];
+ 	fd_set fdset;
+ 	struct sockaddr_in clientadd;
+ 	socklen_t size = sizeof(clientadd);
+ 	std::string clientMsg; // String to store client messages
+
+ 	for (;;)
+ 	{
+ 		FD_ZERO(&fdset);						// Clear the socket set
+ 		FD_SET(this->master_socket, &fdset);	// Add master socket to set
+ 		max_sd = this->master_socket;			// Set the max sd to the master socket
+
+ 		// Add child sockets to set
+ 		std::vector<int>::iterator it;
+ 		for (it = this->sockets.begin(); it != this->sockets.end(); it++)
+ 		{
+ 			int sd = *it;
+ 			if (sd > 0)
+ 				FD_SET(sd, &fdset);
+ 			if (sd > max_sd)
+ 				max_sd = sd;
+ 		}
+
+ 		if (select(max_sd + 1, &fdset, NULL, NULL, NULL) == -1)
+ 		{
+ 			std::cout << "Error select" << std::endl;
+ 			exit(1);
+ 		}
+
+ 		if (FD_ISSET(this->master_socket, &fdset))
+ 		{
+ 			if ((this->client_socket = accept(this->master_socket, (sockaddr *)&clientadd, &size)) == -1)
+ 			{
+ 				std::cout << "Error accept" << std::endl;
+ 				exit(1);
+ 			}
+ 			std::cout << "Connection accepted" << std::endl;
+ 			this->sockets.push_back(this->client_socket);
+ 			clientMsg = ""; // Initialize message for new client socket
+ 		}
+
+ 		for (size_t i = 0; i < this->sockets.size(); i++)
+ 		{
+ 			int clientSocket = this->sockets[i];
+ 			if (FD_ISSET(clientSocket, &fdset))
+ 			{
+ 				if ((res = recv(clientSocket, buffer, 1024, 0)) == 0)
+ 				{
+ 					std::cout << "Client disconnected from socket " << clientSocket << std::endl;
+ 					close(clientSocket);
+ 					this->sockets.erase(this->sockets.begin() + i);
+ 					continue; // Continue to the next iteration
+ 				}
+ 				buffer[res] = '\0';
+ 				clientMsg += buffer;
+ 				std::memset(buffer, 0, 1024);
+				/*☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩*/
+				std::cout << BOLDGREEN  << "🟡 Message received 🔴" << RESET << std::endl;
+				std::cout << BOLDYELLOW << "☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩"
+										<< std::endl
+										<< clientMsg
+										<< std::endl
+										<< "☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩"
+										<< RESET << std::endl;
+				/*☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩*/
+				split_msg();
+				parser.processHandShake(clientSocket, clientMsg, this->getServPass());
+ 			}
+ 		}
+ 	}
+ 	close(this->master_socket);
+ }
 
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-void Server::multi_connection(MsgParser parser)
-{
-	int res;
-	int max_sd = 0;
-	int sd;
-	char buffer[1024];
-	fd_set fdset;
-	struct sockaddr_in clientadd;
-	socklen_t size = sizeof(clientadd);
-	for(;;)
-	{
-		FD_ZERO(&fdset);//clear the socket set
-		FD_SET(this->master_socket,&fdset);//add master socket to set
-		max_sd = this->master_socket; //set the max sd to the master socket
-		//add child sockets to set
-		for(std::vector<int>::iterator it = this->sockets.begin(); it != this->sockets.end(); it++)
-		{
-			sd = *it;
-			if(sd > 0)
-				FD_SET(sd,&fdset);
-			if(sd > max_sd)
-				max_sd = sd;
-		}
-		if(select(max_sd +1,&fdset,NULL,NULL,NULL) == -1)
-		{
-			std::cout << "Error select" << std::endl;
-			exit(1);
-		}
-		if(FD_ISSET(this->master_socket,&fdset))
-		{
-			if((this->client_socket = accept(this->master_socket,(sockaddr*)&clientadd,&size)) == -1)
-			{
-				std::cout << "Error accept" << std::endl;
-				exit(1);
-			}
-			std::cout << "Connection accepted" << std::endl;
-			this->sockets.push_back(this->client_socket);
-			this->msg.push_back("");
-		}
-		//new function get_msg()
-		for(size_t i = 0; i < this->sockets.size(); i++)
-		{
-			if(FD_ISSET(this->sockets[i],&fdset))
-			{
-				if((res = recv(this->sockets[i],buffer,1024,0)) == 0)
-				{
-					std::cout << "Client disconnected" << std::endl;
-					close(this->sockets[i]);
-					this->sockets.erase(this->sockets.begin() + i);
-				}
-				else
-				{
-					buffer[res]= '\0';
-					std::cout << "========================================" << std::endl;
-					this->msg[i] += buffer;
-					std::memset(buffer,0,1024);
-				}
-//				split_msg();
-				std::cout << this->msg[i] << std::endl;
-				parser.processClientMessage(this->sockets[i], this->msg[i], this->getServPass());
-			}
-		}
-	}
-	close(this->master_socket);
-}
+//void Server::multi_connection(MsgParser parser)
+//{
+//	int res;
+//	int max_sd = 0;
+//	int sd;
+//	char buffer[1024];
+//	fd_set fdset;
+//	struct sockaddr_in clientadd;
+//	socklen_t size = sizeof(clientadd);
+//	int clientSocket;
+//
+//	for(;;)
+//	{
+//		FD_ZERO(&fdset);//clear the socket set
+//		FD_SET(this->master_socket,&fdset);//add master socket to set
+//		max_sd = this->master_socket; //set the max sd to the master socket
+//		//add child sockets to set
+//		for(std::vector<int>::iterator it = this->sockets.begin(); it != this->sockets.end(); it++)
+//		{
+//			sd = *it;
+//			if(sd > 0) {
+//				FD_SET(sd,&fdset);
+//			}
+//			if(sd > max_sd) {
+//				max_sd = sd;
+//			}
+//		}
+//		if(select(max_sd +1,&fdset,NULL,NULL,NULL) == -1)
+//		{
+//			std::cout << "Error select" << std::endl;
+//			exit(1);
+//		}
+//		if(FD_ISSET(this->master_socket,&fdset))
+//		{
+//			if((this->client_socket = accept(this->master_socket,(sockaddr*)&clientadd,&size)) == -1)
+//			{
+//				std::cout << BOLDRED << "🟡 Error accept 🔴" << RESET << std::endl;
+//				exit(1);
+//			}
+//			std::cout << BOLDYELLOW << "🟡 Connection accepted 🔴" << RESET << std::endl;
+//			this->sockets.push_back(this->client_socket);
+//			this->msg.push_back("");
+//		}
+//		//new function get_msg()
+//		for(size_t i = 0; i < this->sockets.size(); i++)
+//		{
+//			clientSocket = this->sockets[i];
+//			if(FD_ISSET(this->sockets[i],&fdset))
+//			{
+//				if((res = recv(this->sockets[i],buffer,1024,0)) == 0)
+//				{
+//					std::cout << BOLDRED << "🟡 Client disconnected 🔴" << RESET << std::endl;
+//					close(this->sockets[i]);
+//					this->sockets.erase(this->sockets.begin() + i);
+//				}
+//				else
+//				{
+//					buffer[res]= '\0';
+//					this->msg[i] += buffer;
+//					std::memset(buffer,0,1024);
+//				}
+////				std::cout << BOLDGREEN << "🟡 Message received 🔴" << RESET << std::endl;
+////				std::cout << BOLDGREEN << "🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡🟡"
+////											<< this->msg[i] << std::endl
+////											<< " 🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴🔴"
+////											<< RESET << std::endl;
+////				split_msg();
+//				parser.processHandShake(this->sockets[i], this->msg[i], this->getServPass());
+//			}
+//		}
+//	}
+//	close(this->master_socket);
+//}
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 std::vector <std::string> Server::getMsg() {
