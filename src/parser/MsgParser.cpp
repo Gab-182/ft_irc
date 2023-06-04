@@ -83,14 +83,13 @@ void MsgParser::checkName(int clientSocket, const std::string& clientName, const
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 int MsgParser::checkPass(int clientSocket, const std::string& clientPass, const int& serverPass) {
 	if (clientPass.empty())
-		std::cout << BOLDRED << "🟡 Password not found 🔴" << RESET << std::endl;
-
+		DEBUG_MSG(BOLDRED << "Password not found" << RESET)
 	else if (std::stoi(clientPass) == serverPass) {
-		std::cout << BOLDGREEN << "🟡 Password accepted 🔴" << RESET << std::endl;
+		DEBUG_MSG("Password accepted")
 		return 1;
 	}
 	else {
-		std::cout << BOLDRED << "🟡 Incorrect password 🔴" << RESET << std::endl;
+		DEBUG_MSG(BOLDRED << "Incorrect password" << RESET)
 		std::string errorMsg = "ERROR :Invalid password\r\n";
 		sendResponse(clientSocket, errorMsg);
 	}
@@ -100,15 +99,18 @@ int MsgParser::checkPass(int clientSocket, const std::string& clientPass, const 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 int MsgParser::checkNick(int clientSocket, const std::string& clientNick) {
 	if (clientNick.empty()) {
-		std::cout << BOLDRED << "🟡 Nickname not found 🔴" << RESET << std::endl;
+		DEBUG_MSG(BOLDRED << "Nickname not found" << RESET)
 		std::string errorMsg = "ERROR :No nickname given\r\n";
 		sendResponse(clientSocket, errorMsg);
 		return 0;
 	}
-
+/**
+ ** TODO: Fix the bug of the Generating the guest nickname,
+ **			even if the nick name accepted.
+ **/
 	if (clientsNicks.empty() || duplicatedClient(clientNick)) {
 		std::string newNick = generateGuestNick();
-		std::cout << BOLDRED << "🟡 Assigning a Guest nickname: " << newNick << " 🔴" << RESET << std::endl;
+		DEBUG_MSG("Assigning a Guest nickname: [" << newNick << "]")
 		std::string nickMsg = "Assigning a Guest nickname: "+newNick+"\r\n";
 		sendResponse(clientSocket, nickMsg);
 		clientsNicks[clientSocket] = newNick;
@@ -118,9 +120,7 @@ int MsgParser::checkNick(int clientSocket, const std::string& clientNick) {
 
 	clientsNicks[clientSocket] = clientNick;
 	clientsData[clientSocket].first = clientNick;
-	std::cout << BOLDGREEN << "🟡 Nickname accepted 🔴" << RESET << std::endl;
-	std::cout << BOLDWHITE << "🟡 Nickname: [" << clientsNicks[clientSocket] << "] 🔴" << RESET << std::endl;
-
+	DEBUG_MSG("Nickname accepted: [" << clientsNicks[clientSocket] << "]")
 	return 1;
 }
 
@@ -150,6 +150,9 @@ void MsgParser::processHandShake(int clientSocket, const std::string& clientMsg,
 			std::string username, realName;
 			iss >> username >> realName;
 			checkName(clientSocket, username, realName);
+		} else if (command == "PING") {
+			std::string pingMsg = "PONG :ircserv\r\n";
+			sendResponse(clientSocket, pingMsg);
 		}
 	}
 	welcomeMessage(clientSocket);

@@ -264,7 +264,7 @@ void Server::split_msg()
  				std::cout << "Error accept" << std::endl;
  				exit(1);
  			}
- 			std::cout << "Connection accepted" << std::endl;
+			DEBUG_MSG("Connection accepted")
  			this->sockets.push_back(this->client_socket);
  			clientMsg = ""; // Initialize message for new client socket
  		}
@@ -276,7 +276,7 @@ void Server::split_msg()
  			{
  				if ((res = recv(clientSocket, buffer, 1024, 0)) == 0)
  				{
- 					std::cout << "Client disconnected from socket " << clientSocket << std::endl;
+					DEBUG_MSG("Client disconnected from socket")
  					close(clientSocket);
  					this->sockets.erase(this->sockets.begin() + i);
  					continue; // Continue to the next iteration
@@ -284,15 +284,7 @@ void Server::split_msg()
  				buffer[res] = '\0';
  				clientMsg += buffer;
  				std::memset(buffer, 0, 1024);
-				/*☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩*/
-				std::cout << BOLDGREEN  << "🟡 Message received 🔴" << RESET << std::endl;
-				std::cout << BOLDYELLOW << "☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩"
-										<< std::endl
-										<< clientMsg
-										<< std::endl
-										<< "☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩"
-										<< RESET << std::endl;
-				/*☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩*/
+				DEBUG_MSG(BOLDMAGENTA << "HandShake Message: " << RESET << std::endl << clientMsg)
 				parser.processHandShake(clientSocket, clientMsg, this->getServPass());
  			}
  		}

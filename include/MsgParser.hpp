@@ -16,8 +16,29 @@
 #define BOLDGREEN		"\033[1m\033[32m"		/* Bold Green */
 #define BOLDYELLOW		"\033[1m\033[33m"		/* Bold Yellow */
 #define BOLDRED			"\033[1m\033[31m"		/* Bold Red */
+#define BOLDBLUE			"\033[1m\033[34m"		/* Bold Blue */
+#define BOLDMAGENTA		"\033[1m\033[35m"		/* Bold Magenta */
+#define BOLDCYAN			"\033[1m\033[36m"		/* Bold Cyan */
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+#define DEBUG 1
+
+#if( DEBUG == 1 )
+#define DEBUG_MSG(msg) std::cout												\
+						<< BOLDMAGENTA										\
+						<< "———————————————————————[⤵️]—————————————————————"\
+						<< std::endl										\
+						<< BOLDCYAN << msg << RESET							\
+						<< std::endl										\
+						<< BOLDMAGENTA										\
+						<< "———————————————————————[⤴️]—————————————————————"\
+						<< RESET << std::endl;
+#elif( DEBUG == 0 )
+#define DEBUG_MSG(msg)
+
+#endif
+/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+
 namespace IRC {
 	class MsgParser {
 		private:
