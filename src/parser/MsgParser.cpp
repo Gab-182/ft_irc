@@ -42,43 +42,17 @@ void MsgParser::welcomeMessage(int clientSocket) {
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-// Function to send a message to the client
 void MsgParser::sendResponse(int clientSocket, const std::string& message) {
 	// Check if the message has been sent before
 	if (sentMessages.find(message) == sentMessages.end()) {
-		if (send(clientSocket, message.c_str(), message.size(), 0) == -1) {
-			std::cout << BOLDRED << "🟡 Failed to send message to the client: " << message << " 🔴" << RESET << std::endl;
-		} else {
+		if (send(clientSocket, message.c_str(), message.size(), 0) == -1)
+			DEBUG_MSG("Failed to send message to the client: " << message)
+		else
 			// Add the message to the set of sent messages
 			sentMessages.insert(message);
-		}
 	}
 }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-void MsgParser::checkName(int clientSocket, const std::string& clientName, const std::string& clientRealName) {
-	if (clientName.empty()) {
-		std::cout << BOLDRED << "🟡 user name not found 🔴" << RESET << std::endl;
-		std::string errorMsg = "ERROR :No user name given\r\n";
-		sendResponse(clientSocket, errorMsg);
-
-	}
-//	else if (duplicatedClient(clientName)) {
-//		/*
-//		 ** TODO: Changing the userName by adding random  numbers to it.
-//		 */
-//	}
-	else {
-		std::cout << BOLDGREEN << "🟡 user name and real name are valid 🔴" << RESET << std::endl;
-		clientsNicks[clientSocket] = clientName;
-		std::cout << BOLDWHITE << "🟡Client user name: [" << clientsNicks[clientSocket] << "] 🔴" << RESET << std::endl;
-		std::cout << BOLDWHITE << "🟡Client real name: [" << clientRealName  << "] 🔴" << RESET << std::endl;
-		/*
-		 ** TODO: Save the client real name to the client class.
-		 ** TODO: add the client to the list of clients
-		 */
-	}
-}
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 int MsgParser::checkPass(int clientSocket, const std::string& clientPass, const int& serverPass) {
@@ -86,7 +60,7 @@ int MsgParser::checkPass(int clientSocket, const std::string& clientPass, const 
 		DEBUG_MSG(BOLDRED << "Password not found" << RESET)
 	else if (std::stoi(clientPass) == serverPass) {
 		DEBUG_MSG("Password accepted")
-		return 1;
+		return (1);
 	}
 	else {
 		DEBUG_MSG(BOLDRED << "Incorrect password" << RESET)
@@ -103,27 +77,48 @@ int MsgParser::checkNick(int clientSocket, const std::string& clientNick) {
 		std::string errorMsg = "ERROR :No nickname given\r\n";
 		sendResponse(clientSocket, errorMsg);
 		return 0;
-	}
 /**
- ** TODO: Fix the bug of the Generating the guest nickname,
- **			even if the nick name accepted.
+ ** TODO: When the nick is duplicated,
+ ** 	check if the nick inside the map have the same socket as the new one,
+ **		Cause that mean -> the same client is trying to send nick command again.
  **/
-	if (clientsNicks.empty() || duplicatedClient(clientNick)) {
-		std::string newNick = generateGuestNick();
-		DEBUG_MSG("Assigning a Guest nickname: [" << newNick << "]")
-		std::string nickMsg = "Assigning a Guest nickname: "+newNick+"\r\n";
+	} else if (duplicatedClient(clientNick) && clientsNicks.find(clientSocket) != clientsNicks.end()) {
+		std::string modifiedNickname;
+		modifiedNickname = clientNick + std::to_string(rand() % 1000);
+		DEBUG_MSG("Assigning a Guest nickname: [" << modifiedNickname << "]")
+		std::string nickMsg = "Assigning a Guest nickname: "+modifiedNickname+"\r\n";
 		sendResponse(clientSocket, nickMsg);
-		clientsNicks[clientSocket] = newNick;
-		clientsData[clientSocket].first = newNick;
-		return 0;
+		clientsNicks[clientSocket] = modifiedNickname;
+		clientsData[clientSocket].first = modifiedNickname;
 	}
 
 	clientsNicks[clientSocket] = clientNick;
 	clientsData[clientSocket].first = clientNick;
+	std::string nickMsg = "NICK " + clientNick + "\r\n";
+	sendResponse(clientSocket, nickMsg);
 	DEBUG_MSG("Nickname accepted: [" << clientsNicks[clientSocket] << "]")
 	return 1;
 }
 
+/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+void MsgParser::checkName(int clientSocket, const std::string& clientName, const std::string& realname, const std::string& ip) {
+	std::string modifiedUsername = clientName;
+
+	if (clientName.empty())
+		sendResponse(clientSocket, "ERROR :No user name given\r\n");
+	/**
+	 ** TODO: When the nick is duplicated,
+	 ** 	check if the nick inside the map have the same socket as the new one,
+	 **		Cause that mean -> the same client is trying to send nick command again.
+	 **/
+	else if (duplicatedClient(clientsData[clientSocket].second))
+		modifiedUsername = clientName + std::to_string(rand() % 1000);
+	clientsData[clientSocket].second = modifiedUsername;
+	DEBUG_MSG("Client " << clientSocket << std::endl
+						<< "User name: " << clientsData[clientSocket].second << std::endl
+						<< "Real name: " << realname << std::endl
+						<< "IP: " << ip <<  std::endl)
+}
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 void MsgParser::processHandShake(int clientSocket, const std::string& clientMsg, const int& serverPass) {
@@ -131,13 +126,13 @@ void MsgParser::processHandShake(int clientSocket, const std::string& clientMsg,
 	std::string command;
 
 	while (iss >> command) {
-		if (command == "CAP") {
-			std::string capLsMessage = "CAP * LS :multi-prefix sasl\r\n";
-			sendResponse(clientSocket, capLsMessage);
-		} else if (command == "PASS") {
+		if (command == "CAP")
+			sendResponse(clientSocket, "CAP * ACK :302 CAP LS\r\n");
+		else if (command == "PASS") {
 			std::string password;
 			iss >> password;
 			if (!checkPass(clientSocket, password, serverPass)) {
+				DEBUG_MSG(BOLDRED << "Password not accepted")
 				return;
 			}
 		} else if (command == "NICK") {
@@ -147,9 +142,12 @@ void MsgParser::processHandShake(int clientSocket, const std::string& clientMsg,
 				return;
 			}
 		} else if (command == "USER") {
-			std::string username, realName;
-			iss >> username >> realName;
-			checkName(clientSocket, username, realName);
+			std::string userMessage, username, realname, ip;
+			iss >> username;
+			iss >> username;
+			iss >> ip;
+			std::getline(iss, realname);
+			checkName(clientSocket, username, realname, ip);
 		} else if (command == "PING") {
 			std::string pingMsg = "PONG :ircserv\r\n";
 			sendResponse(clientSocket, pingMsg);

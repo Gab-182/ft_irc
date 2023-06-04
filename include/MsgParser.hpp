@@ -26,12 +26,12 @@
 #if( DEBUG == 1 )
 #define DEBUG_MSG(msg) std::cout												\
 						<< BOLDMAGENTA										\
-						<< "———————————————————————[⤵️]—————————————————————"\
+						<< "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⫷⦙⧛ 𝙳𝙴𝙱𝚄𝙶 ⧚⦙⫸︎⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"\
 						<< std::endl										\
 						<< BOLDCYAN << msg << RESET							\
 						<< std::endl										\
 						<< BOLDMAGENTA										\
-						<< "———————————————————————[⤴️]—————————————————————"\
+						<< "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"	\
 						<< RESET << std::endl;
 #elif( DEBUG == 0 )
 #define DEBUG_MSG(msg)
@@ -46,7 +46,7 @@ namespace IRC {
 			bool duplicatedClient(const std::string& nickname);
 			int checkPass(int clientSocket, const std::string& clientPass, const int& serverPass);
 			int checkNick(int clientSocket, const std::string& clientNick);
-			void checkName(int clientSocket, const std::string& clientName, const std::string& clientRealName);
+			void checkName(int clientSocket, const std::string& clientName, const std::string& clientRealName, const std::string& ip);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		public:
 			std::map<int, std::string> clientsNicks;
