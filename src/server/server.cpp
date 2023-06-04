@@ -251,7 +251,6 @@ void Server::split_msg()
  			if (sd > max_sd)
  				max_sd = sd;
  		}
-
  		if (select(max_sd + 1, &fdset, NULL, NULL, NULL) == -1)
  		{
  			std::cout << "Error select" << std::endl;
@@ -294,7 +293,6 @@ void Server::split_msg()
 										<< "☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩"
 										<< RESET << std::endl;
 				/*☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩☩*/
-				split_msg();
 				parser.processHandShake(clientSocket, clientMsg, this->getServPass());
  			}
  		}

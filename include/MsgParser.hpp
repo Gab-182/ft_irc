@@ -38,7 +38,7 @@ namespace IRC {
 //			MsgParser &operator=(const MsgParser &other);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 			void welcomeMessage(int clientSocket);
-			void sendMessageToClient(int clientSocket, const std::string& message);
+			void sendResponse(int clientSocket, const std::string& message);
 			void processHandShake(int clientSocket, const std::string& clintsMessage, const int& serverPass);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	};

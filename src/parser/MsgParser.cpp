@@ -38,14 +38,12 @@ bool MsgParser::duplicatedClient(const std::string& name) {
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 void MsgParser::welcomeMessage(int clientSocket) {
 	std::string welcomeMsg = ":" + clientsNicks[clientSocket] + " 001 " + clientsNicks[clientSocket] + " :Welcome to the Internet Relay Network\r\n";
-	if (send(clientSocket, welcomeMsg.c_str(), welcomeMsg.size(), 0) == -1) {
-		std::cout << BOLDRED << "🟡 Failed to send welcome message 🔴" << RESET << std::endl;
-	}
+	sendResponse(clientSocket, welcomeMsg);
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 // Function to send a message to the client
-void MsgParser::sendMessageToClient(int clientSocket, const std::string& message) {
+void MsgParser::sendResponse(int clientSocket, const std::string& message) {
 	// Check if the message has been sent before
 	if (sentMessages.find(message) == sentMessages.end()) {
 		if (send(clientSocket, message.c_str(), message.size(), 0) == -1) {
@@ -62,7 +60,7 @@ void MsgParser::checkName(int clientSocket, const std::string& clientName, const
 	if (clientName.empty()) {
 		std::cout << BOLDRED << "🟡 user name not found 🔴" << RESET << std::endl;
 		std::string errorMsg = "ERROR :No user name given\r\n";
-		sendMessageToClient(clientSocket, errorMsg);
+		sendResponse(clientSocket, errorMsg);
 
 	}
 //	else if (duplicatedClient(clientName)) {
@@ -94,7 +92,7 @@ int MsgParser::checkPass(int clientSocket, const std::string& clientPass, const 
 	else {
 		std::cout << BOLDRED << "🟡 Incorrect password 🔴" << RESET << std::endl;
 		std::string errorMsg = "ERROR :Invalid password\r\n";
-		sendMessageToClient(clientSocket, errorMsg);
+		sendResponse(clientSocket, errorMsg);
 	}
 	return 0;
 }
@@ -104,7 +102,7 @@ int MsgParser::checkNick(int clientSocket, const std::string& clientNick) {
 	if (clientNick.empty()) {
 		std::cout << BOLDRED << "🟡 Nickname not found 🔴" << RESET << std::endl;
 		std::string errorMsg = "ERROR :No nickname given\r\n";
-		sendMessageToClient(clientSocket, errorMsg);
+		sendResponse(clientSocket, errorMsg);
 		return 0;
 	}
 
@@ -112,7 +110,7 @@ int MsgParser::checkNick(int clientSocket, const std::string& clientNick) {
 		std::string newNick = generateGuestNick();
 		std::cout << BOLDRED << "🟡 Assigning a Guest nickname: " << newNick << " 🔴" << RESET << std::endl;
 		std::string nickMsg = "Assigning a Guest nickname: "+newNick+"\r\n";
-		sendMessageToClient(clientSocket, nickMsg);
+		sendResponse(clientSocket, nickMsg);
 		clientsNicks[clientSocket] = newNick;
 		clientsData[clientSocket].first = newNick;
 		return 0;
@@ -135,7 +133,7 @@ void MsgParser::processHandShake(int clientSocket, const std::string& clientMsg,
 	while (iss >> command) {
 		if (command == "CAP") {
 			std::string capLsMessage = "CAP * LS :multi-prefix sasl\r\n";
-			sendMessageToClient(clientSocket, capLsMessage);
+			sendResponse(clientSocket, capLsMessage);
 		} else if (command == "PASS") {
 			std::string password;
 			iss >> password;
