@@ -1,5 +1,5 @@
-#ifndef MSGPARSER_HPP
-#define MSGPARSER_HPP
+#ifndef HANDSHAKE_HPP
+#define HANDSHAKE_HPP
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 #include <cstring>
@@ -24,14 +24,14 @@
 #define DEBUG 1
 
 #if( DEBUG == 1 )
-#define DEBUG_MSG(msg) std::cout												\
-						<< BOLDMAGENTA										\
-						<< "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⫷⦙⧛ 𝙳𝙴𝙱𝚄𝙶 ⧚⦙⫸︎⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"\
-						<< std::endl										\
-						<< BOLDCYAN << msg << RESET							\
-						<< std::endl										\
-						<< BOLDMAGENTA										\
-						<< "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"	\
+#define DEBUG_MSG(msg) std::cout														\
+						<< BOLDMAGENTA												\
+						<< "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⫷⦙⧛ 𝙳𝙴𝙱𝚄𝙶 ⧚⦙⫸︎⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"	\
+						<< std::endl												\
+						<< BOLDCYAN << msg << RESET									\
+						<< std::endl												\
+						<< BOLDMAGENTA												\
+						<< "⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯"		\
 						<< RESET << std::endl;
 #elif( DEBUG == 0 )
 #define DEBUG_MSG(msg)
@@ -40,7 +40,12 @@
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 
 namespace IRC {
-	class MsgParser {
+	class HandShake {
+		public:
+			std::map<int, std::string> clientsNicks;
+			std::map<int, std::set<std::string> > sentMessages;  // Track sent messages
+			std::map<int, std::pair<std::string, std::string> > clientsData;
+			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		private:
 			std::string generateGuestNick();
 			bool duplicatedClient(const std::string& nickname);
@@ -49,18 +54,13 @@ namespace IRC {
 			void checkName(int clientSocket, const std::string& clientName, const std::string& clientRealName, const std::string& ip);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		public:
-			std::map<int, std::string> clientsNicks;
-			std::set<std::string> sentMessages;  // Track sent messages
-			std::map<int, std::pair<std::string, std::string> > clientsData;
-		public:
-			MsgParser();
-			~MsgParser();
-			MsgParser(const MsgParser &other);
-//			MsgParser &operator=(const MsgParser &other);
+			HandShake();
+			~HandShake();
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 			void welcomeMessage(int clientSocket);
 			void sendResponse(int clientSocket, const std::string& message);
-			void processHandShake(int clientSocket, const std::string& clintsMessage, const int& serverPass);
+			void handleMode(int clientSocket, std::istringstream& iss);
+			void processHandShake(int clientSocket, const std::string& clientsMessage, const int& serverPass);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	};
 }

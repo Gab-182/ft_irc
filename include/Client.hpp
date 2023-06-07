@@ -7,9 +7,9 @@
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 namespace IRC {
-	class Client
-	{
+	class Client {
 		private:
+			int _socket;
 			std::string _user;
 			std::string _pass;
 			std::string _nick;
@@ -19,17 +19,19 @@ namespace IRC {
 			~Client();
 			Client(const Client& other);
 			Client& operator=(const Client& other);
-			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-			void set_user(const std::string& user);
-			void set_pass(const std::string& pass);
-			void set_nick(const std::string& nick);
-			void set_host(const std::string& host);
-			std::string get_user();
-			std::string get_pass();
-			std::string get_nick();
-			std::string get_host();
-			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-			void print();
+		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎  SETTERS && GETTERS  ❄❄︎❄❄︎❄︎❄❄︎❄❄❄︎❄*/
+			void setSocket(const int& socket);
+			void setUser(const std::string& user);
+			void setPass(const std::string& pass);
+			void setNick(const std::string& nick);
+			void setHost(const std::string& host);
+		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+			int getSocket();
+			std::string getUser();
+			std::string getPass();
+			std::string getNick();
+			std::string getHost();
+		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	};
 }
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/

@@ -1,32 +1,20 @@
-#include "../../include/MsgParser.hpp"
+#include "../../include/HandShake.hpp"
 using namespace IRC;
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-MsgParser::MsgParser() { }
+HandShake::HandShake() { }
 
-MsgParser::~MsgParser() { }
-
-MsgParser::MsgParser(const MsgParser &other) {
-	if (this != &other)
-		*this = other;
-}
-
-//MsgParser& MsgParser::operator=(const MsgParser &other) {
-//	if (this != &other) {
-//		*this = other;
-//	}
-//	return (*this);
-//}
+HandShake::~HandShake() { }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-std::string MsgParser::generateGuestNick() {
+std::string HandShake::generateGuestNick() {
 	static int guestCount = 1;
 	std::string guestNick = "Guest-" + std::to_string(guestCount++);
 	return guestNick;
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-bool MsgParser::duplicatedClient(const std::string& name) {
+bool HandShake::duplicatedClient(const std::string& name) {
 	std::map<int, std::string>::const_iterator it;
 	for (it = clientsNicks.begin(); it != clientsNicks.end(); ++it) {
 		if (it->second == name)
@@ -36,26 +24,27 @@ bool MsgParser::duplicatedClient(const std::string& name) {
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-void MsgParser::welcomeMessage(int clientSocket) {
-	std::string welcomeMsg = ":" + clientsNicks[clientSocket] + " 001 " + clientsNicks[clientSocket] + " :Welcome to the Internet Relay Network\r\n";
+void HandShake::welcomeMessage(int clientSocket) {
+	std::string welcomeMsg = "001 :Welcome to the Internet Relay Network\r\n";
+//	std::string welcomeMsg = ":" + clientsNicks[clientSocket] + " 001 " + clientsNicks[clientSocket] + " :Welcome to the Internet Relay Network\r\n";
 	sendResponse(clientSocket, welcomeMsg);
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-void MsgParser::sendResponse(int clientSocket, const std::string& message) {
+void HandShake::sendResponse(int clientSocket, const std::string& message) {
 	// Check if the message has been sent before
-	if (sentMessages.find(message) == sentMessages.end()) {
+	if (sentMessages[clientSocket].find(message) == sentMessages[clientSocket].end()) {
 		if (send(clientSocket, message.c_str(), message.size(), 0) == -1)
 			DEBUG_MSG("Failed to send message to the client: " << message)
 		else
 			// Add the message to the set of sent messages
-			sentMessages.insert(message);
+			sentMessages[clientSocket].insert(message);
 	}
 }
 
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-int MsgParser::checkPass(int clientSocket, const std::string& clientPass, const int& serverPass) {
+int HandShake::checkPass(int clientSocket, const std::string& clientPass, const int& serverPass) {
 	if (clientPass.empty()) {
 		DEBUG_MSG(BOLDRED << "Password not found" << RESET)
 		std::string errorMsg = "ERROR :No password given\r\n";
@@ -75,38 +64,47 @@ int MsgParser::checkPass(int clientSocket, const std::string& clientPass, const 
 
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-int MsgParser::checkNick(int clientSocket, const std::string& clientNick) {
+int HandShake::checkNick(int clientSocket, const std::string& clientNick) {
 	if (clientNick.empty()) {
-		DEBUG_MSG(BOLDRED << "Nickname not found" << RESET)
+		// Invalid nickname
+		DEBUG_MSG(BOLDRED << "Invalid nickname" << RESET)
 		std::string errorMsg = "ERROR :No nickname given\r\n";
 		sendResponse(clientSocket, errorMsg);
 		return 0;
-	/**
-	 ** @gab-182
-	 ** TODO: When the nick is duplicated,
-	 ** 	check if the nick inside the map have the same socket as the new one,
-	 **		Cause that mean -> the same client is trying to send nick command again.
-	 **/
-	} else if (duplicatedClient(clientNick) && clientsNicks.find(clientSocket) == clientsNicks.end()) {
-		std::string modifiedNickname;
-		modifiedNickname = clientNick + std::to_string(rand() % 1000);
+	} else if (clientNick.length() > 9) {
+		// Nickname too long
+		DEBUG_MSG(BOLDRED << "Nickname is too long" << RESET)
+		std::string errorMsg = "ERROR :Nickname is too long\r\n";
+		sendResponse(clientSocket, errorMsg);
+		return 0;
+	} else if (!std::isalpha(clientNick[0])) {
+		// Nickname doesn't start with a letter
+		DEBUG_MSG(BOLDRED << "Nickname must start with a letter" << RESET)
+		std::string errorMsg = "ERROR :Nickname must start with a letter\r\n";
+		sendResponse(clientSocket, errorMsg);
+		return 0;
+	} else if (duplicatedClient(clientNick) && clientsNicks.find(clientSocket) != clientsNicks.end()) {
+		// Nickname already taken
+		std::string modifiedNickname = clientNick + std::to_string(rand() % 1000);
 		DEBUG_MSG("Assigning a Guest nickname: [" << modifiedNickname << "]")
-		std::string nickMsg = "Assigning a Guest nickname: "+modifiedNickname+"\r\n";
+		std::string nickMsg = "Assigning a Guest nickname: " + modifiedNickname + "\r\n";
 		sendResponse(clientSocket, nickMsg);
 		clientsNicks[clientSocket] = modifiedNickname;
 		clientsData[clientSocket].first = modifiedNickname;
+		return 0;
+	} else {
+		// Nickname accepted
+		clientsNicks[clientSocket] = clientNick;
+		clientsData[clientSocket].first = clientNick;
+		std::string nickMsg = "NICK " + clientNick + "\r\n";
+		sendResponse(clientSocket, nickMsg);
+		// You can add any additional logic or actions here
+		return 1;
 	}
-
-	clientsNicks[clientSocket] = clientNick;
-	clientsData[clientSocket].first = clientNick;
-	std::string nickMsg = "NICK " + clientNick + "\r\n";
-	sendResponse(clientSocket, nickMsg);
-	// DEBUG_MSG("Nickname accepted: [" << clientsNicks[clientSocket] << "]")
-	return 1;
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-void MsgParser::checkName(int clientSocket, const std::string& clientName, const std::string& realname, const std::string& ip) {
+void HandShake::checkName(int clientSocket, const std::string& clientName, const std::string& realname, const std::string& ip) {
 	std::string modifiedUsername = clientName;
 
 	if (clientName.empty())
@@ -121,7 +119,20 @@ void MsgParser::checkName(int clientSocket, const std::string& clientName, const
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-void MsgParser::processHandShake(int clientSocket, const std::string& clientMsg, const int& serverPass) {
+void HandShake::handleMode(int clientSocket, std::istringstream& iss) {
+	std::string mode;
+	while (iss >> mode) {
+		if (mode == "+i") {
+			std::string modeMsg = "MODE " + clientsNicks[clientSocket] + " " + mode + "\r\n";
+			sendResponse(clientSocket, modeMsg);
+			sendResponse(clientSocket, "MODE set to +i\r\n");
+			break;
+		}
+	}
+}
+
+/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+void HandShake::processHandShake(int clientSocket, const std::string& clientMsg, const int& serverPass) {
 	std::istringstream iss(clientMsg);
 	std::string command;
 
@@ -151,17 +162,15 @@ void MsgParser::processHandShake(int clientSocket, const std::string& clientMsg,
 			std::string endMsg;
 			std::getline(iss, endMsg);
 			break;
-		} else if (command == "MODE") { // MODE +i
-			std::string mode, target;
-			iss >> target >> mode;
-			if (target == clientsNicks[clientSocket] && mode == "+i")
-				sendResponse(clientSocket, "MODE " + target + " +i\r\n");
-		} else if (command == "PING") {
+		} else if (command == "MODE") // MODE +i
+			handleMode(clientSocket, iss);
+		else if (command == "PING") {
 			std::string pingMsg = "PONG :ircserv\r\n";
 			sendResponse(clientSocket, pingMsg);
 		}
 	}
-	welcomeMessage(clientSocket);
+//	if (!clientsNicks[clientSocket].empty())
+		welcomeMessage(clientSocket);
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/

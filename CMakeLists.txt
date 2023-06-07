@@ -7,13 +7,18 @@ set(CMAKE_CXX_STANDARD 98)
 set(SOURCES
 		main.cpp
 		src/server/server.cpp
-		src/parser/MsgParser.cpp
+		src/parser/HandShake.cpp
+		src/client/Client.cpp
+		src/commands/Commands.cpp
+		src/interface/IrcInterface.cpp
 		)
 
 # Set the header files for your project
 set(HEADERS
-		include/server.hpp
-		include/MsgParser.hpp
+		include/Server.hpp
+		include/Client.hpp
+		include/HandShake.hpp
+		src/interface/IrcInterface.hpp
 		)
 
 # Create an executable target and link the source and header files

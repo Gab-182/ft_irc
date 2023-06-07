@@ -5,7 +5,10 @@ INCLUDE_DIR := ./include
 
 SRC = main.cpp \
 		src/server/server.cpp \
-		src/parser/MsgParser.cpp
+		src/handShake/HandShake.cpp \
+		src/channel/Channel.cpp \
+		src/client/Client.cpp \
+		src/commands/Commands.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 

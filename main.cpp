@@ -4,7 +4,7 @@
 // socket -> bind -> listen -> accpet(pre req (master socket))
 int main(int ac,char **av) {
 	IRC::Server ircServer;
-	IRC::MsgParser parser;
+	IRC::HandShake parser;
 
 	if(ac == 3) {
 		//todo: check if the port is a number and if the password is a number

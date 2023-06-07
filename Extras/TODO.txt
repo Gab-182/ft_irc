@@ -1,0 +1,41 @@
+1- Edit the welcome message:
+	- now the server is sending -> 001 :Welcome to the Internet Relay Network
+	- it should send -> 001 :Welcome to the Internet Relay Network <username>!<hostname>
+
+--------------------------------------------------
+2- Handle the MODE command correctly:
+	- now the client is sending -> MODE Welcome to the Internet Relay Network +i
+	- the server should send -> "MODE " + target + " " + Mode + "\r\n";
+
+--------------------------------------------------
+3- Create an interface that calls the main functions from each class:
+
+	# Server:
+		* Start the server:
+			- Set the server password.
+			- Set the server port.
+			- Create the Server socket.
+		* Handle the multiple clients connections:
+		* stop the server:
+			- How we can stop the server properly?
+		* Handle the server commands:
+
+	# Handshake:
+		* process the handshake messages:
+			- PASS
+			- NICK
+			- USER
+			- JOIN
+			- MODE
+			- WHOIS
+			- PING
+			- PONG
+
+	# Channel:
+	# Client:
+--------------------------------------------------
+
++ The send response function in the client side
+
++ set port function in the server side
+
