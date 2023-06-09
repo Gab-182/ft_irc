@@ -56,11 +56,7 @@ void Server::create_socket(char *av)
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-/**
- ** @00bn
- ** TODO:	- Improve the multi_connection function So it can keep the client connected
- */
-void Server::multi_connection(HandShake parser) {
+void Server::multi_connection(HandShake parser, Commands commandHandler) {
  	int res;
  	int max_sd = 0;
  	char buffer[1024];
@@ -68,12 +64,13 @@ void Server::multi_connection(HandShake parser) {
  	struct sockaddr_in clientadd;
  	socklen_t size = sizeof(clientadd);
  	std::string clientMsg; // String to store client messages
-
+	/*--------------------------------------------------------------------------------------------------*/
 	while (1) {
 		FD_ZERO(&fdset);						// Clear the socket set
 		FD_SET(this->master_socket, &fdset);	// Add master socket to set
 		max_sd = this->master_socket;			// Set the max sd to the master socket
 
+		/*--------------------------------------------------------------------------------------------------*/
  		// Add child sockets to set
 		std::vector<int>::iterator it;
 		for (it = this->sockets.begin(); it != this->sockets.end(); it++) {
@@ -83,12 +80,12 @@ void Server::multi_connection(HandShake parser) {
  			if (sd > max_sd)
  				max_sd = sd;
  		}
-
+		/*--------------------------------------------------------------------------------------------------*/
 		if (select(max_sd + 1, &fdset, NULL, NULL, NULL) == -1) {
  			std::cout << "Error select" << std::endl;
  			exit(1);
  		}
-
+		/*--------------------------------------------------------------------------------------------------*/
 		if (FD_ISSET(this->master_socket, &fdset)) {
  			if ((this->client_socket = accept(this->master_socket, (sockaddr *)&clientadd, &size)) == -1) {
  				std::cout << "Error accept" << std::endl;
@@ -98,8 +95,9 @@ void Server::multi_connection(HandShake parser) {
  			this->sockets.push_back(this->client_socket);
  			clientMsg = ""; // Initialize message for new client socket
  		}
-
+		/*--------------------------------------------------------------------------------------------------*/
 		for (size_t i = 0; i < this->sockets.size(); i++) {
+			clientMsg = ""; // Reset message for next response
  			int clientSocket = this->sockets[i];
  			if (FD_ISSET(clientSocket, &fdset)) {
  				if ((res = recv(clientSocket, buffer, 1024, 0)) == 0) {
@@ -114,17 +112,11 @@ void Server::multi_connection(HandShake parser) {
 
 				DEBUG_MSG(BOLDMAGENTA << "HandShake Message: " << RESET << std::endl << clientMsg)
 				parser.processHandShake(clientSocket, clientMsg, this->getServPass());
-
+				commandHandler.handleCommands(clientSocket, clientMsg);
  			}
  		}
-
 	 }
  	close(this->master_socket);
-}
-
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-std::vector <std::string> Server::getMsg() {
-	return this->msg;
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/

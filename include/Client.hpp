@@ -10,26 +10,24 @@ namespace IRC {
 	class Client {
 		private:
 			int _socket;
-			std::string _user;
-			std::string _pass;
-			std::string _nick;
 			std::string _host;
+			std::string _userName;
+			std::string _realName;
+			std::string _nickName;
 		public:
 			Client();
 			~Client();
-			Client(const Client& other);
-			Client& operator=(const Client& other);
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎  SETTERS && GETTERS  ❄❄︎❄❄︎❄︎❄❄︎❄❄❄︎❄*/
 			void setSocket(const int& socket);
-			void setUser(const std::string& user);
-			void setPass(const std::string& pass);
-			void setNick(const std::string& nick);
 			void setHost(const std::string& host);
+			void setUserName(const std::string& userName);
+			void setRealName(const std::string& realName);
+			void setNickName(const std::string& nickName);
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 			int getSocket();
-			std::string getUser();
-			std::string getPass();
-			std::string getNick();
+			std::string getUserName();
+			std::string getRealName();
+			std::string getNickName();
 			std::string getHost();
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	};

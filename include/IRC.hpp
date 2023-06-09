@@ -22,8 +22,10 @@
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄❄︎❄❄︎❄*/
 # include "./Server.hpp"
 # include "./HandShake.hpp"
-// # include "./Client.hpp"
-// # include "./Channel.hpp"
+# include "./Commands.hpp"
+# include "./Client.hpp"
+# include "./Channel.hpp"
+
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄❄︎❄❄︎❄*/
 
 #endif

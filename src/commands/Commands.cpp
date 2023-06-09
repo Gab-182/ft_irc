@@ -6,67 +6,47 @@ Commands::Commands() {}
 
 Commands::~Commands() {}
 
+/*————————————————————————————————⟪⟪ JOIN ⟫⟫———————————————————————————————*/
+void Commands::join(int clientSocket, const std::string& channelName) {
+	/*
+	 ** parse the message.
+	 *
+	 ** if the command join is correctly written then:
+	 **		if channel is not there:
+	 *			create it
+	 *		if the channel already created:
+	 *			check the mode of the channel
+	 **/
+
+	std::string msg = ":"+clientNick+"!~"+clientName+"@"+host+" JOIN #"+channelName+"\r\n";
+	if (send(clientSocket, msg.c_str(), msg.length(), 0) == -1) {
+		DEBUG_MSG("Error sending [" << msg << "] to client");
+	}
+}
+
 /*————————————————————————————⟪⟪ SEND Command ⟫⟫———————————————————————————*/
-void Commands::handleCommands(int client_socket, const std::string& msg) {
+void Commands::handleCommands(int clientSocket, const std::string& clientMsg) {
+	(void)clientSocket;
+
 	std::istringstream iss(clientMsg);
+	std::string commandMessage;
 	std::string command;
 
-	while (iss >> command) {
-		if (command == "JOIN") {
-			this->join(client_socket, "JOIN");
-		} else if (command == "PART") {
-			
-//		} else if (command == "PRIVMSG") {
-//
-//		} else if (command == "NOTICE") {
-//
-//		} else if (command == "QUIT") {
-//
-//		} else if (command == "NICK") {
-//
-//		} else if (command == "USER") {
-//
-//		} else if (command == "OPER") {
-//
-//		} else if (command == "MODE") {
-//
-//		} else if (command == "TOPIC") {
-//
-//		} else if (command == "KICK") {
-//
-//		} else if (command == "INVITE") {
-//
-		} else {
-			DEBUG_MSG("Unknown command [" << command << "]");
-		}
+	/**
+	 ** 	if client message is " CAP LS 302 " then:
+	 ** 		command = CAP
+	 ** 		commandMessage = LS 302
+	 **/
+	// get the command name only.
+	std::getline(iss, command, ' ');
+	// get the command name and the message
+	std::getline(iss, commandMessage, '\n');
+
+	if (command == "JOIN") {
+		std::string channelName = commandMessage;
+		join(clientSocket, channelName);
 	}
+	exit(0);
 }
 
-/*————————————————————————————⟪⟪ SEND Command ⟫⟫———————————————————————————*/
-void Commands::sendCommand(int client_socket, const std::string& msg) {
-	if (send(client_socket, msg.c_str(), msg.length(), 0) < 0) {
-		DEBUG_MSG("Error sending [" << msg << "] to client");
-		exit(EXIT_FAILURE);
-	}
-}
-
-/*————————————————————————————————⟪⟪ JOIN ⟫⟫———————————————————————————————*/
-void Commands::join(int clientSocket, const std::string& channel) {
-	this->sendCommand(clientSocket, "JOIN " + channel);
-}
-
-///*————————————————————————————————⟪⟪ PART ⟫⟫———————————————————————————————*/
-//void Commands::part(int clientSocket, const std::string& channel) {
-//	this->sendCommand(clientSocket, "PART " + channel);
-//}
-
-/*———————————————————————————————⟪⟪ PRIVMSG ⟫⟫—————————————————————————————*/
-/*———————————————————————————————⟪⟪ NOTICE ⟫⟫——————————————————————————————*/
-/*————————————————————————————————⟪⟪ QUIT ⟫⟫———————————————————————————————*/
-/*————————————————————————————————⟪⟪ NICK ⟫⟫———————————————————————————————*/
-/*————————————————————————————————⟪⟪ USER ⟫⟫———————————————————————————————*/
-/*————————————————————————————————⟪⟪ OPER ⟫⟫———————————————————————————————*/
-/*————————————————————————————————⟪⟪ MODE ⟫⟫———————————————————————————————*/
-/*———————————————————————————————⟪⟪ TOPIC ⟫⟫———————————————————————————————*/
-/*————————————————————————————————⟪⟪ KICK ⟫⟫———————————————————————————————*/
-/*———————————————————————————————⟪⟪ INVITE ⟫⟫——————————————————————————————*/
+/*------------------------------------------------------------------------*/

@@ -7,7 +7,7 @@ set(CMAKE_CXX_STANDARD 98)
 set(SOURCES
 		main.cpp
 		src/server/server.cpp
-		src/parser/HandShake.cpp
+		src/handShake/HandShake.cpp
 		src/client/Client.cpp
 		src/commands/Commands.cpp
 		src/interface/IrcInterface.cpp
@@ -15,6 +15,7 @@ set(SOURCES
 
 # Set the header files for your project
 set(HEADERS
+		include/IRC.hpp
 		include/Server.hpp
 		include/Client.hpp
 		include/HandShake.hpp
@@ -22,7 +23,7 @@ set(HEADERS
 		)
 
 # Create an executable target and link the source and header files
-add_executable(ircserv ${SOURCES} ${HEADERS})
+add_executable(${SOURCES} ${HEADERS})
 
 # Define custom target for running the executable with arguments
 add_custom_target(run
