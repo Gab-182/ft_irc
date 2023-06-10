@@ -3,13 +3,21 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
-  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="false">
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
     <generated>
-      <config projectName="IRC" targetName="fclean" />
-      <config projectName="IRC" targetName="re" />
-      <config projectName="IRC" targetName="ircserv" />
-      <config projectName="IRC" targetName="all" />
-      <config projectName="IRC" targetName="help" />
+      <config projectName="ft_irc" targetName="help" />
+      <config projectName="ft_irc" targetName="main.cpp" />
+      <config projectName="ft_irc" targetName="re" />
+      <config projectName="ft_irc" targetName="all" />
+      <config projectName="ft_irc" targetName="fclean" />
+      <config projectName="ft_irc" targetName="run" />
+      <config projectName="ft_irc" targetName="ircserv" />
     </generated>
   </component>
   <component name="CMakeSettings">
@@ -18,20 +26,23 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d203e13d-7a31-4ddc-a94b-d2d10e83ed02" name="Changes" comment="irssi config">
-      <change afterPath="$PROJECT_DIR$/.idea/git_toolbox_prj.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ircserv" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/parser/MsgParser.o" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/server/server.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Extras/Notes.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Extras/Notes.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/include/MsgParser.hpp" beforeDir="false" afterPath="$PROJECT_DIR$/include/MsgParser.hpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/irssi/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/irssi/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/irssi/config" beforeDir="false" afterPath="$PROJECT_DIR$/irssi/config" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/parser/MsgParser.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/parser/MsgParser.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/server.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/server.cpp" afterDir="false" />
+    <list default="true" id="d203e13d-7a31-4ddc-a94b-d2d10e83ed02" name="Changes" comment="To Lap.">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/cache-v2-513e8fb4520ef6e3eeb6.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/cmakeFiles-v1-191c6ce1a24d7739431a.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-6203df26cf1db0558781.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/index-2023-06-03T23-35-06-0643.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/target-ircserv-Debug-2ff638feae68ffde633c.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.cmake/api/v1/reply/target-run-Debug-a96327b7b201c63381a6.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/.ninja_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeCache.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/CMakeOutput.log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/TargetDirectories.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/TargetDirectories.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/rules.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/rules.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/build.ninja" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/build.ninja" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/cmake_install.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/cmake_install.cmake" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,14 +104,20 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
     "RunOnceActivity.cidr.known.project.marker": "true",
     "WebServerToolWindowFactoryState": "false",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "server",
+    "last_opened_file_path": "/Users/gabdoush/Desktop/IRC",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "structure.view.defaults.are.configured": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -130,6 +147,30 @@
         <option name="CLION.COMPOUND.BUILD" enabled="true" />
       </method>
     </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="main.cpp" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ft_irc" TARGET_NAME="main.cpp" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="ft_irc" RUN_TARGET_NAME="main.cpp">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="run" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="ft_irc" TARGET_NAME="run" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.main.cpp" />
+      <item itemvalue="CMake Application.run" />
+      <item itemvalue="Makefile Application.all" />
+      <item itemvalue="Makefile Application.fclean" />
+      <item itemvalue="Makefile Application.help" />
+      <item itemvalue="Makefile Application.ircserv" />
+      <item itemvalue="Makefile Application.re" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
@@ -154,6 +195,24 @@
       <workItem from="1685830342590" duration="11000" />
       <workItem from="1685830886012" duration="23000" />
       <workItem from="1685830912541" duration="2272000" />
+      <workItem from="1685841691257" duration="5354000" />
+      <workItem from="1685860198849" duration="645000" />
+      <workItem from="1685865133797" duration="10923000" />
+      <workItem from="1685959091664" duration="86000" />
+      <workItem from="1685959609044" duration="7000" />
+      <workItem from="1685963443201" duration="42000" />
+      <workItem from="1685963512538" duration="541000" />
+      <workItem from="1685964135643" duration="3449000" />
+      <workItem from="1685973858342" duration="3357000" />
+      <workItem from="1685979575744" duration="1808000" />
+      <workItem from="1686061127622" duration="2156000" />
+      <workItem from="1686126586255" duration="5995000" />
+      <workItem from="1686136460318" duration="2268000" />
+      <workItem from="1686161047665" duration="135000" />
+      <workItem from="1686290721875" duration="5080000" />
+      <workItem from="1686300398522" duration="2203000" />
+      <workItem from="1686312472548" duration="3212000" />
+      <workItem from="1686367736078" duration="7961000" />
     </task>
     <task id="LOCAL-00001" summary="irssi">
       <created>1685670456978</created>
@@ -169,7 +228,35 @@
       <option name="project" value="LOCAL" />
       <updated>1685671448998</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Adding .gitignore">
+      <created>1685841764268</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1685841764268</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Creating DEBUG_MSG(msg) in the header file">
+      <created>1685847050858</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1685847050858</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Trying to save the user name and the real name for the client">
+      <created>1685884012513</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1685884012513</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Trying to create Channel and Client and Interface classes.">
+      <created>1686161139398</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1686161139398</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
@@ -201,10 +288,32 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="VCPKGProject">
+    <isAutomaticEditVcpkgJson value="false" />
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticFoundErrors value="true" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="irssi" />
     <MESSAGE value="irssi config" />
-    <option name="LAST_COMMIT_MESSAGE" value="irssi config" />
+    <MESSAGE value="Adding .gitignore" />
+    <MESSAGE value="Creating DEBUG_MSG(msg) in the header file" />
+    <MESSAGE value="Trying to save the user name and the real name for the client" />
+    <MESSAGE value="Trying to create Channel and Client and Interface classes." />
+    <MESSAGE value="To Lap." />
+    <option name="LAST_COMMIT_MESSAGE" value="To Lap." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
