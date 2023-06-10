@@ -7,16 +7,6 @@ HandShake::HandShake() { }
 HandShake::~HandShake() { }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-bool HandShake::duplicatedUser(const std::string& name) {
-	std::map<int, std::string>::const_iterator it;
-	for (it = clientsNicks.begin(); it != clientsNicks.end(); ++it) {
-		if (it->second == name)
-			return (true);  // Duplicated nickname or username found
-	}
-	return (false);  // Duplicated name not found
-}
-
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 void HandShake::welcomeMessage(int clientSocket) {
 	std::string welcomeMsg = "001 :Welcome to the Internet Relay Network \r\n";
 //	std::string welcomeMsg = ":" + clientsNicks[clientSocket] + " 001 " + clientsNicks[clientSocket] + " :Welcome to the Internet Relay Network\r\n";
@@ -41,36 +31,38 @@ int HandShake::checkPass(int clientSocket, const std::string& clientPass, const 
 		DEBUG_MSG(BOLDRED << "Password not found" << RESET)
 		std::string errorMsg = "ERROR :No password given\r\n";
 		sendResponse(clientSocket, errorMsg);
-		return 0;
+		return (0);
 	} else if (std::stoi(clientPass) != serverPass) {
 		DEBUG_MSG(BOLDRED << "Invalid password" << RESET)
 		std::string errorMsg = "ERROR :Invalid password\r\n";
 		sendResponse(clientSocket, errorMsg);
-		return 0;
+		return (0);
 	}
 
 	// Password accepted
 	DEBUG_MSG(BOLDGREEN << "Password accepted" << RESET)
-	return 1;
+	// If the client access the server successfully, save its socket.
+	_clientData.clientSocket = clientSocket;
+	return (1);
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-void HandShake::generateNickName() {
-	std::string modifiedNickname = Guest + std::to_string(rand() % 1000);
+void HandShake::generateNickName(int clientSocket) {
+	std::string modifiedNickname = "Guest" + std::to_string(rand() % 1000);
 	DEBUG_MSG("Assigning a Guest nickname: [" << modifiedNickname << "]")
 	std::string nickMsg = "Assigning a Guest nickname: " + modifiedNickname + "\r\n";
 	sendResponse(clientSocket, nickMsg);
-	clientsNicks[clientSocket] = modifiedNickname;
+
+	_clientData.nickName = modifiedNickname;
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-bool HandShake::validNick(const std::string& clientNick) {
+bool HandShake::validNick(int clientSocket, std::string& clientNick) {
 	if (clientNick.length() > 9) {
 		// Nickname too long
-		DEBUG_MSG(BOLDRED << "Nickname is too long" << RESET)
-		std::string errorMsg = "ERROR :Nickname is too long\r\n";
-		sendResponse(clientSocket, errorMsg);
-		return (false);
+		DEBUG_MSG(BOLDRED << "Nickname is too long, taking only the first 9 characters." << RESET)
+		clientNick = clientNick.substr(0, 9); // Take only the first 9 letters
+		return (true);
 	}
 
 	else if (!std::isalpha(clientNick[0])) {
@@ -80,36 +72,34 @@ bool HandShake::validNick(const std::string& clientNick) {
 		sendResponse(clientSocket, errorMsg);
 		return (false);
 	}
-	else if (duplicatedUser(clientNick) && clientsNicks.find(clientSocket) != clientsNicks.end())
+
+	else if (_clientData.nickName == clientNick)
 		return (false);
 	return (true);
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-void HandShake::checkNick(int clientSocket, const std::string& clientNick) {
-	if (!validNick(clientNick))
-		generateNickName();
+void HandShake::checkNick(int clientSocket, std::string& clientNick) {
+	if (!validNick(clientSocket, clientNick))
+		generateNickName(clientSocket);
 
-	// Nickname accepted
-	clientsNicks[clientSocket] = clientNick;
-	clientsData[clientSocket].first = clientNick;
 	std::string nickMsg = "NICK " + clientNick + "\r\n";
 	sendResponse(clientSocket, nickMsg);
+
+//	Nickname accepted
+	_clientData.nickName = clientNick;
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-void HandShake::checkName(int clientSocket, const std::string& clientName, const std::string& realname, const std::string& ip) {
-	std::string modifiedUsername = clientName;
+void HandShake::checkName(int clientSocket, const std::string& userName) {
+	std::string modifiedUsername = userName;
 
-	if (clientName.empty())
+	if (userName.empty())
 		sendResponse(clientSocket, "ERROR :No user name given\r\n");
-	else if (duplicatedUser(clientsData[clientSocket].second))
-		modifiedUsername = clientName + std::to_string(rand() % 1000);
-	clientsData[clientSocket].second = modifiedUsername;
-	DEBUG_MSG("Client " << clientSocket << std::endl
-						<< "User name: " << clientsData[clientSocket].second << std::endl
-						<< "Real name: " << realname << std::endl
-						<< "HOST: " << ip <<  std::endl)
+	else if (_clientData.userName == userName)
+		modifiedUsername = userName + std::to_string(rand() % 1000);
+
+	_clientData.userName = modifiedUsername;
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
@@ -141,21 +131,26 @@ int HandShake::processHandShake(int clientSocket, const std::string& clientMsg, 
 		} else if (command == "NICK") {
 			std::string clientNick;
 			iss >> clientNick;
-			if (!checkNick(clientSocket, clientNick)) {
-				return (0);
-			}
+			checkNick(clientSocket, clientNick);
 		} else if (command == "USER") {
-			std::string username, realName, ip, separator, realNameWithSpaces;
-			iss >> username >> realName >> ip >> separator;
-			std::getline(iss, realNameWithSpaces);
-			std::string clientName = realName + " " + realNameWithSpaces.substr(1);
-			checkName(clientSocket, username, clientName, ip);
+			std::string userNick, userName, host, realName;
+			if (iss >> userNick >> userName >> host) {
+				std::getline(iss, realName, ':');
+				checkName(clientSocket, userName);
+				_clientData.realName = realName.substr(1); // Remove leading space after ':'
+				_clientData.ip = host;
+			} else
+				sendResponse(clientSocket, "ERROR :No user name given\r\n");
 		} else if (command == "MODE") // MODE +i
 			handleMode(clientSocket, iss);
 		else if (command == "PING")
 			sendResponse(clientSocket, "PONG :ircserv\r\n");
 	}
 	welcomeMessage(clientSocket);
+	DEBUG_MSG("Socket ["<< _clientData.clientSocket << "]" << std::endl
+				<< " User name [" << _clientData.userName << "]" << std::endl
+				<< " Nick name [" << _clientData.nickName << "]" << std::endl
+				<< " Real name [" << _clientData.realName << "]" << std::endl )
 	return (1);
 }
 

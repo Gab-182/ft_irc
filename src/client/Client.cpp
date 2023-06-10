@@ -3,7 +3,7 @@ using namespace IRC;
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 
-Client::Client() : _socket(), _userName(), _realName(), _nickName(), _host() { }
+Client::Client() : _socket(), _host(), _userName(), _realName(), _nickName() { }
 
 Client::~Client() { }
 

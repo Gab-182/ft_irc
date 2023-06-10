@@ -56,7 +56,7 @@ void Server::create_socket(char *av)
 }
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-void Server::multi_connection(HandShake parser, Commands commandHandler) {
+void Server::multi_connection(HandShake handShaker, Commands commandHandler) {
  	int res;
  	int max_sd = 0;
  	char buffer[1024];
@@ -111,7 +111,7 @@ void Server::multi_connection(HandShake parser, Commands commandHandler) {
  				std::memset(buffer, 0, 1024);
 
 				DEBUG_MSG(BOLDMAGENTA << "HandShake Message: " << RESET << std::endl << clientMsg)
-				parser.processHandShake(clientSocket, clientMsg, this->getServPass());
+				handShaker.processHandShake(clientSocket, clientMsg, this->getServPass());
 				commandHandler.handleCommands(clientSocket, clientMsg);
  			}
  		}

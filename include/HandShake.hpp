@@ -40,20 +40,29 @@
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 
 namespace IRC {
+		struct ClientData {
+			std::string ip;
+			int clientSocket;
+			std::string nickName;
+			std::string userName;
+			std::string realName;
+		};
+/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	class HandShake {
 		public:
+			ClientData _clientData;
+
 			std::map<int, std::string> clientsNicks;
 			std::map<int, std::set<std::string> > sentMessages;  // Track sent messages
 			std::map<int, std::pair<std::string, std::string> > clientsData;
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		private:
-			bool duplicatedUser(const std::string& nickname);
 			int checkPass(int clientSocket, const std::string& clientPass, const int& serverPass);
-			void checkName(int clientSocket, const std::string& clientName, const std::string& clientRealName, const std::string& ip);
+			void checkName(int clientSocket, const std::string& userName);
 
-			void generateNickName();
-			bool validNick(const std::string& clientNick);
-			void checkNick(int clientSocket, const std::string& clientNick);
+			void generateNickName(int clientSocket);
+			bool validNick(int clientSocket, std::string& clientNick);
+			void checkNick(int clientSocket, std::string& clientNick);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		public:
 			HandShake();

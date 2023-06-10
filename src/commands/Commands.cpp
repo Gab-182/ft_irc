@@ -18,7 +18,11 @@ void Commands::join(int clientSocket, const std::string& channelName) {
 	 *			check the mode of the channel
 	 **/
 
-	std::string msg = ":"+clientNick+"!~"+clientName+"@"+host+" JOIN #"+channelName+"\r\n";
+//	std::string msg = ":"+clientNick+"!~"+clientName+"@"+host+" JOIN #"+channelName+"\r\n";
+
+	(void) channelName;
+	std::string msg = ": JOIN \r\n";
+
 	if (send(clientSocket, msg.c_str(), msg.length(), 0) == -1) {
 		DEBUG_MSG("Error sending [" << msg << "] to client");
 	}
