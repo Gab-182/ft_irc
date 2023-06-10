@@ -9,6 +9,7 @@
 #include <set>
 #include <utility>
 #include <sys/socket.h>
+#include <fstream>
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 #define BOLDWHITE		"\033[1m\033[37m"		/* Bold White */
@@ -26,13 +27,10 @@
 #if( DEBUG == 1 )
 #define DEBUG_MSG(msg) std::cout														\
 						<< BOLDMAGENTA												\
-						<< "***************⫷⦙⧛ 𝙳𝙴𝙱𝚄𝙶 ⧚⦙⫸︎***************"				\
+						<< "⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚  𝙳𝙴𝙱𝚄𝙶  ⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚"	\
 						<< std::endl												\
 						<< BOLDCYAN << msg << RESET									\
-						<< std::endl												\
-						<< BOLDMAGENTA												\
-						<< "*************************************************"		\
-						<< RESET << std::endl;
+						<< std::endl;
 #elif( DEBUG == 0 )
 #define DEBUG_MSG(msg)
 
@@ -40,38 +38,36 @@
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 
 namespace IRC {
-		struct ClientData {
-			std::string ip;
-			int clientSocket;
-			std::string nickName;
-			std::string userName;
-			std::string realName;
-		};
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	class HandShake {
 		public:
-			ClientData _clientData;
+			struct ClientData {
+				std::string host;
+				std::string nickName;
+				std::string userName;
+				std::string realName;
+			};
 
-			std::map<int, std::string> clientsNicks;
+			std::map<int, ClientData> _clientData;
 			std::map<int, std::set<std::string> > sentMessages;  // Track sent messages
-			std::map<int, std::pair<std::string, std::string> > clientsData;
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		private:
 			int checkPass(int clientSocket, const std::string& clientPass, const int& serverPass);
 			void checkName(int clientSocket, const std::string& userName);
+			void checkNick(int clientSocket, std::string& clientNick);
+
+			void sendResponse(int clientSocket, const std::string& message);
+			void welcomeMessage(int clientSocket);
+			void handleMode(int clientSocket, std::istringstream& iss);
 
 			void generateNickName(int clientSocket);
 			bool validNick(int clientSocket, std::string& clientNick);
-			void checkNick(int clientSocket, std::string& clientNick);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		public:
 			HandShake();
 			~HandShake();
-			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-			void welcomeMessage(int clientSocket);
-			void sendResponse(int clientSocket, const std::string& message);
-			void handleMode(int clientSocket, std::istringstream& iss);
 			int processHandShake(int clientSocket, const std::string& clientsMessage, const int& serverPass);
+//			void saveLogs(const int& clientSocket);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	};
 }
