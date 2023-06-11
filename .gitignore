@@ -1,6 +1,8 @@
 cmake-build-debug
-CMakeLists.txt
 
+build.ninja
+.ninja_log
+workspace.xml
 # Compiled object files
 *.o
 *.ko
