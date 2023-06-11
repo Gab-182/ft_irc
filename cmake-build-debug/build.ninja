@@ -39,62 +39,74 @@ include CMakeFiles/rules.ninja
 #############################################
 # Logical path to working directory; prefix for absolute paths.
 
-cmake_ninja_workdir = /Users/gabdoush/Desktop/ft_irc/cmake-build-debug/
+cmake_ninja_workdir = /Users/gabdoush/Desktop/IRC/cmake-build-debug/
 # =============================================================================
-# Object build statements for EXECUTABLE target ircserv
+# Object build statements for EXECUTABLE target main.cpp
 
 
 #############################################
-# Order-only phony target for ircserv
+# Order-only phony target for main.cpp
 
-build cmake_object_order_depends_target_ircserv: phony || CMakeFiles/ircserv.dir
+build cmake_object_order_depends_target_main.cpp: phony || CMakeFiles/main.cpp.dir
 
-build CMakeFiles/ircserv.dir/main.cpp.o: CXX_COMPILER__ircserv_Debug /Users/gabdoush/Desktop/ft_irc/main.cpp || cmake_object_order_depends_target_ircserv
-  DEP_FILE = CMakeFiles/ircserv.dir/main.cpp.o.d
+build CMakeFiles/main.cpp.dir/src/server/server.cpp.o: CXX_COMPILER__main.2ecpp_Debug /Users/gabdoush/Desktop/IRC/src/server/server.cpp || cmake_object_order_depends_target_main.cpp
+  DEP_FILE = CMakeFiles/main.cpp.dir/src/server/server.cpp.o.d
   FLAGS = -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fcolor-diagnostics
-  OBJECT_DIR = CMakeFiles/ircserv.dir
-  OBJECT_FILE_DIR = CMakeFiles/ircserv.dir
+  OBJECT_DIR = CMakeFiles/main.cpp.dir
+  OBJECT_FILE_DIR = CMakeFiles/main.cpp.dir/src/server
 
-build CMakeFiles/ircserv.dir/src/server/server.cpp.o: CXX_COMPILER__ircserv_Debug /Users/gabdoush/Desktop/ft_irc/src/server/server.cpp || cmake_object_order_depends_target_ircserv
-  DEP_FILE = CMakeFiles/ircserv.dir/src/server/server.cpp.o.d
+build CMakeFiles/main.cpp.dir/src/handShake/HandShake.cpp.o: CXX_COMPILER__main.2ecpp_Debug /Users/gabdoush/Desktop/IRC/src/handShake/HandShake.cpp || cmake_object_order_depends_target_main.cpp
+  DEP_FILE = CMakeFiles/main.cpp.dir/src/handShake/HandShake.cpp.o.d
   FLAGS = -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fcolor-diagnostics
-  OBJECT_DIR = CMakeFiles/ircserv.dir
-  OBJECT_FILE_DIR = CMakeFiles/ircserv.dir/src/server
+  OBJECT_DIR = CMakeFiles/main.cpp.dir
+  OBJECT_FILE_DIR = CMakeFiles/main.cpp.dir/src/handShake
 
-build CMakeFiles/ircserv.dir/src/parser/MsgParser.cpp.o: CXX_COMPILER__ircserv_Debug /Users/gabdoush/Desktop/ft_irc/src/parser/MsgParser.cpp || cmake_object_order_depends_target_ircserv
-  DEP_FILE = CMakeFiles/ircserv.dir/src/parser/MsgParser.cpp.o.d
+build CMakeFiles/main.cpp.dir/src/client/Client.cpp.o: CXX_COMPILER__main.2ecpp_Debug /Users/gabdoush/Desktop/IRC/src/client/Client.cpp || cmake_object_order_depends_target_main.cpp
+  DEP_FILE = CMakeFiles/main.cpp.dir/src/client/Client.cpp.o.d
   FLAGS = -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fcolor-diagnostics
-  OBJECT_DIR = CMakeFiles/ircserv.dir
-  OBJECT_FILE_DIR = CMakeFiles/ircserv.dir/src/parser
+  OBJECT_DIR = CMakeFiles/main.cpp.dir
+  OBJECT_FILE_DIR = CMakeFiles/main.cpp.dir/src/client
+
+build CMakeFiles/main.cpp.dir/src/commands/Commands.cpp.o: CXX_COMPILER__main.2ecpp_Debug /Users/gabdoush/Desktop/IRC/src/commands/Commands.cpp || cmake_object_order_depends_target_main.cpp
+  DEP_FILE = CMakeFiles/main.cpp.dir/src/commands/Commands.cpp.o.d
+  FLAGS = -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fcolor-diagnostics
+  OBJECT_DIR = CMakeFiles/main.cpp.dir
+  OBJECT_FILE_DIR = CMakeFiles/main.cpp.dir/src/commands
+
+build CMakeFiles/main.cpp.dir/src/interface/IrcInterface.cpp.o: CXX_COMPILER__main.2ecpp_Debug /Users/gabdoush/Desktop/IRC/src/interface/IrcInterface.cpp || cmake_object_order_depends_target_main.cpp
+  DEP_FILE = CMakeFiles/main.cpp.dir/src/interface/IrcInterface.cpp.o.d
+  FLAGS = -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15 -fcolor-diagnostics
+  OBJECT_DIR = CMakeFiles/main.cpp.dir
+  OBJECT_FILE_DIR = CMakeFiles/main.cpp.dir/src/interface
 
 
 # =============================================================================
-# Link build statements for EXECUTABLE target ircserv
+# Link build statements for EXECUTABLE target main.cpp
 
 
 #############################################
-# Link the executable ircserv
+# Link the executable main.cpp
 
-build ircserv: CXX_EXECUTABLE_LINKER__ircserv_Debug CMakeFiles/ircserv.dir/main.cpp.o CMakeFiles/ircserv.dir/src/server/server.cpp.o CMakeFiles/ircserv.dir/src/parser/MsgParser.cpp.o
+build main.cpp: CXX_EXECUTABLE_LINKER__main.2ecpp_Debug CMakeFiles/main.cpp.dir/src/server/server.cpp.o CMakeFiles/main.cpp.dir/src/handShake/HandShake.cpp.o CMakeFiles/main.cpp.dir/src/client/Client.cpp.o CMakeFiles/main.cpp.dir/src/commands/Commands.cpp.o CMakeFiles/main.cpp.dir/src/interface/IrcInterface.cpp.o
   FLAGS = -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX11.1.sdk -mmacosx-version-min=10.15
-  OBJECT_DIR = CMakeFiles/ircserv.dir
+  OBJECT_DIR = CMakeFiles/main.cpp.dir
   POST_BUILD = :
   PRE_LINK = :
-  TARGET_FILE = ircserv
-  TARGET_PDB = ircserv.dbg
+  TARGET_FILE = main.cpp
+  TARGET_PDB = main.cpp.dbg
 
 
 #############################################
 # Utility command for run
 
-build run: phony CMakeFiles/run ircserv
+build run: phony CMakeFiles/run
 
 
 #############################################
 # Utility command for edit_cache
 
 build CMakeFiles/edit_cache.util: CUSTOM_COMMAND
-  COMMAND = cd /Users/gabdoush/Desktop/ft_irc/cmake-build-debug && /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+  COMMAND = cd /Users/gabdoush/Desktop/IRC/cmake-build-debug && /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
   DESC = No interactive CMake dialog available...
   restat = 1
 
@@ -105,7 +117,7 @@ build edit_cache: phony CMakeFiles/edit_cache.util
 # Utility command for rebuild_cache
 
 build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
-  COMMAND = cd /Users/gabdoush/Desktop/ft_irc/cmake-build-debug && /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/bin/cmake --regenerate-during-build -S/Users/gabdoush/Desktop/ft_irc -B/Users/gabdoush/Desktop/ft_irc/cmake-build-debug
+  COMMAND = cd /Users/gabdoush/Desktop/IRC/cmake-build-debug && /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/bin/cmake --regenerate-during-build -S/Users/gabdoush/Desktop/IRC -B/Users/gabdoush/Desktop/IRC/cmake-build-debug
   DESC = Running CMake to regenerate build system...
   pool = console
   restat = 1
@@ -116,8 +128,8 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 #############################################
 # Custom command for CMakeFiles/run
 
-build CMakeFiles/run | ${cmake_ninja_workdir}CMakeFiles/run: CUSTOM_COMMAND ircserv || ircserv
-  COMMAND = cd /Users/gabdoush/Desktop/ft_irc/cmake-build-debug && /Users/gabdoush/Desktop/ft_irc/cmake-build-debug/ircserv 1212 12345
+build CMakeFiles/run | ${cmake_ninja_workdir}CMakeFiles/run: CUSTOM_COMMAND /Users/gabdoush/Desktop/IRC/ircserv
+  COMMAND = cd /Users/gabdoush/Desktop/IRC/cmake-build-debug && ircserv 1212 12345
 
 # =============================================================================
 # Target aliases.
@@ -128,9 +140,9 @@ build CMakeFiles/run | ${cmake_ninja_workdir}CMakeFiles/run: CUSTOM_COMMAND ircs
 # =============================================================================
 
 #############################################
-# Folder: /Users/gabdoush/Desktop/ft_irc/cmake-build-debug
+# Folder: /Users/gabdoush/Desktop/IRC/cmake-build-debug
 
-build all: phony ircserv
+build all: phony main.cpp
 
 # =============================================================================
 # Built-in targets
@@ -139,14 +151,14 @@ build all: phony ircserv
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja: RERUN_CMAKE | /Users/gabdoush/Desktop/ft_irc/CMakeLists.txt /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeCInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeCXXInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeGenericSystem.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeInitializeConfigs.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeLanguageInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeSystemSpecificInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeSystemSpecificInitialize.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/AppleClang-C.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/AppleClang-CXX.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/CMakeCommonCompilerMacros.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/Clang.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/GNU.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-AppleClang-C.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-AppleClang-CXX.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-Clang-C.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-Clang-CXX.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-Clang.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Darwin-Initialize.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Darwin.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.25.2/CMakeCCompiler.cmake CMakeFiles/3.25.2/CMakeCXXCompiler.cmake CMakeFiles/3.25.2/CMakeSystem.cmake
+build build.ninja: RERUN_CMAKE | /Users/gabdoush/Desktop/IRC/CMakeLists.txt /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeCInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeCXXInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeGenericSystem.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeInitializeConfigs.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeLanguageInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeSystemSpecificInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeSystemSpecificInitialize.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/AppleClang-C.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/AppleClang-CXX.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/CMakeCommonCompilerMacros.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/Clang.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/GNU.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-AppleClang-C.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-AppleClang-CXX.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-Clang-C.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-Clang-CXX.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-Clang.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Darwin-Initialize.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Darwin.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.25.2/CMakeCCompiler.cmake CMakeFiles/3.25.2/CMakeCXXCompiler.cmake CMakeFiles/3.25.2/CMakeSystem.cmake
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build /Users/gabdoush/Desktop/ft_irc/CMakeLists.txt /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeCInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeCXXInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeGenericSystem.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeInitializeConfigs.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeLanguageInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeSystemSpecificInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeSystemSpecificInitialize.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/AppleClang-C.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/AppleClang-CXX.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/CMakeCommonCompilerMacros.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/Clang.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/GNU.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-AppleClang-C.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-AppleClang-CXX.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-Clang-C.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-Clang-CXX.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-Clang.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Darwin-Initialize.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Darwin.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.25.2/CMakeCCompiler.cmake CMakeFiles/3.25.2/CMakeCXXCompiler.cmake CMakeFiles/3.25.2/CMakeSystem.cmake: phony
+build /Users/gabdoush/Desktop/IRC/CMakeLists.txt /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeCInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeCXXInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeCommonLanguageInclude.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeGenericSystem.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeInitializeConfigs.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeLanguageInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeSystemSpecificInformation.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/CMakeSystemSpecificInitialize.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/AppleClang-C.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/AppleClang-CXX.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/CMakeCommonCompilerMacros.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/Clang.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Compiler/GNU.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-AppleClang-C.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-AppleClang-CXX.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-Clang-C.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-Clang-CXX.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Apple-Clang.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Darwin-Initialize.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/Darwin.cmake /goinfre/gabdoush/CLion.app/Contents/bin/cmake/mac/share/cmake-3.25/Modules/Platform/UnixPaths.cmake CMakeCache.txt CMakeFiles/3.25.2/CMakeCCompiler.cmake CMakeFiles/3.25.2/CMakeCXXCompiler.cmake CMakeFiles/3.25.2/CMakeSystem.cmake: phony
 
 
 #############################################
