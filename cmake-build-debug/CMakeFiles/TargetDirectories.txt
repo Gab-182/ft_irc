@@ -1,4 +1,0 @@
-/Users/gabdoush/Desktop/IRC/cmake-build-debug/CMakeFiles/main.cpp.dir
-/Users/gabdoush/Desktop/IRC/cmake-build-debug/CMakeFiles/run.dir
-/Users/gabdoush/Desktop/IRC/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/gabdoush/Desktop/IRC/cmake-build-debug/CMakeFiles/rebuild_cache.dir
