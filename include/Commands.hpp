@@ -24,7 +24,7 @@
 #define DEBUG 1
 
 #if( DEBUG == 1 )
-#define DEBUG_MSG(msg) std::cout														\
+#define DEBUG_MSG(msg) std::cout													\
 						<< BOLDMAGENTA												\
 						<< "⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚  𝙳𝙴𝙱𝚄𝙶  ⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚⎚"	\
 						<< std::endl												\

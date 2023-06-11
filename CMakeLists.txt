@@ -20,7 +20,7 @@ set(HEADERS
 		include/Client.hpp
 		include/HandShake.hpp
 		src/interface/IrcInterface.hpp
-		)
+        src/channel/Channel.cpp)
 
 # Create an executable target and link the source and header files
 add_executable(${SOURCES} ${HEADERS})
