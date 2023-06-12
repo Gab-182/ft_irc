@@ -112,8 +112,8 @@ void Server::multi_connection(HandShake handShaker, Commands commandHandler) {
  				std::memset(buffer, 0, 1024);
 
 				DEBUG_MSG("HandShake Message: " << std::endl << BOLDBLUE << clientMsg)
-				handShaker.processHandShake(clientSocket, clientMsg, this->getServPass());
-//				handShaker.saveLogs(clientSocket);
+				if (!handShaker.processHandShake(clientSocket, clientMsg, this->getServPass()))
+					continue;
 //				commandHandler.handleCommands(clientSocket, clientMsg);
  			}
  		}

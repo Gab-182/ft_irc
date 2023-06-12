@@ -83,10 +83,10 @@ RUN set -eux; \
 # basic smoke test
 	irssi --version
 
-COPY config "$HOME/.irssi/config"
-COPY rain.theme "$HOME/.irssi/rain.theme"
-
 WORKDIR $HOME
+
+COPY config $HOME/.irssi/config
+COPY rain.theme $HOME/.irssi/rain.theme
 
 USER user
 CMD ["/bin/bash"]

@@ -49,19 +49,26 @@ namespace IRC {
 			};
 
 			std::map<int, ClientData> _clientData;
-			std::map<int, std::set<std::string> > sentMessages;  // Track sent messages
+			std::map<int, std::set<std::string> > _sentMessages;  // Track sent messages
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		private:
-			int checkPass(int clientSocket, const std::string& clientPass, const int& serverPass);
-			void checkName(int clientSocket, const std::string& userName);
-			void checkNick(int clientSocket, std::string& clientNick);
-			void handleMode(int clientSocket, std::istringstream& iss);
+			bool processPassMessage(int clientSocket, const std::string& clientPass, const int& serverPass);
+			void processUserMessage(int clientSocket, std::istringstream& lineStream);
+			void processNickMessage(int clientSocket, std::string& clientNick);
+			void processModeMessage(int clientSocket, std::istringstream& lineStream);
 
 			void sendResponse(int clientSocket, const std::string& message);
 			void welcomeMessage(int clientSocket);
 
+			// Helper functions to process USER message.
+			void generateUserName(int clientSocket);
+			bool validUserName(int clientSocket, const std::string& userName);
+
+			// Helper functions to process NICK message.
+			static std::string toLowerCase(const std::string& str);
 			void generateNickName(int clientSocket);
-			bool validNick(int clientSocket, std::string& clientNick);
+			bool validNickName(int clientSocket, std::string& clientNick);
+			bool isDuplicatedNick(const int& clientSocket, const std::string& nickName);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		public:
 			HandShake();
