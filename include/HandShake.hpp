@@ -52,6 +52,8 @@ namespace IRC {
 			std::map<int, std::set<std::string> > _sentMessages;  // Track sent messages
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		private:
+			void debugClientData(int clientSocket);
+
 			bool processPassMessage(int clientSocket, const std::string& clientPass, const int& serverPass);
 			void processUserMessage(int clientSocket, std::istringstream& lineStream);
 			void processNickMessage(int clientSocket, std::string& clientNick);
@@ -60,11 +62,11 @@ namespace IRC {
 			void sendResponse(int clientSocket, const std::string& message);
 			void welcomeMessage(int clientSocket);
 
-			// Helper functions to process USER message.
+			// ⟫⟫ Helper functions to process USER message.
 			void generateUserName(int clientSocket);
 			bool validUserName(int clientSocket, const std::string& userName);
 
-			// Helper functions to process NICK message.
+			// ⟫⟫ Helper functions to process NICK message.
 			static std::string toLowerCase(const std::string& str);
 			void generateNickName(int clientSocket);
 			bool validNickName(int clientSocket, std::string& clientNick);
@@ -74,6 +76,7 @@ namespace IRC {
 			HandShake();
 			~HandShake();
 			int processHandShake(int clientSocket, std::string& clientsMessage, const int& serverPass);
+			void disconnectClient(int clientSocket);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	};
 }

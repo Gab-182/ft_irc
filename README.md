@@ -6,7 +6,6 @@
 
 ## <span style="color: gray; font-family: 'Times New Roman';">A lightweight IRC server implemented in C++</span>
 
-----------------------------------------------------------------------------------------
 ![GitHub contributors](https://img.shields.io/github/contributors/Gab-182/ft_irc?color=blue&style=flat-square&logo=github)
 ![GitHub stars](https://img.shields.io/github/stars/Gab-182/ft_irc?color=yellow&style=flat-square&logo=github)
 ![GitHub code size](https://img.shields.io/github/languages/code-size/Gab-182/ft_irc?color=red&style=flat-square&logo=github)

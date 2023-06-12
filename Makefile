@@ -21,22 +21,31 @@ RM = rm -rf
 
 .PHONY: all clean fclean re help
 
-all: $(NAME)
+#irssi:
+#	cd irssi/ && docker build -t irssi . &&\
+#	docker run -it --rm -e TERM -e COLUMNS -e LINES irssi
+
+all: $(NAME) irssi
 
 $(NAME): $(OBJ)
 	$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
 
+
 clean:
 	$(RM) $(OBJ)
+#	docker rmi irssi
 
 fclean: clean
 	$(RM) $(NAME)
+#	docker irssi prune -f
 
 re: fclean all
+
 
 help:
 	@echo "\n\033[1;32mAvailable rules:\033[0m"
 	@echo "  \033[1;36mall\033[0m       : Compile and build IRC server"
+#	@echo "  \033[1;36mirssi\033[0m     : Compile and build irssi client"
 	@echo "  \033[1;36mclean\033[0m     : Remove object files"
 	@echo "  \033[1;36mfclean\033[0m    : Remove object files and executable"
 	@echo "  \033[1;36mre\033[0m        : Clean and rebuild the executable"

@@ -103,6 +103,7 @@ void Server::multi_connection(HandShake handShaker, Commands commandHandler) {
  			if (FD_ISSET(clientSocket, &fdset)) {
  				if ((res = recv(clientSocket, buffer, 1024, 0)) == 0) {
 					DEBUG_MSG("Client disconnected from socket")
+					handShaker.disconnectClient(clientSocket);
  					close(clientSocket);
  					this->sockets.erase(this->sockets.begin() + i);
  					continue; // Continue to the next iteration

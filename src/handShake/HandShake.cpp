@@ -1,36 +1,45 @@
 #include "../../include/HandShake.hpp"
 using namespace IRC;
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
 HandShake::HandShake() { }
-
+/*.............................................................................................................*/
 HandShake::~HandShake() { }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
-// Convert the string to lower case.
-std::string HandShake::toLowerCase(const std::string& str) {
-	std::string lowerCaseStr = str;
-	std::transform(lowerCaseStr.begin(), lowerCaseStr.end(), lowerCaseStr.begin(), ::tolower);
-	return (lowerCaseStr);
-}
+/*-------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------⟪⟪⟪⟪⟪⟪ Debugging ⟫⟫⟫⟫⟫⟫---------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------*/
+void HandShake::debugClientData(int clientSocket) {
+	std::cout << "-------------------------------------------------------------" << std::endl;
+	DEBUG_MSG( BOLDMAGENTA  << "Connected client Data: " << std::endl << BOLDBLUE
+							<< "  Socket ["		<< clientSocket << "]" << std::endl
+							<< "  Nick name ["	<< _clientData[clientSocket].nickName	<< "]" << std::endl
+							<< "  User name ["	<< _clientData[clientSocket].userName	<< "]" << std::endl
+							<< "  Real name ["	<< _clientData[clientSocket].realName	<< "]" << std::endl
+							<< "  Host ["	<< _clientData[clientSocket].host			<< "]" << std::endl)
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
-bool HandShake::isDuplicatedNick(const int& clientSocket, const std::string& nickName) {
-	std::map<int, ClientData>::const_iterator it;
-	for (it = _clientData.begin(); it != _clientData.end(); ++it) {
-		if (toLowerCase(it->second.nickName) == nickName && it->first != clientSocket)
-			return (true);
+	std::cout << "-------------------------------------------------------------" << std::endl;
+	std::map<int, std::set<std::string> >::iterator it_map;
+	std::set<std::string>::iterator it_set;
+	for (it_map = _sentMessages.begin(); it_map != _sentMessages.end(); ++it_map) {
+		std::cout	<< BOLDGREEN
+					 << "Client [" << it_map->first << "]:" << RESET << std::endl;
+		for (it_set = it_map->second.begin(); it_set != it_map->second.end(); ++it_set) {
+			std::cout << BOLDWHITE << "\t" << *it_set << RESET << std::endl;
+		}
 	}
-	return (false);
+	std::cout << "-------------------------------------------------------------" << std::endl;
 }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
+/*---------------------------------------⟪⟪⟪⟪⟪⟪ Helpers ⟫⟫⟫⟫⟫⟫----------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------*/
 void HandShake::welcomeMessage(int clientSocket) {
 	std::string welcomeMsg = ":" + _clientData[clientSocket].nickName + " 001 :Welcome to the Internet Relay Network\r\n";
 	sendResponse(clientSocket, welcomeMsg);
 }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+/*.............................................................................................................*/
 void HandShake::sendResponse(int clientSocket, const std::string& message) {
 	// Check if the message has been sent before
 	if (_sentMessages[clientSocket].find(message) == _sentMessages[clientSocket].end()) {
@@ -41,7 +50,137 @@ void HandShake::sendResponse(int clientSocket, const std::string& message) {
 	}
 }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------⟪⟪⟪⟪⟪⟪ NICK ⟫⟫⟫⟫⟫⟫------------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------*/
+std::string HandShake::toLowerCase(const std::string& str) {
+	std::string lowerCaseStr = str;
+	std::transform(lowerCaseStr.begin(), lowerCaseStr.end(), lowerCaseStr.begin(), ::tolower);
+	return (lowerCaseStr);
+}
+
+/*.............................................................................................................*/
+bool HandShake::isDuplicatedNick(const int& clientSocket, const std::string& nickName) {
+	std::map<int, ClientData>::const_iterator it;
+	for (it = _clientData.begin(); it != _clientData.end(); ++it) {
+		if (toLowerCase(it->second.nickName) == toLowerCase(nickName) && it->first != clientSocket)
+			return (true);
+	}
+	return (false);
+}
+
+/*.............................................................................................................*/
+void HandShake::generateNickName(int clientSocket) {
+	std::string modifiedNickname = "Guest" + std::to_string(rand() % 1000);
+	DEBUG_MSG("Assigning a Guest nickname: [" << modifiedNickname << "]")
+	sendResponse(clientSocket, "Assigning a Guest nickname: " + modifiedNickname + "\r\n");
+	_clientData[clientSocket].nickName = modifiedNickname;
+}
+
+/*.............................................................................................................*/
+bool HandShake::validNickName(int clientSocket, std::string& clientNick) {
+	// Nickname too long
+	if (clientNick.length() > 9) {
+		DEBUG_MSG(BOLDRED << "Nickname is too long, taking only the first 9 characters." << RESET)
+		_clientData[clientSocket].nickName = clientNick.substr(0, 9); // Take only the first 9 letters
+		return (true);
+	}
+
+		// Nickname contains invalid characters
+	else if (clientNick.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_") != std::string::npos) {
+		DEBUG_MSG(BOLDRED << "Nickname contains invalid characters" << RESET)
+		sendResponse(clientSocket, "ERROR :Invalid characters in nick name\r\n");
+		return (false);
+	}
+
+		// nickName doesn't start with a letter
+	else if (!std::isalpha(clientNick[0])) {
+		DEBUG_MSG(BOLDRED << "Nickname must start with a letter" << RESET)
+		sendResponse(clientSocket, "ERROR :Nickname must start with a letter\r\n");
+		return (false);
+	}
+
+		// nickName is duplicated
+	else if (isDuplicatedNick(clientSocket, clientNick)) {
+		DEBUG_MSG(BOLDRED << "Duplicated Nickname" << RESET)
+		sendResponse(clientSocket, "ERROR :Duplicated nick name\r\n");
+		return (false);
+	}
+
+		// empty nickName
+	else if (clientNick.empty()) {
+		DEBUG_MSG(BOLDRED << "Empty Nickname" << RESET)
+		sendResponse(clientSocket, "ERROR :Empty nick name\r\n");
+		return (false);
+	}
+	return (true);
+}
+
+/*.............................................................................................................*/
+void HandShake::processNickMessage(int clientSocket, std::string& clientNick) {
+	if (!validNickName(clientSocket, clientNick))
+		generateNickName(clientSocket);
+
+		//	Nickname accepted
+	else
+		_clientData[clientSocket].nickName = clientNick;
+	sendResponse(clientSocket, "NICK " + _clientData[clientSocket].nickName + "\r\n");
+}
+
+/*-------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------⟪⟪⟪⟪⟪⟪ USER ⟫⟫⟫⟫⟫⟫------------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------*/
+void HandShake::generateUserName(int clientSocket) {
+	std::string modifiedUsername = "Guest" + std::to_string(rand() % 1000);
+	DEBUG_MSG("Assigning a Guest username: [" << modifiedUsername << "]")
+	sendResponse(clientSocket, "Assigning a Guest nickname: " + modifiedUsername + "\r\n");
+	_clientData[clientSocket].nickName = modifiedUsername;
+}
+
+/*.............................................................................................................*/
+bool HandShake::validUserName(int clientSocket, const std::string& userName) {
+	// Username too long
+	if (userName.length() > 16) {
+		DEBUG_MSG(BOLDRED << "Username is too long, taking only the first 16 characters." << RESET)
+		_clientData[clientSocket].userName = userName.substr(0, 16); // Take only the first 9 letters
+		return (true);
+	}
+
+		// Username contains invalid characters
+	else if (userName.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_") != std::string::npos) {
+		DEBUG_MSG(BOLDRED << "Username contains invalid characters" << RESET)
+		sendResponse(clientSocket, "ERROR :Invalid characters in user name\r\n");
+		return (false);
+	}
+
+		// empty Username
+	else if (userName.empty()) {
+		DEBUG_MSG(BOLDRED << "Empty Username" << RESET)
+		sendResponse(clientSocket, "ERROR :Empty user name\r\n");
+		return (false);
+	}
+	return (true);
+}
+
+/*.............................................................................................................*/
+void HandShake::processUserMessage(int clientSocket, std::istringstream& lineStream) {
+	std::string userName, host, realName;
+	lineStream >> userName >> host;
+	std::getline(lineStream, realName);
+
+	if (!validUserName(clientSocket, userName))
+		generateUserName(clientSocket);
+		//	Username accepted
+	else
+		_clientData[clientSocket].userName = userName;
+	sendResponse(clientSocket, "UserName " + userName + "\r\n");
+	_clientData[clientSocket].realName = realName.substr(2);
+	_clientData[clientSocket].host = host;
+}
+
+/*-------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------⟪⟪⟪⟪⟪⟪ PASS ⟫⟫⟫⟫⟫⟫------------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------*/
 bool HandShake::processPassMessage(int clientSocket, const std::string& clientPass, const int& serverPass) {
 	if (clientPass.empty()) {
 		DEBUG_MSG(BOLDRED << "Password not found" << RESET)
@@ -60,114 +199,9 @@ bool HandShake::processPassMessage(int clientSocket, const std::string& clientPa
 	return (true);
 }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
-void HandShake::generateNickName(int clientSocket) {
-	std::string modifiedNickname = "Guest" + std::to_string(rand() % 1000);
-	DEBUG_MSG("Assigning a Guest nickname: [" << modifiedNickname << "]")
-	sendResponse(clientSocket, "Assigning a Guest nickname: " + modifiedNickname + "\r\n");
-	_clientData[clientSocket].nickName = modifiedNickname;
-}
-
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
-void HandShake::generateUserName(int clientSocket) {
-	std::string modifiedUsername = "Guest" + std::to_string(rand() % 1000);
-	DEBUG_MSG("Assigning a Guest username: [" << modifiedUsername << "]")
-	sendResponse(clientSocket, "Assigning a Guest nickname: " + modifiedUsername + "\r\n");
-	_clientData[clientSocket].nickName = modifiedUsername;
-}
-
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
-bool HandShake::validNickName(int clientSocket, std::string& clientNick) {
-	// Nickname too long
-	if (clientNick.length() > 9) {
-		DEBUG_MSG(BOLDRED << "Nickname is too long, taking only the first 9 characters." << RESET)
-		_clientData[clientSocket].nickName = clientNick.substr(0, 9); // Take only the first 9 letters
-		return (true);
-	}
-
-	// Nickname contains invalid characters
-	else if (clientNick.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_") != std::string::npos) {
-		DEBUG_MSG(BOLDRED << "Nickname contains invalid characters" << RESET)
-		sendResponse(clientSocket, "ERROR :Invalid characters in nick name\r\n");
-		return (false);
-	}
-
-	// nickName doesn't start with a letter
-	else if (!std::isalpha(clientNick[0])) {
-		DEBUG_MSG(BOLDRED << "Nickname must start with a letter" << RESET)
-		sendResponse(clientSocket, "ERROR :Nickname must start with a letter\r\n");
-		return (false);
-	}
-
-	// nickName is duplicated
-	else if (!isDuplicatedNick(clientSocket, clientNick)) {
-		DEBUG_MSG(BOLDRED << "Duplicated Nickname" << RESET)
-		sendResponse(clientSocket, "ERROR :Duplicated nick name\r\n");
-		return (false);
-	}
-
-	// empty nickName
-	else if (clientNick.empty()) {
-		DEBUG_MSG(BOLDRED << "Empty Nickname" << RESET)
-		sendResponse(clientSocket, "ERROR :Empty nick name\r\n");
-		return (false);
-	}
-	return (true);
-}
-
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
-bool HandShake::validUserName(int clientSocket, const std::string& userName) {
-	// Username too long
-	if (userName.length() > 16) {
-		DEBUG_MSG(BOLDRED << "Username is too long, taking only the first 16 characters." << RESET)
-		_clientData[clientSocket].userName = userName.substr(0, 16); // Take only the first 9 letters
-		return (true);
-	}
-
-	// Username contains invalid characters
-	else if (userName.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_") != std::string::npos) {
-		DEBUG_MSG(BOLDRED << "Username contains invalid characters" << RESET)
-		sendResponse(clientSocket, "ERROR :Invalid characters in user name\r\n");
-		return (false);
-	}
-
-	// empty Username
-	else if (userName.empty()) {
-		DEBUG_MSG(BOLDRED << "Empty Username" << RESET)
-		sendResponse(clientSocket, "ERROR :Empty user name\r\n");
-		return (false);
-	}
-	return (true);
-}
-
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
-void HandShake::processNickMessage(int clientSocket, std::string& clientNick) {
-	if (!validNickName(clientSocket, clientNick))
-		generateNickName(clientSocket);
-
-	//	Nickname accepted
-	sendResponse(clientSocket, "NICK " + clientNick + "\r\n");
-	_clientData[clientSocket].nickName = clientNick;
-}
-
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
-void HandShake::processUserMessage(int clientSocket, std::istringstream& lineStream) {
-	std::string userName, host, realName;
-	lineStream >> userName >> host;
-	std::getline(lineStream, realName);
-
-	if (!validUserName(clientSocket, userName))
-		generateUserName(clientSocket);
-
-	//	Username accepted
-	sendResponse(clientSocket, "UserName " + userName + "\r\n");
-
-	_clientData[clientSocket].realName = realName.substr(2);
-	_clientData[clientSocket].host = host;
-	_clientData[clientSocket].userName = userName;
-}
-
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
+/*----------------------------------------⟪⟪⟪⟪⟪⟪ MODE ⟫⟫⟫⟫⟫⟫------------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------*/
 void HandShake::processModeMessage(int clientSocket, std::istringstream& lineStream) {
 	std::string mode, modMsg;
 	while (lineStream >> mode) {
@@ -179,7 +213,9 @@ void HandShake::processModeMessage(int clientSocket, std::istringstream& lineStr
 	}
 }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
+/*------------------------------------⟪⟪⟪⟪⟪⟪ Public methods ⟫⟫⟫⟫⟫⟫------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------*/
 int HandShake::processHandShake(int clientSocket, std::string& clientMsg, const int& serverPass) {
 	std::string messageLine, command, option;
 	std::istringstream messageStream(clientMsg);
@@ -188,51 +224,58 @@ int HandShake::processHandShake(int clientSocket, std::string& clientMsg, const 
 		std::istringstream lineStream(messageLine);
 		lineStream >> command;
 		lineStream >> option;
-	/* ❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎︎❄❄︎❄︎❄︎❄︎︎❄︎❄︎❄︎ CAP LS ❄︎❄︎❄︎❄︎❄❄︎❄︎❄❄❄︎❄︎︎❄︎︎❄︎︎❄︎❄︎❄︎❄︎❄︎❄︎*/
+		/* ⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ CAP LS ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		if (command == "CAP" && option == "LS")
 			sendResponse(clientSocket, "CAP * ACK :302 CAP LS\r\n");
 
-	/* ❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎︎❄❄︎❄︎❄︎❄︎︎❄︎❄︎❄︎ CAP END ❄︎❄︎❄︎❄︎❄❄︎❄︎❄❄❄︎❄︎︎❄︎︎❄︎︎❄︎❄︎❄︎❄︎❄︎❄︎*/
+		/* ⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ CAP END ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		else if (command == "CAP" && option == "END")
 			sendResponse(clientSocket, "CAP * ACK :CAP END\r\n");
 
-	/* ❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎︎❄❄︎❄︎❄︎❄︎︎❄︎❄︎❄︎ PASS ❄︎❄︎❄︎❄︎❄❄︎❄︎❄❄❄︎❄︎︎❄︎︎❄︎︎❄︎❄︎❄︎❄︎❄︎❄︎*/
+		/*⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ PASS ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		else if (command == "PASS") {
 			if (!processPassMessage(clientSocket, option, serverPass))
 				return (0);
 		}
 
-	/* ❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎︎❄❄︎❄︎❄︎❄︎︎❄︎❄︎❄︎ NICK ❄︎❄︎❄︎❄︎❄❄︎❄︎❄❄❄︎❄︎︎❄︎︎❄︎︎❄︎❄︎❄︎❄︎❄︎❄︎*/
+		/*⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ NICK ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		else if (command == "NICK")
 			processNickMessage(clientSocket, option);
 
-	/* ❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎︎❄❄︎❄︎❄︎❄︎︎❄︎❄︎❄︎ USER ❄︎❄︎❄︎❄︎❄❄︎❄︎❄❄❄︎❄︎︎❄︎︎❄︎︎❄︎❄︎❄︎❄︎❄︎❄︎*/
+		/*⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ USER ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		else if (command == "USER")
 			processUserMessage(clientSocket, lineStream);
 
-	/* ❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎︎❄❄︎❄︎❄︎❄︎❄︎︎❄︎❄︎❄︎ MODE ❄︎❄︎❄︎❄︎❄❄︎❄︎❄︎❄❄❄︎❄︎︎❄︎︎❄︎︎❄︎❄︎❄︎❄︎❄︎❄︎*/
-		else if (command == "MODE") // MODE +i
+		/*⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ MODE ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
+		else if (command == "MODE")
 			processModeMessage(clientSocket, lineStream);
 
-	/* ❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎︎❄❄︎❄︎❄︎❄︎❄︎︎❄︎❄︎❄︎ PING ❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎︎❄︎❄︎*/
+		/*⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ PING ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		else if (command == "PING")
 			sendResponse(clientSocket, "PONG :ircserv\r\n");
 
-	/* ❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎︎❄❄︎❄︎❄︎❄︎❄︎︎❄︎❄︎❄︎ QUIT ❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎︎❄︎❄︎*/
-		else if (command == "QUIT") {// when the client is disconnected
-			_clientData.erase(clientSocket); // remove client data from the  map
-			_sentMessages.erase(clientSocket); // remove client handShake messages from the map.
-		}
+		/*⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ QUIT ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
+//		else if (command == "QUIT") {// when the client is disconnected
+//			_clientData.erase(clientSocket); // remove client data from the  map
+//			_sentMessages.erase(clientSocket); // remove client handShake messages from the map.
+//			DEBUG_MSG( BOLDRED << "Client [" << clientSocket << "]:\n"
+//																"# data has been deleted from [_clientData] map\n"
+//																"# messages has been deleted from [_sentMessages] map" << RESET)
+//		}
 	}
 
 	welcomeMessage(clientSocket);
-//	DEBUG_MSG( BOLDMAGENTA << "Connected client Data: " << std::endl << BOLDBLUE
-//				<< "  Socket ["		<< clientSocket << "]" << std::endl
-//				<< "  Nick name ["	<< _clientData[clientSocket].nickName	<< "]" << std::endl
-//				<< "  User name ["	<< _clientData[clientSocket].userName	<< "]" << std::endl
-//				<< "  Real name ["	<< _clientData[clientSocket].realName	<< "]" << std::endl
-//				<< "  Host ["	<< _clientData[clientSocket].host			<< "]" << std::endl)
+	debugClientData(clientSocket);
 	return (1);
 }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+/*.............................................................................................................*/
+void HandShake::disconnectClient(int clientSocket) {
+	_clientData.erase(clientSocket); // ⟫⟫ remove client data from the  map
+	_sentMessages.erase(clientSocket); // ⟫⟫ remove client handShake messages from the map.
+	DEBUG_MSG( BOLDRED << "Client [" << clientSocket << "]:\n"
+						"# data has been deleted from [_clientData] map\n"
+						"# messages has been deleted from [_sentMessages] map" << RESET)
+}
+
+/*-------------------------------------------------------------------------------------------------------------*/
