@@ -18,17 +18,17 @@ void HandShake::debugClientData(int clientSocket) {
 							<< "  Real name ["	<< _clientData[clientSocket].realName	<< "]" << std::endl
 							<< "  Host ["	<< _clientData[clientSocket].host			<< "]" << std::endl)
 
-	std::cout << "-------------------------------------------------------------" << std::endl;
-	std::map<int, std::set<std::string> >::iterator it_map;
-	std::set<std::string>::iterator it_set;
-	for (it_map = _sentMessages.begin(); it_map != _sentMessages.end(); ++it_map) {
-		std::cout	<< BOLDGREEN
-					 << "Client [" << it_map->first << "]:" << RESET << std::endl;
-		for (it_set = it_map->second.begin(); it_set != it_map->second.end(); ++it_set) {
-			std::cout << BOLDWHITE << "\t" << *it_set << RESET << std::endl;
-		}
-	}
-	std::cout << "-------------------------------------------------------------" << std::endl;
+//	std::cout << "-------------------------------------------------------------" << std::endl;
+//	std::map<int, std::set<std::string> >::iterator it_map;
+//	std::set<std::string>::iterator it_set;
+//	for (it_map = _sentMessages.begin(); it_map != _sentMessages.end(); ++it_map) {
+//		std::cout	<< BOLDGREEN
+//					 << "Client [" << it_map->first << "]:" << RESET << std::endl;
+//		for (it_set = it_map->second.begin(); it_set != it_map->second.end(); ++it_set) {
+//			std::cout << BOLDWHITE << "\t" << *it_set << RESET << std::endl;
+//		}
+//	}
+//	std::cout << "-------------------------------------------------------------" << std::endl;
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/
@@ -48,6 +48,23 @@ void HandShake::sendResponse(int clientSocket, const std::string& message) {
 		else
 			_sentMessages[clientSocket].insert(message);
 	}
+}
+
+/*.............................................................................................................*/
+// By checking if the client is registered, we make sure that the client has sent all the required information
+// And it hase unique [host, IP]
+bool HandShake::isClientRegistered(const int& clientSocket) {
+	if (!_clientData[clientSocket].nickName.empty() &&
+		!_clientData[clientSocket].userName.empty() &&
+		!_clientData[clientSocket].realName.empty() &&
+		!_clientData[clientSocket].host.empty()) {
+		std::map<int, ClientData>::iterator it;
+		for (it = _clientData.begin(); it != _clientData.end(); ++it) {
+			if (_clientData[clientSocket].host == it->second.host && it->first != clientSocket)
+				return (true);
+		}
+	}
+	return (false);
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/
@@ -176,6 +193,14 @@ void HandShake::processUserMessage(int clientSocket, std::istringstream& lineStr
 	sendResponse(clientSocket, "UserName " + userName + "\r\n");
 	_clientData[clientSocket].realName = realName.substr(2);
 	_clientData[clientSocket].host = host;
+
+	// Check if the client is already there: if so, disconnect him
+	if (isClientRegistered(clientSocket)) {
+		DEBUG_MSG(BOLDRED << "Client is trying to reconnect !!!" << RESET)
+		std::string rejectionResponse = "462 :You are already registered and connected to the server.\r\n";
+		sendResponse(clientSocket, rejectionResponse);
+		disconnectClient(clientSocket);
+	}
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/
@@ -214,6 +239,21 @@ void HandShake::processModeMessage(int clientSocket, std::istringstream& lineStr
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/
+/*---------------------------------------⟪⟪⟪⟪⟪⟪ WHOIS ⟫⟫⟫⟫⟫⟫------------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------*/
+void HandShake::processWhoisMessage(const int& clientSocket) {
+	if (isClientRegistered(clientSocket)) {
+		std::string response ="311 "+ _clientData[clientSocket].nickName
+								+ " " + _clientData[clientSocket].userName
+								+ " " + _clientData[clientSocket].host
+								+ " * :" + _clientData[clientSocket].realName + "\r\n";
+		sendResponse(clientSocket, response);
+	}
+	else
+		sendResponse(clientSocket, "401 " + _clientData[clientSocket].nickName + " :No such nick/channel\r\n");
+}
+
+/*-------------------------------------------------------------------------------------------------------------*/
 /*------------------------------------⟪⟪⟪⟪⟪⟪ Public methods ⟫⟫⟫⟫⟫⟫------------------------------------------------*/
 /*-------------------------------------------------------------------------------------------------------------*/
 int HandShake::processHandShake(int clientSocket, std::string& clientMsg, const int& serverPass) {
@@ -224,44 +264,26 @@ int HandShake::processHandShake(int clientSocket, std::string& clientMsg, const 
 		std::istringstream lineStream(messageLine);
 		lineStream >> command;
 		lineStream >> option;
-		/* ⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ CAP LS ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
+		/* ⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ Messages ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		if (command == "CAP" && option == "LS")
 			sendResponse(clientSocket, "CAP * ACK :302 CAP LS\r\n");
-
-		/* ⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ CAP END ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		else if (command == "CAP" && option == "END")
 			sendResponse(clientSocket, "CAP * ACK :CAP END\r\n");
-
-		/*⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ PASS ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		else if (command == "PASS") {
 			if (!processPassMessage(clientSocket, option, serverPass))
 				return (0);
 		}
-
-		/*⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ NICK ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		else if (command == "NICK")
 			processNickMessage(clientSocket, option);
-
-		/*⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ USER ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		else if (command == "USER")
 			processUserMessage(clientSocket, lineStream);
-
-		/*⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ MODE ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		else if (command == "MODE")
 			processModeMessage(clientSocket, lineStream);
 
-		/*⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ PING ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		else if (command == "PING")
 			sendResponse(clientSocket, "PONG :ircserv\r\n");
-
-		/*⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ QUIT ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
-//		else if (command == "QUIT") {// when the client is disconnected
-//			_clientData.erase(clientSocket); // remove client data from the  map
-//			_sentMessages.erase(clientSocket); // remove client handShake messages from the map.
-//			DEBUG_MSG( BOLDRED << "Client [" << clientSocket << "]:\n"
-//																"# data has been deleted from [_clientData] map\n"
-//																"# messages has been deleted from [_sentMessages] map" << RESET)
-//		}
+		else if (command == "WHOIS")
+			processWhoisMessage(clientSocket);
 	}
 
 	welcomeMessage(clientSocket);
@@ -271,11 +293,15 @@ int HandShake::processHandShake(int clientSocket, std::string& clientMsg, const 
 
 /*.............................................................................................................*/
 void HandShake::disconnectClient(int clientSocket) {
-	_clientData.erase(clientSocket); // ⟫⟫ remove client data from the  map
-	_sentMessages.erase(clientSocket); // ⟫⟫ remove client handShake messages from the map.
-	DEBUG_MSG( BOLDRED << "Client [" << clientSocket << "]:\n"
-						"# data has been deleted from [_clientData] map\n"
-						"# messages has been deleted from [_sentMessages] map" << RESET)
+	if (isClientRegistered(clientSocket)) {
+		_clientData.erase(clientSocket); // ⟫⟫ remove client data from the  map
+		_sentMessages.erase(clientSocket); // ⟫⟫ remove client handShake messages from the map.
+		DEBUG_MSG( BOLDRED << "Disconnecting client [" << clientSocket << "]"<< RESET)
+		std::string disconnectResponse = "ERROR :Closing Link: " + _clientData[clientSocket].nickName
+											+ " (" + _clientData[clientSocket].host + ") [Client disconnected]\r\n";
+		sendResponse(clientSocket, disconnectResponse);
+		close(clientSocket);
+	}
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/

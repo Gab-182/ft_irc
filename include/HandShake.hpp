@@ -2,6 +2,7 @@
 #define HANDSHAKE_HPP
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+#include <unistd.h>
 #include <cstring>
 #include <sstream>
 #include <iostream>
@@ -58,9 +59,11 @@ namespace IRC {
 			void processUserMessage(int clientSocket, std::istringstream& lineStream);
 			void processNickMessage(int clientSocket, std::string& clientNick);
 			void processModeMessage(int clientSocket, std::istringstream& lineStream);
+			void processWhoisMessage(const int& clientSocket);
 
 			void sendResponse(int clientSocket, const std::string& message);
 			void welcomeMessage(int clientSocket);
+			bool isClientRegistered(const int& clientSocket);
 
 			// ⟫⟫ Helper functions to process USER message.
 			void generateUserName(int clientSocket);
