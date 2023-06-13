@@ -2,29 +2,46 @@
 using namespace IRC;
 
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------⟪⟪⟪⟪⟪⟪ Debugging ⟫⟫⟫⟫⟫⟫---------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------*/
+void Server::printClients() {
+	std::cout << BOLDMAGENTA << "Number of registered clients: [" << _clients.size() << "]" << RESET << std::endl;
+	std::vector<Client>::iterator it;
+	for (it = _clients.begin(); it != _clients.end(); ++it) {
+		if (it->getIsRegistered()) {
+			std::cout << BOLDYELLOW << "Socket: [" << BOLDGREEN << it->getSocket() << BOLDYELLOW << "]" << std::endl;
+			std::cout << BOLDYELLOW << "Host: [" << BOLDGREEN << it->getHost() << BOLDYELLOW << "]" << RESET << std::endl;
+			std::cout << BOLDYELLOW << "Username: [" << BOLDGREEN << it->getUserName() << BOLDYELLOW << "]" << RESET << std::endl;
+			std::cout << BOLDYELLOW << "Realname: [" << BOLDGREEN << it->getRealName() << BOLDYELLOW << "]" << RESET << std::endl;
+			std::cout << BOLDYELLOW << "Nickname: [" << BOLDGREEN << it->getNickName() << BOLDYELLOW << "]" << RESET << std::endl;
+			std::cout << "----------------------------------------" << std::endl;
+		}
+	}
+}
+
+/*-------------------------------------------------------------------------------------------------------------*/
 Server::Server() :
 	port(), servpass(), sockets(0), _clients(0), _channels(0), master_socket(), client_socket() { }
 
-/*-------------------------------------------------------------------------------------------------------------*/
 Server::~Server(){}
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
 int Server::getPort(){return port;}
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
 int Server::getMasterSocket(){return master_socket;}
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
 void Server::setMasterSocket(int socket){master_socket = socket;}
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
 void Server::setServPass(int pass){servpass = pass;}
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
 int Server::getServPass() const{return servpass;}
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
 // socket -> bind -> listen 
 void Server::create_socket(char *av)
 {
@@ -40,22 +57,19 @@ void Server::create_socket(char *av)
 	*/
 	this->master_socket = socket(AF_INET,SOCK_STREAM,0);
 	//bind the socket to the port
-	if(bind(this->master_socket,(sockaddr*)&sockin,sizeof(sockin)) == -1)
-	{
+	if(bind(this->master_socket,(sockaddr*)&sockin,sizeof(sockin)) == -1) {
 		std::cout << "Error bind" << std::endl;
 		exit(1);
 	}
 	//backlog is the number of connection that can be waiting while the
 	// server is handling a connection
-	if(listen(this->master_socket,5) == -1)
-	{
+	if(listen(this->master_socket,5) == -1) {
 		std::cout << "Error listen" << std::endl;
 		exit(1);
 	}
-	
 }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
 void Server::multi_connection(HandShake handShaker, const Commands& commandHandler) {
 	(void) commandHandler;
 
@@ -98,17 +112,21 @@ void Server::multi_connection(HandShake handShaker, const Commands& commandHandl
  			clientMsg = ""; // Initialize message for new client socket
  		}
 		/*--------------------------------------------------------------------------------------------------*/
+		// Check for client activity
+
 		for (size_t i = 0; i < this->sockets.size(); i++) {
 			clientMsg = ""; // Reset message for next response
  			int clientSocket = this->sockets[i];
+
  			if (FD_ISSET(clientSocket, &fdset)) {
  				if ((res = recv(clientSocket, buffer, 1024, 0)) == 0) {
 					DEBUG_MSG("Client disconnected from socket")
-					handShaker.removeClientData(clientSocket);
+					handShaker.removeClient(clientSocket);
  					close(clientSocket);
  					this->sockets.erase(this->sockets.begin() + i);
  					continue; // Continue to the next iteration
  				}
+
  				buffer[res] = '\0';
  				clientMsg += buffer;
  				std::memset(buffer, 0, 1024);
@@ -116,11 +134,13 @@ void Server::multi_connection(HandShake handShaker, const Commands& commandHandl
 				DEBUG_MSG("HandShake Message: " << std::endl << BOLDBLUE << clientMsg)
 				if (!handShaker.processHandShake(clientSocket, clientMsg, this->getServPass()))
 					continue;
+				handShaker.registerClient(clientSocket, _clients);
 //				commandHandler.handleCommands(clientSocket, clientMsg);
- 			}
- 		}
-	 }
+			}
+		}
+		this->printClients();
+	}
  	close(this->master_socket);
 }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/

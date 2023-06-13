@@ -51,9 +51,7 @@ void HandShake::sendResponse(int clientSocket, const std::string& message) {
 }
 
 /*.............................................................................................................*/
-// By checking if the client is registered, we make sure that the client has sent all the required information
-// And it hase unique [host, IP]
-bool HandShake::isClientRegistered(const int& clientSocket) {
+bool HandShake::isClientAuthenticated(const int& clientSocket) {
 	if (!_clientData[clientSocket].nickName.empty() &&
 		!_clientData[clientSocket].userName.empty() &&
 		!_clientData[clientSocket].realName.empty() &&
@@ -230,7 +228,7 @@ void HandShake::processModeMessage(int clientSocket, std::istringstream& lineStr
 /*---------------------------------------⟪⟪⟪⟪⟪⟪ WHOIS ⟫⟫⟫⟫⟫⟫------------------------------------------------------*/
 /*-------------------------------------------------------------------------------------------------------------*/
 void HandShake::processWhoisMessage(const int& clientSocket) {
-	if (isClientRegistered(clientSocket)) {
+	if (isClientAuthenticated(clientSocket)) {
 		std::string response ="311 "+ _clientData[clientSocket].nickName
 								+ " " + _clientData[clientSocket].userName
 								+ " " + _clientData[clientSocket].host
@@ -275,13 +273,13 @@ int HandShake::processHandShake(int clientSocket, std::string& clientMsg, const 
 	}
 
 	welcomeMessage(clientSocket);
-	debugClientData(clientSocket);
+//	debugClientData(clientSocket);
 	return (1);
 }
 
 /*.............................................................................................................*/
-void HandShake::removeClientData(int clientSocket) {
-	if (isClientRegistered(clientSocket)) {
+void HandShake::removeClient(int clientSocket) {
+	if (isClientAuthenticated(clientSocket)) {
 		_clientData.erase(clientSocket); // ⟫⟫ remove client data from the  map
 		_sentMessages.erase(clientSocket); // ⟫⟫ remove client handShake messages from the map.
 		DEBUG_MSG( BOLDRED << "Disconnecting client [" << clientSocket << "]"<< RESET)
@@ -290,6 +288,25 @@ void HandShake::removeClientData(int clientSocket) {
 	}
 	else
 		DEBUG_MSG( BOLDRED << "Client [" << clientSocket << "] not found" << RESET)
+}
+
+/*.............................................................................................................*/
+void HandShake::registerClient(const int& clientSocket, std::vector<IRC::Client>& _clients) {
+	std::vector<IRC::Client>::iterator it;
+	for (it = _clients.begin(); it != _clients.end(); it++) {
+		if (it->getSocket() == clientSocket)
+			break;
+	}
+	if (isClientAuthenticated(clientSocket)) {
+		Client client;
+		client.setNickName(_clientData[clientSocket].nickName);
+		client.setUserName(_clientData[clientSocket].userName);
+		client.setRealName(_clientData[clientSocket].realName);
+		client.setHost(_clientData[clientSocket].host);
+		client.setSocket(clientSocket);
+		client.setIsRegistered(true);
+		_clients.push_back(client);
+	}
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/

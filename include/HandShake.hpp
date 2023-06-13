@@ -6,13 +6,14 @@
 #include <cstring>
 #include <sstream>
 #include <iostream>
+#include <vector>
 #include <map>
 #include <set>
 #include <utility>
 #include <sys/socket.h>
 #include <fstream>
 
-//# include "Server.hpp"
+#include "Client.hpp"
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
 #define BOLDWHITE		"\033[1m\033[37m"		/* Bold White */
 #define RESET			"\033[0m"				/* Reset the color */
@@ -64,7 +65,7 @@ namespace IRC {
 
 			void sendResponse(int clientSocket, const std::string& message);
 			void welcomeMessage(int clientSocket);
-			bool isClientRegistered(const int& clientSocket);
+			bool isClientAuthenticated(const int& clientSocket);
 
 			// ⟫⟫ Helper functions to process USER message.
 			void generateUserName(int clientSocket);
@@ -80,7 +81,8 @@ namespace IRC {
 			HandShake();
 			~HandShake();
 			int processHandShake(int clientSocket, std::string& clientsMessage, const int& serverPass);
-			void removeClientData(int clientSocket);
+			void registerClient(const int& clientSocket, std::vector<IRC::Client>& _clients);
+			void removeClient(int clientSocket);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	};
 }

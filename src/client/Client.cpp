@@ -1,13 +1,12 @@
 #include "../../include/Client.hpp"
 using namespace IRC;
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-
-Client::Client() : _socket(), _host(), _userName(), _realName(), _nickName() { }
+/*-------------------------------------------------------------------------------------------------------------*/
+Client::Client() : _socket(), _userName(), _realName(), _nickName(), _isRegistered() { }
 
 Client::~Client() { }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+/*-------------------------------------------------------------------------------------------------------------*/
 
 void Client::setHost(const std::string& host) { _host = host; }
 
@@ -19,9 +18,10 @@ void Client::setNickName(const std::string& nick) { _nickName = nick; }
 
 void Client::setRealName(const std::string& realName) { _realName = realName; }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+void Client::setIsRegistered(bool isRegistered) { _isRegistered = isRegistered; }
+/*-------------------------------------------------------------------------------------------------------------*/
 
-int Client::getSocket() { return (this->_socket); }
+int Client::getSocket() const { return (this->_socket); }
 
 std::string Client::getHost() { return (this->_host); }
 
@@ -31,4 +31,5 @@ std::string Client::getUserName() { return (this->_userName); }
 
 std::string Client::getNickName() { return (this->_nickName); }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+bool Client::getIsRegistered() const { return (this->_isRegistered); }
+/*-------------------------------------------------------------------------------------------------------------*/
