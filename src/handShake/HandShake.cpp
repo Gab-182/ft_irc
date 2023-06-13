@@ -58,11 +58,7 @@ bool HandShake::isClientRegistered(const int& clientSocket) {
 		!_clientData[clientSocket].userName.empty() &&
 		!_clientData[clientSocket].realName.empty() &&
 		!_clientData[clientSocket].host.empty()) {
-		std::map<int, ClientData>::iterator it;
-		for (it = _clientData.begin(); it != _clientData.end(); ++it) {
-			if (_clientData[clientSocket].host == it->second.host && it->first != clientSocket)
-				return (true);
-		}
+		return (true);
 	}
 	return (false);
 }
@@ -193,14 +189,6 @@ void HandShake::processUserMessage(int clientSocket, std::istringstream& lineStr
 	sendResponse(clientSocket, "UserName " + userName + "\r\n");
 	_clientData[clientSocket].realName = realName.substr(2);
 	_clientData[clientSocket].host = host;
-
-	// Check if the client is already there: if so, disconnect him
-	if (isClientRegistered(clientSocket)) {
-		DEBUG_MSG(BOLDRED << "Client is trying to reconnect !!!" << RESET)
-		std::string rejectionResponse = "462 :You are already registered and connected to the server.\r\n";
-		sendResponse(clientSocket, rejectionResponse);
-		disconnectClient(clientSocket);
-	}
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/
@@ -292,16 +280,16 @@ int HandShake::processHandShake(int clientSocket, std::string& clientMsg, const 
 }
 
 /*.............................................................................................................*/
-void HandShake::disconnectClient(int clientSocket) {
+void HandShake::removeClientData(int clientSocket) {
 	if (isClientRegistered(clientSocket)) {
 		_clientData.erase(clientSocket); // ⟫⟫ remove client data from the  map
 		_sentMessages.erase(clientSocket); // ⟫⟫ remove client handShake messages from the map.
 		DEBUG_MSG( BOLDRED << "Disconnecting client [" << clientSocket << "]"<< RESET)
-		std::string disconnectResponse = "ERROR :Closing Link: " + _clientData[clientSocket].nickName
-											+ " (" + _clientData[clientSocket].host + ") [Client disconnected]\r\n";
-		sendResponse(clientSocket, disconnectResponse);
-		close(clientSocket);
+		std::string removalMsg = "QUIT :Client disconnected\r\n";
+		sendResponse(clientSocket, removalMsg);
 	}
+	else
+		DEBUG_MSG( BOLDRED << "Client [" << clientSocket << "] not found" << RESET)
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/
