@@ -70,9 +70,7 @@ void Server::create_socket(char *av)
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/
-void Server::multi_connection(HandShake handShaker, const Commands& commandHandler) {
-	(void) commandHandler;
-
+void Server::multi_connection(HandShake handShaker, ICommands* commands) {
  	int res;
  	int max_sd = 0;
  	char buffer[1024];
@@ -131,14 +129,21 @@ void Server::multi_connection(HandShake handShaker, const Commands& commandHandl
  				clientMsg += buffer;
  				std::memset(buffer, 0, 1024);
 
-				DEBUG_MSG("HandShake Message: " << std::endl << BOLDBLUE << clientMsg)
-				if (!handShaker.processHandShake(clientSocket, clientMsg, this->getServPass()))
-					continue;
-				handShaker.registerClient(clientSocket, _clients);
-//				commandHandler.handleCommands(clientSocket, clientMsg);
+				 /*-------------------------------------------------------------------------------------*/
+				// Check if client is registered, if not, process handshake and register client
+				if (!handShaker.isClientRegistered(clientSocket, _clients)) {
+					DEBUG_MSG("HandShake Message: " << std::endl << BOLDBLUE << clientMsg)
+					if (!handShaker.processHandShake(clientSocket, clientMsg, this->getServPass()))
+						continue;
+					handShaker.registerClient(clientSocket, _clients);
+				}
+				(void)commands;
+//				commands->getCommand(clientSocket, clientMsg);
+				/*-------------------------------------------------------------------------------------*/
+
 			}
 		}
-		this->printClients();
+		// this->printClients();
 	}
  	close(this->master_socket);
 }

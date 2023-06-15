@@ -9,7 +9,7 @@ set(SOURCES
 		src/server/server.cpp
 		src/handShake/HandShake.cpp
 		src/client/Client.cpp
-		src/commands/Commands.cpp
+        src/commands/Join.cpp
 		src/interface/IrcInterface.cpp
 		)
 

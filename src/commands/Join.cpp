@@ -1,4 +1,4 @@
-# include "../../include/Commands.hpp"
+# include "../../include/commands/Join.hpp"
 
 using namespace IRC;
 

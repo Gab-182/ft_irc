@@ -65,6 +65,8 @@ namespace IRC {
 
 			void sendResponse(int clientSocket, const std::string& message);
 			void welcomeMessage(int clientSocket);
+
+			// ⟫⟫ Helper function to register the authenticated client to the server.
 			bool isClientAuthenticated(const int& clientSocket);
 
 			// ⟫⟫ Helper functions to process USER message.
@@ -81,6 +83,7 @@ namespace IRC {
 			HandShake();
 			~HandShake();
 			int processHandShake(int clientSocket, std::string& clientsMessage, const int& serverPass);
+			bool isClientRegistered(const int& clientSocket, std::vector<IRC::Client>& _clients);
 			void registerClient(const int& clientSocket, std::vector<IRC::Client>& _clients);
 			void removeClient(int clientSocket);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/

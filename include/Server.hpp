@@ -20,7 +20,7 @@
 #include "./HandShake.hpp"
 #include "./Channel.hpp"
 #include "./Client.hpp"
-#include "./Commands.hpp"
+#include "./commands/ICommands.hpp"
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 namespace IRC
@@ -43,7 +43,7 @@ namespace IRC
 
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 			void create_socket(char *av);
-			void multi_connection(HandShake handShaker, const Commands& commandHandler);
+			void multi_connection(HandShake handShaker, ICommands* commands);
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎  SETTERS && GETTERS  ❄❄︎❄❄︎❄︎❄❄︎❄❄❄︎❄*/
 			void setMasterSocket(int socket);
 			void setServPass(int pass);

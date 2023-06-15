@@ -8,7 +8,7 @@ SRC = main.cpp \
 		src/handShake/HandShake.cpp \
 		src/channel/Channel.cpp \
 		src/client/Client.cpp \
-		src/commands/Commands.cpp \
+		src/commands/ICommands.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 
