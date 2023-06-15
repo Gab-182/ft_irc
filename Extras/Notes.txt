@@ -1,0 +1,184 @@
+=========================================================================
+# Connect to free node server for testing purpose
+=========================================================================
+
+❯❯ /connect irc.freenode.net
+
+❯❯ /join #(channel name)
+❯❯ /msg nickserv register [password] [email address]
+
+# To register the nickname
+❯❯ /msg NickServ IDENTIFY <password>
+
+=========================================================================
+Create Client class that will contain:
+=========================================================================
+
+client socket
+client nick
+client username
+map of <channel name, client messages to that channel>
+
+=========================================================================
+During the parsing:
+=========================================================================
+
+Typical message will be:
+❄ CAP LS 302 (this is the first message that the server sends to the client)
+=========================================================================
+Some of the commands:
+=========================================================================
+
+❄ NICK <nickname>
+❄ USER <username> <hostname> <servername> <realname>
+❄ JOIN <channel name>
+❄ PRIVMSG <channel name> :<message>
+❄ QUIT <message>
+❄ PART <channel name>
+❄ PING <server name>
+❄ PONG <server name>
+❄ MODE <channel name> <mode>
+❄ TOPIC <channel name> :<topic>
+❄ NAMES <channel name>
+❄ LIST <channel name>
+❄ WHO <channel name>
+❄ WHOIS <nickname>
+❄ AWAY <message>
+❄ NOTICE <channel name> :<message>
+❄ KICK <channel name> <nickname> :<message>
+❄ INVITE <nickname> <channel name>
+❄ OPER <username> <password>
+❄ KILL <nickname> :<message>
+
+=========================================================================
+Server numerics:
+=========================================================================
+
+001: RPL_WELCOME
+
+Sent by the server to welcome a client after successful registration.
+Indicates that the client has successfully connected to the server.
+002: RPL_YOURHOST
+
+Sent by the server to provide information about the server's host and version.
+003: RPL_CREATED
+
+Sent by the server to provide the server's creation date or other related information.
+004: RPL_MYINFO
+
+Sent by the server to provide information about the server's supported user modes, channel modes, and other related details.
+005: RPL_ISUPPORT
+
+Sent by the server to provide a list of supported features and options.
+Includes information such as supported channel modes, user modes, and server-specific capabilities.
+302: RPL_USERHOST
+
+Sent in response to a USERHOST command.
+Provides information about the online status and hostname of multiple users.
+303: RPL_ISON
+
+Sent in response to an ISON command.
+Provides a list of users who are currently online.
+305: RPL_UNAWAY
+
+Sent to a client to indicate that the client is no longer marked as away.
+306: RPL_NOWAWAY
+
+Sent to a client to indicate that the client is now marked as away.
+311: RPL_WHOISUSER
+
+Sent in response to a WHOIS command to provide information about a user's username, hostname, real name, and other details.
+312: RPL_WHOISSERVER
+
+Sent in response to a WHOIS command to provide information about the server a user is connected to.
+313: RPL_WHOISOPERATOR
+
+Sent in response to a WHOIS command to indicate if a user is an IRC operator.
+317: RPL_WHOISIDLE
+
+Sent in response to a WHOIS command to provide information about a user's idle time.
+318: RPL_ENDOFWHOIS
+
+Marks the end of a WHOIS response.
+319: RPL_WHOISCHANNELS
+
+Sent in response to a WHOIS command to provide a list of channels a user is a member of.
+324: RPL_CHANNELMODEIS
+
+Sent in response to a MODE command or when joining a channel to provide the channel's modes.
+329: RPL_CREATIONTIME
+
+Sent in response to a channel query to provide the timestamp when the channel was created.
+331: RPL_NOTOPIC
+
+Sent when attempting to retrieve a topic for a channel with no topic set.
+332: RPL_TOPIC
+
+Sent in response to a TOPIC command to provide the topic of a channel.
+333: RPL_TOPICINFO
+
+Sent in response to a TOPIC command to provide information about who set the topic and when.
+353: RPL_NAMREPLY
+
+Sent in response to a NAMES command or a JOIN command to provide a list of nicknames in a channel.
+366: RPL_ENDOFNAMES
+
+Marks the end of the list of nicknames provided in response to a NAMES command or a JOIN command.
+368: RPL_ENDOFBANLIST
+
+Marks the end of a ban list for a channel in response to a channel query.
+372: RPL_MOTD
+
+Sent to provide the "Message of the Day" or server's informational messages.
+375: RPL_MOTDSTART
+
+Marks the beginning of the "Message of the Day" or server's informational messages.
+376: RPL_ENDOFMOTD
+
+Marks the end of the "Message of the Day" or server's informational messages.
+401: ERR_NOSUCHNICK
+
+Sent when a given nickname does not exist on the server.
+403: ERR_NOSUCHCHANNEL
+
+Sent when attempting an operation on a nonexistent channel.
+404: ERR_CANNOTSENDTOCHAN
+
+Sent when a message cannot be delivered to a channel.
+405: ERR_TOOMANYCHANNELS
+
+Sent when attempting to join too many channels.
+411: ERR_NORECIPIENT
+
+Sent when a command is missing a recipient or target.
+421: ERR_UNKNOWNCOMMAND
+
+Sent when an unknown command is received.
+432: ERR_ERRONEUSNICKNAME
+
+Sent when a nickname is considered invalid or erroneous.
+433: ERR_NICKNAMEINUSE
+
+Sent when a nickname is already in use by another user.
+442: ERR_NOTONCHANNEL
+
+Sent when attempting an operation that requires being on a specific channel.
+451: ERR_NOTREGISTERED
+
+Sent when a command is received before completing the registration process.
+461: ERR_NEEDMOREPARAMS
+
+Sent when a command is missing parameters.
+471: ERR_CHANNELISFULL
+
+Sent when attempting to join a channel that has reached its maximum limit of users.
+473: ERR_INVITEONLYCHAN
+
+Sent when attempting to join an invite-only channel without an invitation.
+474: ERR_BANNEDFROMCHAN
+
+Sent when attempting to join a channel where the user is banned.
+475: ERR_BADCHANNELKEY
+
+Sent when attempting to join a channel with an incorrect channel key or password.
+=========================================================================

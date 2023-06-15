@@ -1,0 +1,52 @@
+cmake-build-debug
+
+build.ninja
+.ninja_log
+workspace.xml
+# Compiled object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Compiled dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Executables
+*.exe
+*.out
+
+# Build directories
+build/
+dist/
+target/
+
+# Dependency directories
+node_modules/
+vendor/
+
+# CMake build directory
+CMakeFiles/
+CMakeCache.txt
+CMakeScripts/
+Makefile
+cmake_install.cmake
+
+# IDE-specific files and directories
+.vscode/
+.idea/
+*.sln
+*.xcodeproj/
+*.xcworkspace/
+
+# Editor-specific temporary files
+*~
+.#*
+
+# macOS specific files
+.DS_Store
+
+# Windows thumbnail cache files
+Thumbs.db
