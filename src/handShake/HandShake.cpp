@@ -4,7 +4,12 @@ using namespace IRC;
 /*-------------------------------------------------------------------------------------------------------------*/
 HandShake::HandShake() { }
 /*.............................................................................................................*/
-HandShake::~HandShake() { }
+HandShake::~HandShake() {
+	if (!_clientData.empty())
+		_clientData.clear();
+	if (!_sentMessages.empty())
+		_sentMessages.clear();
+}
 
 /*-------------------------------------------------------------------------------------------------------------*/
 /*--------------------------------------⟪⟪⟪⟪⟪⟪ Debugging ⟫⟫⟫⟫⟫⟫---------------------------------------------------*/
@@ -12,11 +17,11 @@ HandShake::~HandShake() { }
 void HandShake::debugClientData(int clientSocket) {
 	std::cout << "-------------------------------------------------------------" << std::endl;
 	DEBUG_MSG( BOLDMAGENTA  << "Connected client Data: " << std::endl << BOLDBLUE
-							<< "  Socket ["		<< clientSocket << "]" << std::endl
-							<< "  Nick name ["	<< _clientData[clientSocket].nickName	<< "]" << std::endl
-							<< "  User name ["	<< _clientData[clientSocket].userName	<< "]" << std::endl
-							<< "  Real name ["	<< _clientData[clientSocket].realName	<< "]" << std::endl
-							<< "  Host ["	<< _clientData[clientSocket].host			<< "]" << std::endl)
+			<< '\t' << " Socket ["		<< clientSocket << "]" << std::endl
+			<< '\t' << " nickName ["	<< _clientData[clientSocket].nickName	<< "]" << std::endl
+			<< '\t' << " userName ["	<< _clientData[clientSocket].userName	<< "]" << std::endl
+			<< '\t' << " realName ["	<< _clientData[clientSocket].realName	<< "]" << std::endl
+			<< '\t' << " hostName ["	<< _clientData[clientSocket].hostName	<< "]" << std::endl)
 
 //	std::cout << "-------------------------------------------------------------" << std::endl;
 //	std::map<int, std::set<std::string> >::iterator it_map;
@@ -39,7 +44,6 @@ void HandShake::welcomeMessage(int clientSocket) {
 	sendResponse(clientSocket, welcomeMsg);
 }
 
-/*.............................................................................................................*/
 void HandShake::sendResponse(int clientSocket, const std::string& message) {
 	// Check if the message has been sent before
 	if (_sentMessages[clientSocket].find(message) == _sentMessages[clientSocket].end()) {
@@ -59,7 +63,6 @@ std::string HandShake::toLowerCase(const std::string& str) {
 	return (lowerCaseStr);
 }
 
-/*.............................................................................................................*/
 bool HandShake::isDuplicatedNick(const int& clientSocket, const std::string& nickName) {
 	std::map<int, ClientData>::const_iterator it;
 	for (it = _clientData.begin(); it != _clientData.end(); ++it) {
@@ -69,7 +72,6 @@ bool HandShake::isDuplicatedNick(const int& clientSocket, const std::string& nic
 	return (false);
 }
 
-/*.............................................................................................................*/
 void HandShake::generateNickName(int clientSocket) {
 	std::string modifiedNickname = "Guest" + std::to_string(rand() % 1000);
 	DEBUG_MSG("Assigning a Guest nickname: [" << modifiedNickname << "]")
@@ -77,7 +79,6 @@ void HandShake::generateNickName(int clientSocket) {
 	_clientData[clientSocket].nickName = modifiedNickname;
 }
 
-/*.............................................................................................................*/
 bool HandShake::validNickName(int clientSocket, std::string& clientNick) {
 	if (isDuplicatedNick(clientSocket, clientNick) || clientNick.empty() || !std::isalpha(clientNick[0]) 
 		|| clientNick.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_") == std::string::npos) {
@@ -90,7 +91,6 @@ bool HandShake::validNickName(int clientSocket, std::string& clientNick) {
 	return (true);
 }
 
-/*.............................................................................................................*/
 void HandShake::processNickMessage(int clientSocket, std::string& clientNick) {
 	// Nickname is too long
 	if (clientNick.length() > 9)
@@ -115,7 +115,6 @@ void HandShake::generateUserName(int clientSocket) {
 	_clientData[clientSocket].nickName = modifiedUsername;
 }
 
-/*.............................................................................................................*/
 bool HandShake::validUserName(int clientSocket, const std::string& userName) {
 	// Username too long
 	if (userName.length() > 16) {
@@ -140,20 +139,14 @@ bool HandShake::validUserName(int clientSocket, const std::string& userName) {
 	return (true);
 }
 
-/*.............................................................................................................*/
-void HandShake::processUserMessage(int clientSocket, std::istringstream& lineStream) {
-	std::string userName, host, realName;
-	lineStream >> userName >> host;
-	std::getline(lineStream, realName);
-
+void HandShake::processUserMessage(int clientSocket, std::string& userName) {
 	if (!validUserName(clientSocket, userName))
 		generateUserName(clientSocket);
 		//	Username accepted
 	else
 		_clientData[clientSocket].userName = userName;
 	sendResponse(clientSocket, "UserName " + userName + "\r\n");
-	_clientData[clientSocket].realName = realName.substr(2);
-	_clientData[clientSocket].host = host;
+//	_clientData[clientSocket].host = host;
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/
@@ -198,8 +191,7 @@ void HandShake::processWhoisMessage(const int& clientSocket) {
 	if (isClientAuthenticated(clientSocket)) {
 		std::string response ="311 "+ _clientData[clientSocket].nickName
 								+ " " + _clientData[clientSocket].userName
-								+ " " + _clientData[clientSocket].host
-								+ " * :" + _clientData[clientSocket].realName + "\r\n";
+								+ " * :" + _clientData[clientSocket].userName + "\r\n";
 		sendResponse(clientSocket, response);
 	}
 	else
@@ -218,28 +210,23 @@ bool HandShake::isClientRegistered(const int& clientSocket, std::vector<IRC::Cli
 	return (false);
 }
 
-/*.............................................................................................................*/
 bool HandShake::isClientAuthenticated(const int& clientSocket) {
 	if (!_clientData[clientSocket].nickName.empty() &&
-		!_clientData[clientSocket].userName.empty() &&
-		!_clientData[clientSocket].realName.empty() &&
-		!_clientData[clientSocket].host.empty()) {
+		!_clientData[clientSocket].userName.empty()) {
 		return (true);
 	}
 	return (false);
 }
 
-/*.............................................................................................................*/
 void HandShake::registerClient(const int& clientSocket, std::vector<IRC::Client>& _clients) {
 	if (isClientAuthenticated(clientSocket) && !isClientRegistered(clientSocket, _clients)) {
 		Client client;
 		client.setNickName(_clientData[clientSocket].nickName);
 		client.setUserName(_clientData[clientSocket].userName);
-		client.setRealName(_clientData[clientSocket].realName);
-		client.setHost(_clientData[clientSocket].host);
 		client.setSocket(clientSocket);
 		client.setIsRegistered(true);
 		_clients.push_back(client);
+		DEBUG_MSG(BOLDGREEN << "Client Registered !!")
 	}
 }
 
@@ -255,37 +242,49 @@ int HandShake::processHandShake(int clientSocket, std::string& clientMsg, const 
 		lineStream >> command;
 		lineStream >> _parameter;
 		/* ⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ Messages ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
-		if (command == "CAP" && _parameter == "LS")
+		if (toLowerCase(command) == "cap" && toLowerCase(_parameter) == "ls")
 			sendResponse(clientSocket, "CAP * ACK :302 CAP LS\r\n");
-		else if (command == "CAP" && _parameter == "END")
+
+		else if (toLowerCase(command) == "cap" && toLowerCase(_parameter) == "end")
 			sendResponse(clientSocket, "CAP * ACK :CAP END\r\n");
-		else if (command == "PASS") {
+
+		else if (toLowerCase(command) == "pass") {
 			if (!processPassMessage(clientSocket, _parameter, serverPass))
 				return (0);
 		}
-		else if (command == "NICK")
+
+		else if (toLowerCase(command) == "nick")
 			processNickMessage(clientSocket, _parameter);
-		else if (command == "USER")
-			processUserMessage(clientSocket, lineStream);
-		else if (command == "MODE")
+
+		else if (toLowerCase(command) == "user")
+			processUserMessage(clientSocket, _parameter);
+
+		else if (toLowerCase(command) == "mode")
 			processModeMessage(clientSocket, lineStream);
 
-		else if (command == "PING")
+		else if (toLowerCase(command) == "ping")
 			sendResponse(clientSocket, "PONG :ircserv\r\n");
-		else if (command == "WHOIS")
+		else if (toLowerCase(command) == "whois")
 			processWhoisMessage(clientSocket);
 	}
-
-	welcomeMessage(clientSocket);
-	debugClientData(clientSocket);
+	if (isClientAuthenticated(clientSocket))
+		welcomeMessage(clientSocket);
+//	debugClientData(clientSocket);
 	return (1);
 }
 
-/*.............................................................................................................*/
-void HandShake::removeClient(int clientSocket) {
+void HandShake::removeClient(int clientSocket, std::vector<IRC::Client>& _clients) {
 	if (isClientAuthenticated(clientSocket)) {
 		_clientData.erase(clientSocket); // ⟫⟫ remove client data from the  map
 		_sentMessages.erase(clientSocket); // ⟫⟫ remove client handShake messages from the map.
+		std::vector<IRC::Client>::iterator it;
+		for (it = _clients.begin(); it != _clients.end(); it++) {
+			if (it->getSocket() == clientSocket) {
+				_clients.erase(it); // ⟫⟫ remove client from the vector of clients inside the server.
+				break;
+			}
+		}
+
 		DEBUG_MSG( BOLDRED << "Disconnecting client [" << clientSocket << "]"<< RESET)
 		std::string removalMsg = "QUIT :Client disconnected\r\n";
 		sendResponse(clientSocket, removalMsg);

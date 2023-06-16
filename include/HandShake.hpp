@@ -45,10 +45,10 @@ namespace IRC {
 	class HandShake {
 		public:
 			struct ClientData {
-				std::string host;
 				std::string nickName;
 				std::string userName;
 				std::string realName;
+				std::string hostName;
 			};
 
 			std::map<int, ClientData> _clientData;
@@ -58,7 +58,7 @@ namespace IRC {
 			void debugClientData(int clientSocket);
 
 			bool processPassMessage(int clientSocket, const std::string& clientPass, const int& serverPass);
-			void processUserMessage(int clientSocket, std::istringstream& lineStream);
+			void processUserMessage(int clientSocket, std::string& userName);
 			void processNickMessage(int clientSocket, std::string& clientNick);
 			void processModeMessage(int clientSocket, std::istringstream& lineStream);
 			void processWhoisMessage(const int& clientSocket);
@@ -83,9 +83,9 @@ namespace IRC {
 			HandShake();
 			~HandShake();
 			int processHandShake(int clientSocket, std::string& clientsMessage, const int& serverPass);
-			bool isClientRegistered(const int& clientSocket, std::vector<IRC::Client>& _clients);
+			static bool isClientRegistered(const int& clientSocket, std::vector<IRC::Client>& _clients);
 			void registerClient(const int& clientSocket, std::vector<IRC::Client>& _clients);
-			void removeClient(int clientSocket);
+			void removeClient(int clientSocket, std::vector<IRC::Client>& _clients);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	};
 }

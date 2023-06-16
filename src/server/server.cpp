@@ -11,9 +11,7 @@ void Server::printClients() {
 	for (it = _clients.begin(); it != _clients.end(); ++it) {
 		if (it->getIsRegistered()) {
 			std::cout << BOLDYELLOW << "Socket: [" << BOLDGREEN << it->getSocket() << BOLDYELLOW << "]" << std::endl;
-			std::cout << BOLDYELLOW << "Host: [" << BOLDGREEN << it->getHost() << BOLDYELLOW << "]" << RESET << std::endl;
 			std::cout << BOLDYELLOW << "Username: [" << BOLDGREEN << it->getUserName() << BOLDYELLOW << "]" << RESET << std::endl;
-			std::cout << BOLDYELLOW << "Realname: [" << BOLDGREEN << it->getRealName() << BOLDYELLOW << "]" << RESET << std::endl;
 			std::cout << BOLDYELLOW << "Nickname: [" << BOLDGREEN << it->getNickName() << BOLDYELLOW << "]" << RESET << std::endl;
 			std::cout << "----------------------------------------" << std::endl;
 		}
@@ -119,7 +117,7 @@ void Server::multi_connection(HandShake handShaker, ICommands* commands) {
  			if (FD_ISSET(clientSocket, &fdset)) {
  				if ((res = recv(clientSocket, buffer, 1024, 0)) == 0) {
 					DEBUG_MSG("Client disconnected from socket")
-					handShaker.removeClient(clientSocket);
+					handShaker.removeClient(clientSocket, _clients);
  					close(clientSocket);
  					this->sockets.erase(this->sockets.begin() + i);
  					continue; // Continue to the next iteration
@@ -131,14 +129,15 @@ void Server::multi_connection(HandShake handShaker, ICommands* commands) {
 
 				 /*-------------------------------------------------------------------------------------*/
 				// Check if client is registered, if not, process handshake and register client
-				if (!handShaker.isClientRegistered(clientSocket, _clients)) {
-					DEBUG_MSG("HandShake Message: " << std::endl << BOLDBLUE << clientMsg)
+				DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
+				/*-------------------------------------------------------------------------------------*/
+				if (!IRC::HandShake::isClientRegistered(clientSocket, _clients)) {
 					if (!handShaker.processHandShake(clientSocket, clientMsg, this->getServPass()))
 						continue;
 					handShaker.registerClient(clientSocket, _clients);
 				}
-				(void)commands;
-//				commands->getCommand(clientSocket, clientMsg);
+				/*-------------------------------------------------------------------------------------*/
+				commands->getCommandInfo(clientSocket, clientMsg);
 				/*-------------------------------------------------------------------------------------*/
 
 			}
