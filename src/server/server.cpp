@@ -138,6 +138,7 @@ void Server::multi_connection(HandShake handShaker, ICommands* commands) {
 				}
 				/*-------------------------------------------------------------------------------------*/
 				commands->getCommandInfo(clientSocket, clientMsg);
+//				commands->executeCommand(clientSocket, clientMsg, _clients, _channels);
 				/*-------------------------------------------------------------------------------------*/
 
 			}

@@ -20,8 +20,9 @@ void HandShake::debugClientData(int clientSocket) {
 			<< '\t' << " Socket ["		<< clientSocket << "]" << std::endl
 			<< '\t' << " nickName ["	<< _clientData[clientSocket].nickName	<< "]" << std::endl
 			<< '\t' << " userName ["	<< _clientData[clientSocket].userName	<< "]" << std::endl
-			<< '\t' << " realName ["	<< _clientData[clientSocket].realName	<< "]" << std::endl
-			<< '\t' << " hostName ["	<< _clientData[clientSocket].hostName	<< "]" << std::endl)
+//			<< '\t' << " realName ["	<< _clientData[clientSocket].realName	<< "]" << std::endl
+//			<< '\t' << " hostName ["	<< _clientData[clientSocket].hostName	<< "]" << std::endl
+			)
 
 //	std::cout << "-------------------------------------------------------------" << std::endl;
 //	std::map<int, std::set<std::string> >::iterator it_map;
@@ -241,6 +242,7 @@ int HandShake::processHandShake(int clientSocket, std::string& clientMsg, const 
 		std::istringstream lineStream(messageLine);
 		lineStream >> command;
 		lineStream >> _parameter;
+
 		/* ⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ Messages ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		if (toLowerCase(command) == "cap" && toLowerCase(_parameter) == "ls")
 			sendResponse(clientSocket, "CAP * ACK :302 CAP LS\r\n");

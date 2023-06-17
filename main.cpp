@@ -5,7 +5,9 @@
 int main(int ac,char **av) {
 	IRC::Server ircServer;
 	IRC::HandShake handShaker;
-	IRC::ICommands *commands = new IRC::ICommands();
+
+	IRC::ICommands *join = new JoinCommand();
+	IRC::ICommands *nick = new NickCommand();
 
 	if(ac == 3) {
 		//todo: check if the port is a number and if the password is a number

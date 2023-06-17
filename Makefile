@@ -9,6 +9,7 @@ SRC = main.cpp \
 		src/channel/Channel.cpp \
 		src/client/Client.cpp \
 		src/commands/ICommands.cpp \
+		src/commands/JoinCommand.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 

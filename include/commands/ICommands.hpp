@@ -26,13 +26,24 @@ namespace IRC {
 			std::string _command;
 			std::vector<std::string> _parameters;
 
+			/*-----------------------------------------------------------------------*/
+			// Define the type for the command function pointer
+			typedef void (CommandFunction)(const int&, const std::vector<Client>&, std::vector<Channel>&);
+			std::map<std::string, CommandFunction> registry;
+
+			/*-----------------------------------------------------------------------*/
+
 		public:
 			ICommands();
 			~ICommands();
 			/*-----------------------------------------------------------------------*/
 			void getCommandInfo(const int& clientSocket, const std::string& clientMessage);
-//			std::string getCommandName() const;
-//			std::vector<std::string> getCommandParameters() const;
+			std::string getCommandName() const;
+			std::vector<std::string> getCommandParameters() const;
+
+			virtual void registerCommands() = 0;
+			virtual void executeCommand(const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels) = 0;
+
 			/*-----------------------------------------------------------------------*/
 	};
 }
