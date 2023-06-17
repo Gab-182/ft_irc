@@ -10,9 +10,10 @@ namespace IRC {
 		public:
 			NickCommand();
 			~NickCommand();
+			void registerCommands();
 			void executeCommand(const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels);
-		};
-}
 
+	};
+}
 
 #endif //NICKCOMMAND_HPP

@@ -31,10 +31,15 @@ void ICommands::getCommandInfo(const int& clientSocket, const std::string& clien
 }
 
 /*----------------------------------------------------------------------------------------------*/
-void ICommands::executeCommand(const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels) {
-	(void)clientSocket;
-	(void)clients;
-	(void)channels;
+//void ICommands::executeCommand(const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels) {
+//	(void)clientSocket;
+//	(void)clients;
+//	(void)channels;
+//	std::cout << BOLDRED << "This is the ICommands executeCommand function called" << RESET << std::endl;
+//}
+
+/*----------------------------------------------------------------------------------------------*/
+void ICommands::executeCommand() {
 	std::cout << BOLDRED << "This is the ICommands executeCommand function called" << RESET << std::endl;
 }
 

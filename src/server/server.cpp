@@ -68,7 +68,7 @@ void Server::create_socket(char *av)
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/
-void Server::multi_connection(HandShake handShaker, ICommands* commands) {
+void Server::multi_connection(HandShake handShaker, std::map<std::string, IRC::ICommands*>& commands) {
  	int res;
  	int max_sd = 0;
  	char buffer[1024];
@@ -86,12 +86,12 @@ void Server::multi_connection(HandShake handShaker, ICommands* commands) {
  		// Add child sockets to set
 		std::vector<int>::iterator it;
 		for (it = this->sockets.begin(); it != this->sockets.end(); it++) {
- 			int sd = *it;
- 			if (sd > 0)
- 				FD_SET(sd, &fdset);
- 			if (sd > max_sd)
- 				max_sd = sd;
- 		}
+			int sd = *it;
+			if (sd > 0)
+				FD_SET(sd, &fdset);
+			if (sd > max_sd)
+				max_sd = sd;
+		}
 		/*--------------------------------------------------------------------------------------------------*/
 		if (select(max_sd + 1, &fdset, NULL, NULL, NULL) == -1) {
  			std::cout << "Error select" << std::endl;
@@ -137,8 +137,7 @@ void Server::multi_connection(HandShake handShaker, ICommands* commands) {
 					handShaker.registerClient(clientSocket, _clients);
 				}
 				/*-------------------------------------------------------------------------------------*/
-				commands->getCommandInfo(clientSocket, clientMsg);
-//				commands->executeCommand(clientSocket, clientMsg, _clients, _channels);
+
 				/*-------------------------------------------------------------------------------------*/
 
 			}

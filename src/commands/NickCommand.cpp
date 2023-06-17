@@ -2,12 +2,14 @@
 using namespace IRC;
 
 /*-------------------------------------------------------------------------------------------------------------*/
-NickCommand::NickCommand() {}
+NickCommand::NickCommand() : ICommands() {
+	_command = "NICK";
+}
 
 NickCommand::~NickCommand() {}
 
 /*-------------------------------------------------------------------------------------------------------------*/
-void NickCommand::executeCommand(const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels) {
+void NickCommand::executeCommand() {
 	if (_parameters.empty()) {
 		std::cout << BOLDRED << "Empty parameters" << std::endl;
 	} else {

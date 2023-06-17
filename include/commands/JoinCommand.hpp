@@ -9,7 +9,6 @@ namespace IRC {
 		public:
 			JoinCommand();
 			~JoinCommand();
-			void join(int clientSocket, const std::vector<Client>& clients);
 			void registerCommands();
 			void executeCommand(const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels);
 		};

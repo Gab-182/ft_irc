@@ -44,7 +44,7 @@ namespace IRC
 
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 			void create_socket(char *av);
-			void multi_connection(HandShake handShaker, ICommands* commands);
+			void multi_connection(HandShake handShaker, std::map<std::string, IRC::ICommands*>& commands);
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎  SETTERS && GETTERS  ❄❄︎❄❄︎❄︎❄❄︎❄❄❄︎❄*/
 			void setMasterSocket(int socket);
 			void setServPass(int pass);
