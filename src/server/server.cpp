@@ -68,7 +68,7 @@ void Server::create_socket(char *av)
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/
-void Server::multi_connection(HandShake handShaker, std::map<std::string, IRC::ICommands*>& commands) {
+void Server::multi_connection(HandShake* handShaker, IRC::ICommands* commands) {
  	int res;
  	int max_sd = 0;
  	char buffer[1024];
@@ -117,7 +117,7 @@ void Server::multi_connection(HandShake handShaker, std::map<std::string, IRC::I
  			if (FD_ISSET(clientSocket, &fdset)) {
  				if ((res = recv(clientSocket, buffer, 1024, 0)) == 0) {
 					DEBUG_MSG("Client disconnected from socket")
-					handShaker.removeClient(clientSocket, _clients);
+					handShaker->removeClient(clientSocket, _clients);
  					close(clientSocket);
  					this->sockets.erase(this->sockets.begin() + i);
  					continue; // Continue to the next iteration
@@ -131,13 +131,22 @@ void Server::multi_connection(HandShake handShaker, std::map<std::string, IRC::I
 				// Check if client is registered, if not, process handshake and register client
 				DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
 				/*-------------------------------------------------------------------------------------*/
+				// parse the client message, then check if username and nick and pass are correct,
+				// if so, that mean that the client is authenticated and can proceed to the next step.
+
 				if (!IRC::HandShake::isClientRegistered(clientSocket, _clients)) {
-					if (!handShaker.processHandShake(clientSocket, clientMsg, this->getServPass()))
+					if (!handShaker->processHandShake(clientSocket, clientMsg, this->getServPass()))
 						continue;
-					handShaker.registerClient(clientSocket, _clients);
+					handShaker->registerClient(clientSocket, _clients);
 				}
 				/*-------------------------------------------------------------------------------------*/
+				// parse the message from the interface then, execute the requested command
+				//from the map of commands, then send the response to the client.
 
+				commands->getCommandInfo(clientSocket, clientMsg);
+				commands->debugCommands();
+//				commands->registerCommands();
+				commands->executeCommand(commands, clientSocket, _clients, _channels);
 				/*-------------------------------------------------------------------------------------*/
 
 			}

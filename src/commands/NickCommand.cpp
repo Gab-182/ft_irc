@@ -9,12 +9,14 @@ NickCommand::NickCommand() : ICommands() {
 NickCommand::~NickCommand() {}
 
 /*-------------------------------------------------------------------------------------------------------------*/
-void NickCommand::executeCommand() {
-	if (_parameters.empty()) {
-		std::cout << BOLDRED << "Empty parameters" << std::endl;
-	} else {
-		std::cout << BOLDGREEN << "Nick Command with parameter called " << RESET << std::endl;
-	}
+void NickCommand::executeCommand(ICommands* base,  const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels) {
+	(void)clientSocket;
+	(void)clients;
+	(void)channels;
+	(void)base;
+
+	std::cout << BOLDGREEN << "[NICK] COMMAND HAS BEEN CALLED" << std::endl;
+
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/

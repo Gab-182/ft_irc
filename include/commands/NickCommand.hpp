@@ -11,7 +11,7 @@ namespace IRC {
 			NickCommand();
 			~NickCommand();
 			void registerCommands();
-			void executeCommand(const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels);
+			void executeCommand(ICommands* base, const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels);
 
 	};
 }

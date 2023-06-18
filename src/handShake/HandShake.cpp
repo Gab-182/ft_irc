@@ -23,18 +23,6 @@ void HandShake::debugClientData(int clientSocket) {
 //			<< '\t' << " realName ["	<< _clientData[clientSocket].realName	<< "]" << std::endl
 //			<< '\t' << " hostName ["	<< _clientData[clientSocket].hostName	<< "]" << std::endl
 			)
-
-//	std::cout << "-------------------------------------------------------------" << std::endl;
-//	std::map<int, std::set<std::string> >::iterator it_map;
-//	std::set<std::string>::iterator it_set;
-//	for (it_map = _sentMessages.begin(); it_map != _sentMessages.end(); ++it_map) {
-//		std::cout	<< BOLDGREEN
-//					 << "Client [" << it_map->first << "]:" << RESET << std::endl;
-//		for (it_set = it_map->second.begin(); it_set != it_map->second.end(); ++it_set) {
-//			std::cout << BOLDWHITE << "\t" << *it_set << RESET << std::endl;
-//		}
-//	}
-//	std::cout << "-------------------------------------------------------------" << std::endl;
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/

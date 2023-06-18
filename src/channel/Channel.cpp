@@ -2,6 +2,8 @@
 using namespace IRC;
 
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+Channel::Channel() : _name(), _topic(), _key(), _mode(), _users(), _operators(), _banedUsers(), _invites() {}
+
 Channel::Channel(std::string name) :
 	_name(name), _topic(), _key(), _mode(), _users(), _operators(), _banedUsers(), _invites() {}
 

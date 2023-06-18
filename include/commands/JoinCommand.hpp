@@ -1,6 +1,7 @@
 #ifndef JOINCOMMAND_HPP
 #define JOINCOMMAND_HPP
 
+#include <sys/socket.h>
 #include "../Client.hpp"
 #include "ICommands.hpp"
 
@@ -9,8 +10,7 @@ namespace IRC {
 		public:
 			JoinCommand();
 			~JoinCommand();
-			void registerCommands();
-			void executeCommand(const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels);
+			void executeCommand(ICommands* base, const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels);
 		};
 }
 
