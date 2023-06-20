@@ -54,6 +54,9 @@ std::string HandShake::toLowerCase(const std::string& str) {
 	return (lowerCaseStr);
 }
 
+/**
+ ** TODO: isDuplicateNick() is not working properly, it keep false even if the nick is duplicated
+ **/
 bool HandShake::isDuplicatedNick(const int& clientSocket, const std::string& nickName) {
 	std::map<int, ClientData>::const_iterator it;
 	for (it = _clientData.begin(); it != _clientData.end(); ++it) {
@@ -71,8 +74,10 @@ void HandShake::generateNickName(int clientSocket) {
 }
 
 bool HandShake::validNickName(int clientSocket, std::string& clientNick) {
+	std::string allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
+
 	if (isDuplicatedNick(clientSocket, clientNick) || clientNick.empty() || !std::isalpha(clientNick[0]) 
-		|| clientNick.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_") == std::string::npos) {
+		|| clientNick.find_first_of(allowedChars) == std::string::npos) {
 		DEBUG_MSG(BOLDRED << "Duplicated Nickname" << RESET)
 		sendResponse(clientSocket, "ERROR :Duplicated nick name\r\n");
 		return (false);
