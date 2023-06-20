@@ -1,8 +1,7 @@
 #ifndef NICKCOMMAND_HPP
 #define NICKCOMMAND_HPP
 
-#include "../Client.hpp"
-#include "ICommands.hpp"
+//#include "../Client.hpp"
 #include "ICommands.hpp"
 
 namespace IRC {
@@ -11,7 +10,7 @@ namespace IRC {
 			NickCommand();
 			~NickCommand();
 			void registerCommands();
-			void executeCommand(ICommands* base, const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels);
+			void executeCommand(ICommands* base, const int& clientSocket, Server* server);
 
 	};
 }

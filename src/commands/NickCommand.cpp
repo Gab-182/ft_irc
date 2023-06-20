@@ -9,11 +9,10 @@ NickCommand::NickCommand() : ICommands() {
 NickCommand::~NickCommand() {}
 
 /*-------------------------------------------------------------------------------------------------------------*/
-void NickCommand::executeCommand(ICommands* base,  const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels) {
+void NickCommand::executeCommand(ICommands* base,  const int& clientSocket, Server* server) {
 	(void)clientSocket;
-	(void)clients;
-	(void)channels;
 	(void)base;
+	(void)server;
 
 	std::cout << BOLDGREEN << "[NICK] COMMAND HAS BEEN CALLED" << std::endl;
 

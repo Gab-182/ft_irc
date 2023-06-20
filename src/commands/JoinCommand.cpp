@@ -7,17 +7,13 @@ JoinCommand::JoinCommand() : ICommands() {}
 JoinCommand::~JoinCommand() {}
 
 /*————————————————————————————--------------------------------------------------------------———————————————————————————*/
-void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels) {
-	(void)clients;
-	(void)channels;
-
-	std::string command = base->getCommand();
-	std::vector<std::string> parameters = base->getParameters();
+void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server) {
+	(void)server;
 
 	// If the command 'join' has the correct parameters, then we can
 	// execute the command and join or create the desired channel.
-	if (parameters.size() >= 1) {
-		std::string channelName = parameters[0];
+	if (base->getParameters().size() >= 1) {
+		std::string channelName = base->getParameters()[0];
 		if (channelName[0] == '#') {
 			channelName = channelName.substr(1); // Remove the '#' character from the channel name.
 			std::cout << "Channel name: " << channelName << std::endl;
@@ -58,6 +54,6 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, const
 	}
 
 	// Cleaning the parameters vector before adding new ones to it.
-	parameters.clear();
+	base->getParameters().clear();
 }
 /*————————————————————————————--------------------------------------------------------------———————————————————————————*/

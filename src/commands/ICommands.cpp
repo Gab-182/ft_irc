@@ -1,4 +1,6 @@
 #include "../../include/commands/ICommands.hpp"
+#include "../../include/Server.hpp"
+
 #include "../../include/commands/JoinCommand.hpp"
 #include "../../include/commands/NickCommand.hpp"
 using namespace IRC;
@@ -75,16 +77,15 @@ void ICommands::registerCommands() {
 }
 
 /*----------------------------------------------------------------------------------------------*/
-void ICommands::executeCommand(ICommands* base, const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels) {
+void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server* server) {
 	(void)clientSocket;
-	(void)clients;
-	(void)channels;
 	(void)base;
+	(void)server;
 
-	if (_command == "JOIN") {
-		_commandsMap["JOIN"]->executeCommand(this, clientSocket, clients, channels);
+if (_command == "JOIN") {
+		_commandsMap["JOIN"]->executeCommand(this, clientSocket, server);
 	} else if (_command == "NICK") {
-		_commandsMap["NICK"]->executeCommand(this, clientSocket, clients, channels);
+		_commandsMap["NICK"]->executeCommand(this, clientSocket, server);
 	}
 
 //	else {

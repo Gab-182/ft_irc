@@ -6,11 +6,12 @@
 #include <cstring>
 #include <sstream>
 #include <iostream>
+#include <vector>
 #include <map>
 
 /*---------------------------------------------------------------------------------------------------*/
-#include "../Client.hpp"
-#include "../Channel.hpp"
+//#include "../Client.hpp"
+//#include "../Channel.hpp"
 
 /*---------------------------------------------------------------------------------------------------*/
 #define BOLDWHITE		"\033[1m\033[37m"		/* Bold White */
@@ -39,6 +40,9 @@
 
 /*---------------------------------------------------------------------------------------------------*/
 namespace IRC {
+	// Forward declaration of the Server class.
+	class Server;
+
 	class ICommands {
 		/*-----------------------------------------------------------------------*/
 		protected:
@@ -57,7 +61,7 @@ namespace IRC {
 			void sendResponse(int clientSocket, const std::string& message);
 			void getCommandInfo(const int& clientSocket, const std::string& clientMessage);
 			void registerCommands();
-			virtual void executeCommand(ICommands* base, const int& clientSocket, const std::vector<Client>& clients, std::vector<Channel>& channels);
+			virtual void executeCommand(ICommands* base, const int& clientSocket, Server* server);
 		/*-----------------------------------------------------------------------*/
 	};
 }

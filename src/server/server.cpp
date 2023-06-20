@@ -1,5 +1,5 @@
 #include "../../include/Server.hpp"
-#include "./HandShake.hpp"
+#include "../../include/HandShake.hpp"
 
 using namespace IRC;
 
@@ -54,7 +54,7 @@ void IRC::Server::create_socket(char *av)
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/
-void IRC::Server::multi_connection(IRC::HandShake* handShaker, IRC::ICommands* commands) {
+void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
  	int res;
  	int max_sd = 0;
  	char buffer[1024];
@@ -120,7 +120,7 @@ void IRC::Server::multi_connection(IRC::HandShake* handShaker, IRC::ICommands* c
 				// parse the client message, then check if username and nick and pass are correct,
 				// if so, that mean that the client is authenticated and can proceed to the next step.
 
-				if (!IRC::HandShake::isClientRegistered(clientSocket, this)) {
+				if (!HandShake::isClientRegistered(clientSocket, this)) {
 					if (!handShaker->processHandShake(clientSocket, clientMsg, this->getServPass()))
 						continue;
 					handShaker->registerClient(clientSocket, this);
@@ -131,7 +131,7 @@ void IRC::Server::multi_connection(IRC::HandShake* handShaker, IRC::ICommands* c
 
 				commands->getCommandInfo(clientSocket, clientMsg);
 				commands->debugCommands();
-				commands->executeCommand(commands, clientSocket, _clients, _channels);
+				commands->executeCommand(commands, clientSocket, this);
 				/*-------------------------------------------------------------------------------------*/
 
 			}
