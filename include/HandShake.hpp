@@ -39,9 +39,11 @@
 
 #endif
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+// Forward declaration of the server class
 
 namespace IRC {
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+	class Server;
+
 	class HandShake {
 		public:
 			struct ClientData {
@@ -51,7 +53,9 @@ namespace IRC {
 				std::string hostName;
 			};
 
-			std::map<int, ClientData> _clientData;
+			std::map<int, ClientData> _clientData; // Why you created this map, try to remove it and replace it
+												   // with the map from the server class.
+
 			std::map<int, std::set<std::string> > _sentMessages;  // Track sent messages
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		private:
@@ -83,9 +87,9 @@ namespace IRC {
 			HandShake();
 			~HandShake();
 			int processHandShake(int clientSocket, std::string& clientsMessage, const int& serverPass);
-			static bool isClientRegistered(const int& clientSocket, std::vector<IRC::Client>& _clients);
-			void registerClient(const int& clientSocket, std::vector<IRC::Client>& _clients);
-			void removeClient(int clientSocket, std::vector<IRC::Client>& _clients);
+			static bool isClientRegistered(const int& clientSocket, Server* server);
+			void registerClient(const int& clientSocket, Server* server);
+			void removeClient(int clientSocket, IRC::Server* server);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	};
 }

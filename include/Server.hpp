@@ -18,7 +18,7 @@
 #include <vector>
 #include <algorithm>
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
-#include "./HandShake.hpp"
+//#include "./HandShake.hpp"
 #include "./Channel.hpp"
 #include "./Client.hpp"
 #include "./commands/ICommands.hpp"
@@ -47,39 +47,50 @@
 
 #endif
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+// Forward declaration of the HandShake class
+
 namespace IRC
 {
+	class HandShake;
+
 	class Server {
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		private:
 			int port;
 			int servpass;
 			std::vector <int> sockets;
+			// to be removed and replaced with the maps
 			std::vector<Client> _clients;
 			std::vector<Channel> _channels;
+
 			int master_socket;
 			int client_socket;
 			std::vector <std::string> msg;
-			/*-----------------------------------------*/
-			// for the commands:
-			std::string _command;
-			std::vector<std::string> _commandParameters;
-		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+
 		public:
 			Server();
 			~Server();
+		/*-----------------------------------------------------------------*/
+			// map of the all the clients on the server:
+			//	key: nickname
+			//	value: pointer to the client object.
+			std::map<std::string, Client*> serverClientsMap;
 
-		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-			void create_socket(char *av);
-			void multi_connection(HandShake* handShaker, IRC::ICommands* commands);
-		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎  SETTERS && GETTERS  ❄❄︎❄❄︎❄︎❄❄︎❄❄❄︎❄*/
+			// map of the all the channels on the server:
+			//	key: channel name
+			//	value: pointer to the channel object.
+			std::map<std::string, Channel*> serverChannelsMap;
+		/*-----------------------------------------------------------------*/
 			void setMasterSocket(int socket);
 			void setServPass(int pass);
 			int getMasterSocket();
 			int getServPass() const;
 			int getPort();
-		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
-			void printClients();
+
+			void create_socket(char *av);
+			std::map<std::string, Client*> getServerClientsMap;
+			std::map<std::string, Channel*> getServerChannelsMap;
+			void multi_connection(IRC::HandShake* handShaker, IRC::ICommands* commands);
 	};
 }
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/

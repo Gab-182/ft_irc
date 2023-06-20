@@ -5,6 +5,7 @@
 #include <ostream>
 #include <vector>
 
+#include "Client.hpp"
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄❄❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 namespace IRC {
 	class Channel {
@@ -13,10 +14,10 @@ namespace IRC {
 			std::string _topic;						//▶️ The topic of the channel.
 			std::string _key;						//▶️ The password/key required to join the channel.
 			std::string _mode;						//▶️ The mode of the channel.
-			std::vector<std::string> _users;		//▶️ The list of users in the channel.
-			std::vector<std::string> _operators;	//▶️ The list of operators in the channel.
-			std::vector<std::string> _banedUsers;	//▶️ The list of banned users in the channel.
-			std::vector<std::string> _invites;		//▶️ The list of invited users to the channel.
+			std::vector<Client> _users;				//▶️ The list of users in the channel.
+			std::vector<Client> _operators;			//▶️ The list of operators in the channel.
+			std::vector<Client> _banedUsers;		//▶️ The list of banned users in the channel.
+			std::vector<Client> _invites;			//▶️ The list of invited users to the channel.
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄❄❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		public:
 			Channel();
@@ -24,14 +25,14 @@ namespace IRC {
 			~Channel();
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄❄❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		public:
-			void addUser(std::string user);
-			void removeUser(std::string user);
-			void addOperator(std::string user);
-			void removeOperator(std::string user);
-			void banUser(std::string user);
-			void unbanUser(std::string user);
-			void inviteUser(std::string user);
-			void removeInvitee(std::string user);
+			void addUser(Client user);
+			void removeUser(Client user);
+			void addOperator(Client user);
+			void removeOperator(Client user);
+			void banUser(Client user);
+			void unbanUser(Client user);
+			void inviteUser(Client user);
+			void removeInvitee(Client user);
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎  SETTERS && GETTERS  ❄❄︎❄❄︎❄︎❄❄︎❄❄❄︎❄*/
 			void setName(std::string name);
 			void setTopic(std::string topic);
@@ -41,10 +42,10 @@ namespace IRC {
 			std::string getTopic();
 			std::string getMode();
 			std::string getKey();
-			std::vector<std::string> getUsers();
-			std::vector<std::string> getOperators();
-			std::vector<std::string> getBanedUsers();
-			std::vector<std::string> getInvites();
+			std::vector<Client> getUsers();
+			std::vector<Client> getOperators();
+			std::vector<Client> getBanedUsers();
+			std::vector<Client> getInvites();
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄❄︎❄❄︎❄︎❄❄︎❄❄❄︎❄❄❄︎❄❄︎❄︎❄❄︎❄❄❄︎❄❄❄︎❄❄︎❄︎❄❄︎❄❄❄︎❄*/
 	};
 	/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄❄❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/

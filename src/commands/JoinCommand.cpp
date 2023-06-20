@@ -11,20 +11,41 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, const
 	(void)clients;
 	(void)channels;
 
+	std::string command = base->getCommand();
+	std::vector<std::string> parameters = base->getParameters();
+
 	// If the command 'join' has the correct parameters, then we can
 	// execute the command and join or create the desired channel.
-	std::cout << BOLDGREEN << "_command: " << base->getCommand() << std::endl;
-//	std::cout << "_parameters.size(): " << _parameters.size() << std::endl;
-//	std::cout << "_parameters[0]:  " << _parameters[0] << std::endl;
-//	std::cout << "_parameters[0][0]:  " << _parameters[0][0] << std::endl;
-//	std::cout << "_parameters[0][1]:  " << _parameters[0][1] << std::endl;
-
-	if (_parameters.size() >= 1) {
-		std::string channelName = _parameters[0];
+	if (parameters.size() >= 1) {
+		std::string channelName = parameters[0];
 		if (channelName[0] == '#') {
-			channelName = channelName.substr(1); // Remove the '#' character
-			// Join or create the channel here
-			// ...
+			channelName = channelName.substr(1); // Remove the '#' character from the channel name.
+			std::cout << "Channel name: " << channelName << std::endl;
+		/*-----------------------------------------------------------------------------------------*/
+//			// check if the channel already exists
+//			bool channelExists = false;
+//
+//			for (auto& channel : channels) {
+//				if (channel.getName() == channelName) {
+//					channelExists = true;
+//					break;
+//				}
+//			}
+//			// If the channel doesn't exist, then we create it.
+//			if (!channelExists) {
+//				Channel newChannel(channelName);
+//				channels.push_back(newChannel);
+//			}
+//			// We add the client to the channel.
+//			for (auto& channel : channels) {
+//				if (channel.getName() == channelName) {
+//					channel.addOperator(clientSocket);
+//					break;
+//				}
+//			}
+
+		/*-----------------------------------------------------------------------------------------*/
+			// We send a response to the client.
 			std::string response = "Successfully joined channel: " + channelName;
 			sendResponse(clientSocket, response); // Assuming you have a function to send the response
 		} else {
@@ -35,5 +56,8 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, const
 		std::string response = "Invalid parameters. Usage: /join #channel";
 		sendResponse(clientSocket, response); // Assuming you have a function to send the response
 	}
+
+	// Cleaning the parameters vector before adding new ones to it.
+	parameters.clear();
 }
 /*————————————————————————————--------------------------------------------------------------———————————————————————————*/

@@ -1,4 +1,6 @@
 #include "../../include/HandShake.hpp"
+#include "../../include/Server.hpp"
+
 using namespace IRC;
 
 /*-------------------------------------------------------------------------------------------------------------*/
@@ -190,10 +192,10 @@ void HandShake::processWhoisMessage(const int& clientSocket) {
 /*-------------------------------------------------------------------------------------------------------------*/
 /*-----------------------------------⟪⟪⟪⟪⟪⟪ Register Client ⟫⟫⟫⟫⟫⟫------------------------------------------------*/
 /*-------------------------------------------------------------------------------------------------------------*/
-bool HandShake::isClientRegistered(const int& clientSocket, std::vector<IRC::Client>& _clients) {
-	std::vector<IRC::Client>::iterator it;
-	for (it = _clients.begin(); it != _clients.end(); it++) {
-		if (it->getSocket() == clientSocket)
+bool HandShake::isClientRegistered(const int& clientSocket, Server* server) {
+	std::map<std::string, IRC::Client*>::iterator it;
+	for (it = server->serverClientsMap.begin(); it != server->serverClientsMap.end(); it++) {
+		if (it->second->getSocket() == clientSocket)
 			return (true);
 	}
 	return (false);
@@ -207,14 +209,16 @@ bool HandShake::isClientAuthenticated(const int& clientSocket) {
 	return (false);
 }
 
-void HandShake::registerClient(const int& clientSocket, std::vector<IRC::Client>& _clients) {
-	if (isClientAuthenticated(clientSocket) && !isClientRegistered(clientSocket, _clients)) {
-		Client client;
-		client.setNickName(_clientData[clientSocket].nickName);
-		client.setUserName(_clientData[clientSocket].userName);
-		client.setSocket(clientSocket);
-		client.setIsRegistered(true);
-		_clients.push_back(client);
+void HandShake::registerClient(const int& clientSocket, Server* server) {
+	if (isClientAuthenticated(clientSocket) && !isClientRegistered(clientSocket, server)) {
+		Client* client = new Client();
+		client->setNickName(_clientData[clientSocket].nickName);
+		client->setUserName(_clientData[clientSocket].userName);
+		client->setSocket(clientSocket);
+		client->setIsRegistered(true);
+
+		server->serverClientsMap[client->getNickName()] = client;
+		delete client;
 		DEBUG_MSG(BOLDGREEN << "Client Registered !!")
 	}
 }
@@ -259,18 +263,18 @@ int HandShake::processHandShake(int clientSocket, std::string& clientMsg, const 
 	}
 	if (isClientAuthenticated(clientSocket))
 		welcomeMessage(clientSocket);
-//	debugClientData(clientSocket);
+	debugClientData(clientSocket);
 	return (1);
 }
 
-void HandShake::removeClient(int clientSocket, std::vector<IRC::Client>& _clients) {
+void HandShake::removeClient(int clientSocket, IRC::Server* server) {
 	if (isClientAuthenticated(clientSocket)) {
 		_clientData.erase(clientSocket); // ⟫⟫ remove client data from the  map
 		_sentMessages.erase(clientSocket); // ⟫⟫ remove client handShake messages from the map.
-		std::vector<IRC::Client>::iterator it;
-		for (it = _clients.begin(); it != _clients.end(); it++) {
-			if (it->getSocket() == clientSocket) {
-				_clients.erase(it); // ⟫⟫ remove client from the vector of clients inside the server.
+		std::map<std::string, IRC::Client*>::iterator it;
+		for (it = server->serverClientsMap.begin(); it != server->serverClientsMap.end(); it++) {
+			if (it->second->getSocket() == clientSocket) {
+				server->serverClientsMap.erase(it->first); // ⟫⟫ remove client from the clients map.
 				break;
 			}
 		}
