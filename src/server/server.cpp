@@ -1,8 +1,8 @@
 #include "../../include/Server.hpp"
 #include "../../include/HandShake.hpp"
+#include "../../include/commands/ICommands.hpp"
 
 using namespace IRC;
-
 
 /*-------------------------------------------------------------------------------------------------------------*/
 IRC::Server::Server() :
@@ -121,16 +121,15 @@ void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
 				// if so, that mean that the client is authenticated and can proceed to the next step.
 
 				if (!HandShake::isClientRegistered(clientSocket, this)) {
-					if (!handShaker->processHandShake(clientSocket, clientMsg, this->getServPass()))
+					if (!handShaker->processHandShake(clientSocket, clientMsg, this))
 						continue;
-					handShaker->registerClient(clientSocket, this);
 				}
 				/*-------------------------------------------------------------------------------------*/
 				// parse the message from the interface then, execute the requested command
 				//from the map of commands, then send the response to the client.
 
 				commands->getCommandInfo(clientSocket, clientMsg);
-				commands->debugCommands();
+//				commands->debugCommands();
 				commands->executeCommand(commands, clientSocket, this);
 				/*-------------------------------------------------------------------------------------*/
 

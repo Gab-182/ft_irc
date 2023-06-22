@@ -1,12 +1,13 @@
 # include "./include/IRC.hpp"
 # include "./include/commands/ICommands.hpp"
 
+using namespace IRC;
 /*------------------------------------------------------------------------------------------------------------------*/
 // socket -> bind -> listen -> accept(pre req (master socket))
 int main(int ac,char **av) {
-	IRC::Server* ircServer = new IRC::Server();
-	IRC::HandShake* handShaker = new IRC::HandShake();
-	IRC::ICommands* commands = new IRC::ICommands();
+	Server* ircServer = new IRC::Server();
+	HandShake* handShaker = new IRC::HandShake();
+	ICommands* commands = new IRC::ICommands();
 
 
 	// Allocate memory for all the objects of the commands classes.

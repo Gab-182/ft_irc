@@ -20,7 +20,7 @@ ICommands::ICommands() : _command(), _parameters(), _commandsMap() {}
 
 /*----------------------------------------------------------------------------------------------*/
 ICommands::~ICommands() {
-	std::cout << "BOLDRED" << "ICommands destructor called" << "RESET" << std::endl;
+	std::cout << BOLDRED << "ICommands destructor called" << RESET << std::endl;
 
 	if (!this->_parameters.empty())
 		this->_parameters.clear();

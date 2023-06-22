@@ -4,6 +4,8 @@ using namespace IRC;
 /*-------------------------------------------------------------------------------------------------------------*/
 Client::Client() : _socket(), _userName(), _nickName(), _isRegistered() { }
 
+Client::Client(int socket) : _socket(socket), _userName(), _nickName(), _isRegistered() { }
+
 Client::~Client() { }
 
 /*-------------------------------------------------------------------------------------------------------------*/

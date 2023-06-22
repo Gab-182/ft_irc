@@ -15,6 +15,7 @@ namespace IRC {
 			bool _isRegistered;
 		public:
 			Client();
+			Client(int socket);
 			~Client();
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎  SETTERS && GETTERS  ❄❄︎❄❄︎❄︎❄❄︎❄❄❄︎❄*/
 			void setSocket(const int& socket);

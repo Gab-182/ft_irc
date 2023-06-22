@@ -10,7 +10,6 @@ set(SOURCES
 		src/handShake/HandShake.cpp
 		src/client/Client.cpp
         src/commands/JoinCommand.cpp
-		src/interface/IrcInterface.cpp
 		)
 
 # Set the header files for your project
@@ -19,7 +18,6 @@ set(HEADERS
 		include/Server.hpp
 		include/Client.hpp
 		include/HandShake.hpp
-		src/interface/IrcInterface.hpp
 		src/channel/Channel.cpp main.cpp src/commands/ICommands.cpp include/commands/NickCommand.hpp src/commands/NickCommand.cpp include/Commands.hpp)
 
 # Create an executable target and link the source and header files
