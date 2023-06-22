@@ -72,9 +72,9 @@ namespace IRC
 			~Server();
 		/*-----------------------------------------------------------------*/
 			// map of the all the clients on the server:
-			//	key: nickname
+			//	key: client socket
 			//	value: pointer to the client object.
-			std::map<std::string, Client*> serverClientsMap;
+			std::map<int, Client*> serverClientsMap;
 
 			// map of the all the channels on the server:
 			//	key: channel name
@@ -88,8 +88,6 @@ namespace IRC
 			int getPort();
 
 			void create_socket(char *av);
-			std::map<std::string, Client*> getServerClientsMap;
-			std::map<std::string, Channel*> getServerChannelsMap;
 			void multi_connection(IRC::HandShake* handShaker, IRC::ICommands* commands);
 	};
 }

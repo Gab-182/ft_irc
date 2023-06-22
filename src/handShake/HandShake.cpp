@@ -198,7 +198,7 @@ void HandShake::processWhoisMessage(const int& clientSocket) {
 /*-----------------------------------⟪⟪⟪⟪⟪⟪ Register Client ⟫⟫⟫⟫⟫⟫------------------------------------------------*/
 /*-------------------------------------------------------------------------------------------------------------*/
 bool HandShake::isClientRegistered(const int& clientSocket, Server* server) {
-	std::map<std::string, IRC::Client*>::iterator it;
+	std::map<int, IRC::Client*>::iterator it;
 	for (it = server->serverClientsMap.begin(); it != server->serverClientsMap.end(); it++) {
 		if (it->second->getSocket() == clientSocket)
 			return (true);
@@ -222,7 +222,7 @@ void HandShake::registerClient(const int& clientSocket, Server* server) {
 		client->setSocket(clientSocket);
 		client->setIsRegistered(true);
 
-		server->serverClientsMap[client->getNickName()] = client;
+		server->serverClientsMap[clientSocket] = client;
 		delete client;
 		DEBUG_MSG(BOLDGREEN << "Client Registered !!")
 	}
@@ -276,9 +276,10 @@ void HandShake::removeClient(int clientSocket, IRC::Server* server) {
 	if (isClientAuthenticated(clientSocket)) {
 		_clientData.erase(clientSocket); // ⟫⟫ remove client data from the  map
 		_sentMessages.erase(clientSocket); // ⟫⟫ remove client handShake messages from the map.
-		std::map<std::string, IRC::Client*>::iterator it;
+		std::map<int, IRC::Client*>::iterator it;
 		for (it = server->serverClientsMap.begin(); it != server->serverClientsMap.end(); it++) {
 			if (it->second->getSocket() == clientSocket) {
+				it->second->~Client(); // ⟫⟫ delete client object.
 				server->serverClientsMap.erase(it->first); // ⟫⟫ remove client from the clients map.
 				break;
 			}

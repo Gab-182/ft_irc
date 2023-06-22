@@ -53,9 +53,7 @@ namespace IRC {
 				std::string hostName;
 			};
 
-			std::map<int, ClientData> _clientData; // Why you created this map, try to remove it and replace it
-												   // with the map from the server class.
-
+			std::map<int, ClientData> _clientData;  // Track client data
 			std::map<int, std::set<std::string> > _sentMessages;  // Track sent messages
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		private:
