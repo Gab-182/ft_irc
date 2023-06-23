@@ -63,8 +63,10 @@ void NickCommand::executeCommand(ICommands* base,  const int& clientSocket, Serv
 			if (validNickName(clientSocket, fixedNick, server))
 				server->serverClientsMap[clientSocket]->setNickName(fixedNick);
 		}
-		else if (!validNickName(clientSocket, clientNick, server))
-			generateNickName(clientSocket, server);
+		else if (!validNickName(clientSocket, clientNick, server)) {
+			if (server->serverClientsMap[clientSocket]->getNickName().empty())
+				generateNickName(clientSocket, server);
+		}
 
 		//	Nickname accepted
 		else
