@@ -39,53 +39,47 @@
 
 #endif
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+// Forward declaration of the server class
 
 namespace IRC {
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+	// Forward declaration of the server class.
+	class Server;
+
 	class HandShake {
 		public:
-			struct ClientData {
-				std::string host;
-				std::string nickName;
-				std::string userName;
-				std::string realName;
-			};
-
-			std::map<int, ClientData> _clientData;
 			std::map<int, std::set<std::string> > _sentMessages;  // Track sent messages
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		private:
-			void debugClientData(int clientSocket);
+			static void debugClientData(int clientSocket, Server* server);
 
-			bool processPassMessage(int clientSocket, const std::string& clientPass, const int& serverPass);
-			void processUserMessage(int clientSocket, std::istringstream& lineStream);
-			void processNickMessage(int clientSocket, std::string& clientNick);
-			void processModeMessage(int clientSocket, std::istringstream& lineStream);
-			void processWhoisMessage(const int& clientSocket);
+			bool processPassMessage(int clientSocket, const std::string& clientPass, Server* server);
+			void processUserMessage(int clientSocket, std::string& userName, Server* server);
+			void processNickMessage(int clientSocket, std::string& clientNick, Server* server);
+			void processModeMessage(int clientSocket, std::istringstream& lineStream, Server* server);
+			void processWhoisMessage(const int& clientSocket, Server* server);
 
 			void sendResponse(int clientSocket, const std::string& message);
-			void welcomeMessage(int clientSocket);
+			void welcomeMessage(int clientSocket, Server* server);
 
 			// ⟫⟫ Helper function to register the authenticated client to the server.
-			bool isClientAuthenticated(const int& clientSocket);
+			static bool isClientAuthenticated(const int& clientSocket, Server* server);
 
 			// ⟫⟫ Helper functions to process USER message.
-			void generateUserName(int clientSocket);
-			bool validUserName(int clientSocket, const std::string& userName);
+			void generateUserName(int clientSocket, Server* server);
+			bool validUserName(int clientSocket, const std::string& userName, Server* server);
 
 			// ⟫⟫ Helper functions to process NICK message.
 			static std::string toLowerCase(const std::string& str);
-			void generateNickName(int clientSocket);
-			bool validNickName(int clientSocket, std::string& clientNick);
-			bool isDuplicatedNick(const int& clientSocket, const std::string& nickName);
+			void generateNickName(int clientSocket, Server* server);
+			bool validNickName(int clientSocket, std::string& clientNick, Server* server);
+			static bool isDuplicatedNick(const int& clientSocket, const std::string& nickName, Server* server);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 		public:
 			HandShake();
 			~HandShake();
-			int processHandShake(int clientSocket, std::string& clientsMessage, const int& serverPass);
-			bool isClientRegistered(const int& clientSocket, std::vector<IRC::Client>& _clients);
-			void registerClient(const int& clientSocket, std::vector<IRC::Client>& _clients);
-			void removeClient(int clientSocket);
+			int processHandShake(int clientSocket, std::string& clientsMessage, Server* server);
+			static bool isClientRegistered(const int& clientSocket, Server* server);
+			void removeClient(int clientSocket, IRC::Server* server);
 			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	};
 }

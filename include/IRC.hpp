@@ -22,7 +22,6 @@
 /*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄❄︎❄❄︎❄*/
 # include "./Server.hpp"
 # include "./HandShake.hpp"
-# include "commands/Join.hpp"
 # include "./Client.hpp"
 # include "./Channel.hpp"
 
