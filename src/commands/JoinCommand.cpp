@@ -5,9 +5,9 @@
 using namespace IRC;
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-JoinCommand::JoinCommand() : ICommands() {}
+JoinCommand::JoinCommand() : ICommands() { }
 
-JoinCommand::~JoinCommand() {}
+JoinCommand::~JoinCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client) {

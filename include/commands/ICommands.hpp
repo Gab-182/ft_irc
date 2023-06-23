@@ -1,7 +1,7 @@
 #ifndef ICOMMANDS_HPP
 #define ICOMMANDS_HPP
 
-/*---------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #include <unistd.h>
 #include <cstring>
 #include <sstream>
@@ -9,11 +9,11 @@
 #include <vector>
 #include <map>
 
-/*---------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 //#include "../Client.hpp"
 //#include "../Channel.hpp"
 
-/*---------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #define BOLDWHITE		"\033[1m\033[37m"		/* Bold White */
 #define RESET			"\033[0m"				/* Reset the color */
 #define BOLDGREEN		"\033[1m\033[32m"		/* Bold Green */
@@ -23,7 +23,7 @@
 #define BOLDMAGENTA		"\033[1m\033[35m"		/* Bold Magenta */
 #define BOLDCYAN		"\033[1m\033[36m"		/* Bold Cyan */
 
-/*---------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #define DEBUG 1
 
 #if( DEBUG == 1 )
@@ -38,7 +38,7 @@
 
 #endif
 
-/*---------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 namespace IRC {
 	// Forward declaration of the Server class.
 	class Server;
@@ -57,16 +57,17 @@ namespace IRC {
 		public:
 			ICommands();
 			virtual ~ICommands();
+			void debugCommands();
 			std::string getCommand();
 			std::vector<std::string> getParameters();
-			void debugCommands();
-			void sendResponse(int clientSocket, const std::string& message);
-			void getCommandInfo(const int& clientSocket, const std::string& clientMessage);
+
 			void registerCommands();
+			void sendResponse(int clientSocket, const std::string& message);
+			static std::string toLowerCase(const std::string& str);
+			void getCommandInfo(const int& clientSocket, const std::string& clientMessage);
 			virtual void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client);
-		/*-----------------------------------------------------------------------*/
 	};
 }
 
-/*---------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #endif //ICOMMANDS_HPP

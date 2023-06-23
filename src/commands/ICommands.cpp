@@ -67,6 +67,14 @@ void ICommands::getCommandInfo(const int& clientSocket, const std::string& clien
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+std::string ICommands::toLowerCase(const std::string& str) {
+	std::string lowerCaseStr = str;
+	std::transform(lowerCaseStr.begin(), lowerCaseStr.end(), lowerCaseStr.begin(), ::tolower);
+	return (lowerCaseStr);
+}
+
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 /**
  * @brief Register all commands in a map, so we can use them later
  * register them by doing:
@@ -77,24 +85,20 @@ void ICommands::getCommandInfo(const int& clientSocket, const std::string& clien
  * @return void
  */
 void ICommands::registerCommands() {
-	_commandsMap["JOIN"] = new IRC::JoinCommand();
-	_commandsMap["NICK"] = new IRC::NickCommand();
+	_commandsMap["join"] = new IRC::JoinCommand();
+	_commandsMap["nick"] = new IRC::NickCommand();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client) {
 	(void)base;
 
-	if (_command == "JOIN") {
-		_commandsMap["JOIN"]->executeCommand(this, clientSocket, server, client);
+	if (toLowerCase(_command) == "join") {
+		_commandsMap["join"]->executeCommand(this, clientSocket, server, client);
 	}
-	else if (_command == "NICK") {
-		_commandsMap["NICK"]->executeCommand(this, clientSocket, server, client);
+	else if (toLowerCase(_command) == "nick") {
+		_commandsMap["nick"]->executeCommand(this, clientSocket, server, client);
 	}
-
-//	else {
-//		std::cout << BOLDRED << "Command not found" << RESET << std::endl;
-//	}
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

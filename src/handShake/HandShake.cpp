@@ -156,19 +156,18 @@ void HandShake::processUserMessage(int clientSocket, std::string& userName, Serv
 /*------------------------------------------⟪⟪⟪⟪⟪⟪ PASS ⟫⟫⟫⟫⟫⟫--------------------------------------------------------*/
 bool HandShake::processPassMessage(int clientSocket, const std::string& clientPass, Server* server) {
 	if (clientPass.empty()) {
-		DEBUG_MSG(BOLDRED << "Password not found" << RESET)
 		sendResponse(clientSocket, "ERROR :No password given\r\n");
 		return (false);
 	}
 
 	else if (std::stoi(clientPass) != server->getServPass()) {
-		DEBUG_MSG(BOLDRED << "Invalid password" << RESET)
-		sendResponse(clientSocket, "ERROR :Invalid password\r\n");
+		std::string errMsg = BOLDRED "ERROR :Invalid password" RESET "\r\n";
+		sendResponse(clientSocket, errMsg);
 		return (false);
 	}
 
 	// Password accepted
-	DEBUG_MSG(BOLDGREEN << "Password accepted" << RESET)
+	sendResponse(clientSocket, BOLDGREEN "Password accepted" RESET "\r\n");
 	if (server->serverClientsMap[clientSocket] == nullptr) {
 		// Create new client object and setting the socket element.
 		server->serverClientsMap[clientSocket] = new Client(clientSocket);

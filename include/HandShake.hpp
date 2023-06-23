@@ -1,7 +1,7 @@
 #ifndef HANDSHAKE_HPP
 #define HANDSHAKE_HPP
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #include <unistd.h>
 #include <cstring>
 #include <sstream>
@@ -14,7 +14,8 @@
 #include <fstream>
 
 #include "Client.hpp"
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #define BOLDWHITE		"\033[1m\033[37m"		/* Bold White */
 #define RESET			"\033[0m"				/* Reset the color */
 #define BOLDGREEN		"\033[1m\033[32m"		/* Bold Green */
@@ -24,7 +25,7 @@
 #define BOLDMAGENTA		"\033[1m\033[35m"		/* Bold Magenta */
 #define BOLDCYAN			"\033[1m\033[36m"		/* Bold Cyan */
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #define DEBUG 1
 
 #if( DEBUG == 1 )
@@ -38,7 +39,7 @@
 #define DEBUG_MSG(msg)
 
 #endif
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 // Forward declaration of the server class
 
 namespace IRC {
@@ -48,7 +49,7 @@ namespace IRC {
 	class HandShake {
 		public:
 			std::map<int, std::set<std::string> > _sentMessages;  // Track sent messages
-			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+
 		private:
 			static void debugClientData(int clientSocket, Server* server);
 
@@ -73,16 +74,15 @@ namespace IRC {
 			void generateNickName(int clientSocket, Server* server);
 			bool validNickName(int clientSocket, std::string& clientNick, Server* server);
 			static bool isDuplicatedNick(const int& clientSocket, const std::string& nickName, Server* server);
-			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+
 		public:
 			HandShake();
 			~HandShake();
 			int processHandShake(int clientSocket, std::string& clientsMessage, Server* server);
 			static bool isClientRegistered(const int& clientSocket, Server* server);
 			void removeClient(int clientSocket, IRC::Server* server);
-			/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
 	};
 }
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄︎❄*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 
 #endif

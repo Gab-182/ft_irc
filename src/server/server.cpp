@@ -129,14 +129,9 @@ void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
 				//from the map of commands, then send the response to the client.
 
 				commands->getCommandInfo(clientSocket, clientMsg);
-
-
 //				commands->debugCommands();
 
-
-				// - from the socket that we have, we need to get the client that is associated with it:
-				// try to search for the client in the map of clients, if found, then pass the pointer
-				// to the executeCommand function.
+				// pass the client pointer to the commands, so we can know who is executing
 				std::map<int, Client*>::iterator it = this->serverClientsMap.find(clientSocket);
 				commands->executeCommand(commands, clientSocket, this, *(it->second));
 				/*-------------------------------------------------------------------------------------*/
