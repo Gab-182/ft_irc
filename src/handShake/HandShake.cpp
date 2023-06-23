@@ -59,10 +59,9 @@ std::string HandShake::toLowerCase(const std::string& str) {
 }
 
 bool HandShake::isDuplicatedNick(const int& clientSocket, const std::string& nickName, Server* server) {
-	std::map<int, Client*>::const_iterator clientFinder;
-	clientFinder = server->serverClientsMap.find(clientSocket);
-	if (clientFinder != server->serverClientsMap.end()) {
-		if (toLowerCase(clientFinder->second->getNickName()) == toLowerCase(nickName) && clientFinder->first != clientSocket)
+	std::map<int, Client*>::const_iterator it;
+	for (it = server->serverClientsMap.begin(); it != server->serverClientsMap.end() ;++it) {
+		if (toLowerCase(it->second->getNickName()) == toLowerCase(nickName) && it->first != clientSocket)
 			return (true);
 	}
 	return (false);
@@ -95,7 +94,8 @@ void HandShake::processNickMessage(int clientSocket, std::string& clientNick, Se
 	// Nickname is too long
 	if (clientNick.length() > 9) {
 		std::string fixedNick = clientNick.substr(0, 9);
-		server->serverClientsMap[clientSocket]->setNickName(fixedNick);
+		if (validNickName(clientSocket, fixedNick, server))
+			server->serverClientsMap[clientSocket]->setNickName(fixedNick);
 	}
 	else if (!validNickName(clientSocket, clientNick, server))
 		generateNickName(clientSocket, server);
@@ -165,7 +165,6 @@ void HandShake::processUserMessage(int clientSocket, std::string& userName, Serv
 /*----------------------------------------⟪⟪⟪⟪⟪⟪ PASS ⟫⟫⟫⟫⟫⟫------------------------------------------------------*/
 /*-------------------------------------------------------------------------------------------------------------*/
 bool HandShake::processPassMessage(int clientSocket, const std::string& clientPass, Server* server) {
-	DEBUG_MSG(BOLDRED << "[2] processPassMessage()")
 	if (clientPass.empty()) {
 		DEBUG_MSG(BOLDRED << "Password not found" << RESET)
 		sendResponse(clientSocket, "ERROR :No password given\r\n");
@@ -179,7 +178,6 @@ bool HandShake::processPassMessage(int clientSocket, const std::string& clientPa
 	}
 
 	// Password accepted
-	DEBUG_MSG(BOLDRED << "[3] processPassMessage()")
 	DEBUG_MSG(BOLDGREEN << "Password accepted" << RESET)
 	if (server->serverClientsMap[clientSocket] == nullptr) {
 		// Create new client object and setting the socket element.
@@ -267,8 +265,6 @@ int HandShake::processHandShake(int clientSocket, std::string& clientMsg, Server
 			sendResponse(clientSocket, "CAP * ACK :CAP END\r\n");
 
 		else if (toLowerCase(command) == "pass") {
-			DEBUG_MSG(BOLDRED << "[1] processPassMessage()")
-
 			if (!processPassMessage(clientSocket, _parameter, server))
 				return (0);
 		}

@@ -130,14 +130,30 @@ void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
 
 				commands->getCommandInfo(clientSocket, clientMsg);
 //				commands->debugCommands();
-				commands->executeCommand(commands, clientSocket, this);
+//				commands->executeCommand(commands, clientSocket, this);
 				/*-------------------------------------------------------------------------------------*/
 
 			}
 		}
-		// this->printClients();
+		 this->printClients();
 	}
  	close(this->master_socket);
 }
 
 /*-------------------------------------------------------------------------------------------------------------*/
+void Server::printClients() {
+	int i = 1;
+	std::map<int, Client*>::iterator it;
+	for (it = serverClientsMap.begin(); it != serverClientsMap.end() ;++it) {
+		if (it ->first && it->second) {
+			std::cout << BOLDBLUE << "Client: [" << BOLDGREEN << i << BOLDBLUE << "]" << std::endl;
+			std::cout << BOLDBLUE << '\t' << "Socket: [" << BOLDWHITE << it->first << BOLDBLUE << "]" << std::endl;
+			std::cout << BOLDBLUE << '\t' << "Nick: [" << BOLDWHITE << it->second->getNickName() << BOLDBLUE << "]"
+					  << std::endl;
+			std::cout << BOLDBLUE << '\t' << "User: [" << BOLDWHITE << it->second->getUserName() << BOLDBLUE << "]"
+					  << std::endl;
+			std::cout << BOLDYELLOW << "-----------------------------------------------" << std::endl;
+		}
+		i++;
+	}
+}

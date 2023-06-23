@@ -91,6 +91,7 @@ namespace IRC
 			int getPort();
 
 		/*-----------------------------------------------------------------*/
+			void printClients();
 			void create_socket(char *av);
 			void multi_connection(IRC::HandShake* handShaker, IRC::ICommands* commands);
 	};

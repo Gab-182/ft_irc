@@ -82,9 +82,10 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 	(void)base;
 	(void)server;
 
-if (_command == "JOIN") {
+	if (_command == "JOIN") {
 		_commandsMap["JOIN"]->executeCommand(this, clientSocket, server);
-	} else if (_command == "NICK") {
+	}
+	else if (_command == "NICK") {
 		_commandsMap["NICK"]->executeCommand(this, clientSocket, server);
 	}
 
