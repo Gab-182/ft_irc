@@ -10,8 +10,7 @@ namespace IRC {
 			NickCommand();
 			~NickCommand();
 			void registerCommands();
-			void executeCommand(ICommands* base, const int& clientSocket, Server* server);
-
+			void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client);
 	};
 }
 

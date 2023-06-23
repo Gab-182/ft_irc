@@ -4,28 +4,28 @@
 
 using namespace IRC;
 
-/*-------------------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 IRC::Server::Server() :
 	port(), servpass(), sockets(0), _clients(0), _channels(0), master_socket(), client_socket() { }
 
 IRC::Server::~Server(){}
 
-/*-------------------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 int IRC::Server::getPort(){return port;}
 
-/*-------------------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 int IRC::Server::getMasterSocket(){return master_socket;}
 
-/*-------------------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void IRC::Server::setMasterSocket(int socket){master_socket = socket;}
 
-/*-------------------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void IRC::Server::setServPass(int pass){servpass = pass;}
 
-/*-------------------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 int IRC::Server::getServPass() const{return servpass;}
 
-/*-------------------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 // socket -> bind -> listen 
 void IRC::Server::create_socket(char *av)
 {
@@ -53,7 +53,7 @@ void IRC::Server::create_socket(char *av)
 	}
 }
 
-/*-------------------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
  	int res;
  	int max_sd = 0;
@@ -129,8 +129,16 @@ void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
 				//from the map of commands, then send the response to the client.
 
 				commands->getCommandInfo(clientSocket, clientMsg);
+
+
 //				commands->debugCommands();
-//				commands->executeCommand(commands, clientSocket, this);
+
+
+				// - from the socket that we have, we need to get the client that is associated with it:
+				// try to search for the client in the map of clients, if found, then pass the pointer
+				// to the executeCommand function.
+				std::map<int, Client*>::iterator it = this->serverClientsMap.find(clientSocket);
+				commands->executeCommand(commands, clientSocket, this, *(it->second));
 				/*-------------------------------------------------------------------------------------*/
 
 			}
@@ -140,9 +148,10 @@ void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
  	close(this->master_socket);
 }
 
-/*-------------------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Server::printClients() {
 	int i = 1;
+	std::cout << BOLDGREEN << '\t' << '\t' << "Clients" << std::endl;
 	std::map<int, Client*>::iterator it;
 	for (it = serverClientsMap.begin(); it != serverClientsMap.end() ;++it) {
 		if (it ->first && it->second) {

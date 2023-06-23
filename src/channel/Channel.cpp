@@ -1,12 +1,16 @@
 # include "../../include/Channel.hpp"
 using namespace IRC;
 
-/*-----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 Channel::Channel() : _name(), _topic(), _key(), _mode(),
 					 _users(), _operators(), _banedUsers(), _invites() { }
 
-Channel::Channel(const std::string& name) : _name(name), _topic(), _key(), _mode(),
-											_users(), _operators(), _banedUsers(), _invites() { }
+Channel::Channel(const std::string& name, const Client& creator) : _name(name), _topic(), _key(), _mode(),
+											_users(), _operators(), _banedUsers(), _invites() {
+	// Adding creator to channel's users and operators
+	this->_users.push_back(new Client(creator));
+	this->_operators.push_back(new Client(creator));
+}
 
 Channel::~Channel() {
 	if (!_users.empty())
@@ -19,29 +23,31 @@ Channel::~Channel() {
 		_invites.clear();
 }
 
-/*-----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::setName(const std::string& name) { _name = name;}
 void Channel::setTopic(const std::string& topic) {_topic = topic;}
 void Channel::setKey(const std::string& key) {_key = key;}
 void Channel::setMode(const std::string& mode) {_mode = mode;}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 std::string Channel::getName() { return (_name); }
 std::string Channel::getTopic() { return (_topic); }
 std::string Channel::getMode() { return (_mode); }
 std::string Channel::getKey() { return (_key); }
 
-/*-----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 std::vector<Client*> Channel::getUsers() { return (_users); }
 std::vector<Client*> Channel::getOperators() { return (_operators); }
 std::vector<Client*> Channel::getBanedUsers() { return (_banedUsers); }
 std::vector<Client*> Channel::getInvites() { return (_invites); }
 
-/*-----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::addUser(const Client& user) {
 	Client* newUser = new Client(user);
 	this->_users.push_back(newUser);
 }
 
-/*-----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::removeUser(Client user) {
 	std::vector<Client*>::iterator toDelete;
 
@@ -53,13 +59,13 @@ void Channel::removeUser(Client user) {
 	}
 }
 
-/*-----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::addOperator(const Client& user) {
 	Client* newUser = new Client(user);
 	this->_operators.push_back(newUser);
 }
 
-/*-----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::removeOperator(Client user) {
 	std::vector<Client*>::iterator toDelete;
 
@@ -71,13 +77,13 @@ void Channel::removeOperator(Client user) {
 	}
 }
 
-/*-----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::banUser(const Client& user) {
 	Client* newUser = new Client(user);
 	this->_banedUsers.push_back(newUser);
 }
 
-/*-----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::unbanUser(Client user) {
 	std::vector<Client*>::iterator toDelete;
 
@@ -89,13 +95,13 @@ void Channel::unbanUser(Client user) {
 	}
 }
 
-/*-----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::inviteUser(const Client& user) {
 	Client* newUser = new Client(user);
 	this->_invites.push_back(newUser);
 }
 
-/*-----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::removeInvitee(Client user) {
 	std::vector<Client*>::iterator toDelete;
 
@@ -107,4 +113,4 @@ void Channel::removeInvitee(Client user) {
 	}
 }
 
-/*-----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/

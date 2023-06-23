@@ -1,11 +1,16 @@
 #include "../../include/commands/ICommands.hpp"
+
+// For the forward declaration of the classes
+#include "../../include/Client.hpp"
 #include "../../include/Server.hpp"
 
+// The commands
 #include "../../include/commands/JoinCommand.hpp"
 #include "../../include/commands/NickCommand.hpp"
+
 using namespace IRC;
 
-/*----------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::debugCommands() {
 	std::cout << BOLDGREEN << "Command name: " << RESET << this->_command << std::endl;
 	std::cout << BOLDGREEN << "Command parameters: " << RESET << std::endl;
@@ -15,10 +20,10 @@ void ICommands::debugCommands() {
 	}
 }
 
-/*----------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 ICommands::ICommands() : _command(), _parameters(), _commandsMap() {}
 
-/*----------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 ICommands::~ICommands() {
 	std::cout << BOLDRED << "ICommands destructor called" << RESET << std::endl;
 
@@ -28,23 +33,23 @@ ICommands::~ICommands() {
 		this->_commandsMap.clear();
 }
 
-/*----------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 std::string ICommands::getCommand() {
 	return this->_command;
 }
 
-/*----------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 std::vector<std::string> ICommands::getParameters() {
 	return this->_parameters;
 }
 
-/*----------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::sendResponse(int clientSocket, const std::string& message) {
 	if (send(clientSocket, message.c_str(), message.size(), 0) == -1)
 		DEBUG_MSG("Failed to send message to the client: " << message)
 }
 
-/*----------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::getCommandInfo(const int& clientSocket, const std::string& clientMessage) {
 	(void)clientSocket;
 	std::string messageLine, command, parameter;
@@ -61,7 +66,7 @@ void ICommands::getCommandInfo(const int& clientSocket, const std::string& clien
 	}
 }
 
-/*------------------------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 /**
  * @brief Register all commands in a map, so we can use them later
  * register them by doing:
@@ -76,17 +81,15 @@ void ICommands::registerCommands() {
 	_commandsMap["NICK"] = new IRC::NickCommand();
 }
 
-/*----------------------------------------------------------------------------------------------*/
-void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server* server) {
-	(void)clientSocket;
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client) {
 	(void)base;
-	(void)server;
 
 	if (_command == "JOIN") {
-		_commandsMap["JOIN"]->executeCommand(this, clientSocket, server);
+		_commandsMap["JOIN"]->executeCommand(this, clientSocket, server, client);
 	}
 	else if (_command == "NICK") {
-		_commandsMap["NICK"]->executeCommand(this, clientSocket, server);
+		_commandsMap["NICK"]->executeCommand(this, clientSocket, server, client);
 	}
 
 //	else {
@@ -94,4 +97,4 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 //	}
 }
 
-/*----------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/

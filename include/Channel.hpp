@@ -24,7 +24,7 @@ namespace IRC {
 		/*---------------------------------------------------------------------------------------------*/
 		public:
 			Channel();
-			Channel(const std::string& name);
+			Channel(const std::string& name, const Client& creator);
 			~Channel();
 		public:
 			void addUser(const Client& user);

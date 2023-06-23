@@ -17,6 +17,8 @@ namespace IRC {
 			Client();
 			Client(int socket);
 			~Client();
+			Client(const Client& other);
+			Client& operator=(const Client& other);
 		/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎  SETTERS && GETTERS  ❄❄︎❄❄︎❄︎❄❄︎❄❄❄︎❄*/
 			void setSocket(const int& socket);
 			void setUserName(const std::string& userName);

@@ -1,45 +1,42 @@
 # include "../../include/commands/JoinCommand.hpp"
+#include "../../include/Client.hpp"
+# include "../../include/Server.hpp"
+
 using namespace IRC;
 
-/*————————————————————————————--------------------------------------------------------------———————————————————————————*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 JoinCommand::JoinCommand() : ICommands() {}
 
 JoinCommand::~JoinCommand() {}
 
-/*————————————————————————————--------------------------------------------------------------———————————————————————————*/
-void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server) {
-	(void)server;
-
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client) {
 	// If the command 'join' has the correct parameters, then we can
 	// execute the command and join or create the desired channel.
 	if (base->getParameters().size() >= 1) {
 		std::string channelName = base->getParameters()[0];
 		if (channelName[0] == '#') {
 			channelName = channelName.substr(1); // Remove the '#' character from the channel name.
-			std::cout << "Channel name: " << channelName << std::endl;
 		/*-----------------------------------------------------------------------------------------*/
-//			// check if the channel already exists
-//			bool channelExists = false;
-//
-//			for (auto& channel : channels) {
-//				if (channel.getName() == channelName) {
-//					channelExists = true;
-//					break;
-//				}
-//			}
-//			// If the channel doesn't exist, then we create it.
-//			if (!channelExists) {
-//				Channel newChannel(channelName);
-//				channels.push_back(newChannel);
-//			}
-//			// We add the client to the channel.
-//			for (auto& channel : channels) {
-//				if (channel.getName() == channelName) {
-//					channel.addOperator(clientSocket);
-//					break;
-//				}
-//			}
+			// If the channel doesn't exist, then we create it.
+			if (server->serverChannelsMap.find(channelName) == server->serverChannelsMap.end()) {
+				Channel* newChannel = new Channel(channelName, client);
 
+				DEBUG_MSG("Channel: [" << channelName << "] has been created."
+							<< std::endl << "Adding user: [" << client.getNickName() << "] to the channel.")
+
+				// save the channel in the server's channels map.
+				server->serverChannelsMap.insert(std::pair<std::string, Channel*>(channelName, newChannel));
+				DEBUG_MSG("Channel " << channelName << " has been added to the server's channels map.")
+			}
+			// else if the channel is already created, then we add the user to the channel.
+			else {
+
+				DEBUG_MSG("Channel " << channelName << " already exists." << std::endl
+									 << "Adding user: [" << client.getNickName() << "] to the channel.")
+
+				server->serverChannelsMap[channelName]->addUser(client);
+			}
 		/*-----------------------------------------------------------------------------------------*/
 			// We send a response to the client.
 			std::string response = "Successfully joined channel: " + channelName;
@@ -56,4 +53,4 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 	// Cleaning the parameters vector before adding new ones to it.
 	base->getParameters().clear();
 }
-/*————————————————————————————--------------------------------------------------------------———————————————————————————*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/

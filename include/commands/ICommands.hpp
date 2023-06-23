@@ -19,9 +19,9 @@
 #define BOLDGREEN		"\033[1m\033[32m"		/* Bold Green */
 #define BOLDYELLOW		"\033[1m\033[33m"		/* Bold Yellow */
 #define BOLDRED			"\033[1m\033[31m"		/* Bold Red */
-#define BOLDBLUE			"\033[1m\033[34m"		/* Bold Blue */
+#define BOLDBLUE		"\033[1m\033[34m"		/* Bold Blue */
 #define BOLDMAGENTA		"\033[1m\033[35m"		/* Bold Magenta */
-#define BOLDCYAN			"\033[1m\033[36m"		/* Bold Cyan */
+#define BOLDCYAN		"\033[1m\033[36m"		/* Bold Cyan */
 
 /*---------------------------------------------------------------------------------------------------*/
 #define DEBUG 1
@@ -42,6 +42,8 @@
 namespace IRC {
 	// Forward declaration of the Server class.
 	class Server;
+	// Forward declaration of the Client class.
+	class Client;
 
 	class ICommands {
 		/*-----------------------------------------------------------------------*/
@@ -61,7 +63,7 @@ namespace IRC {
 			void sendResponse(int clientSocket, const std::string& message);
 			void getCommandInfo(const int& clientSocket, const std::string& clientMessage);
 			void registerCommands();
-			virtual void executeCommand(ICommands* base, const int& clientSocket, Server* server);
+			virtual void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client);
 		/*-----------------------------------------------------------------------*/
 	};
 }
