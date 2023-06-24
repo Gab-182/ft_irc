@@ -45,8 +45,6 @@ bool NickCommand::validNickName(int clientSocket, std::string& clientNick, Serve
 		sendResponse(clientSocket, errMsg);
 		return (false);
 	}
-
-	// Nickname is valid
 	return (true);
 }
 
@@ -81,4 +79,5 @@ void NickCommand::executeCommand(ICommands* base,  const int& clientSocket, Serv
 	// Cleaning the parameters vector before adding new ones to it.
 	base->getParameters().clear();
 }
+
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

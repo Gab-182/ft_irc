@@ -11,6 +11,8 @@ SRC = main.cpp \
 		src/commands/ICommands.cpp \
 		src/commands/JoinCommand.cpp \
 		src/commands/NickCommand.cpp \
+		src/commands/UserCommand.cpp \
+		src/commands/WhoisCommand.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 

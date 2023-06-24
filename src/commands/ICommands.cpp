@@ -7,6 +7,8 @@
 // The commands
 #include "../../include/commands/JoinCommand.hpp"
 #include "../../include/commands/NickCommand.hpp"
+#include "../../include/commands/UserCommand.hpp"
+#include "../../include/commands/WhoisCommand.hpp"
 
 using namespace IRC;
 
@@ -44,12 +46,6 @@ std::vector<std::string> ICommands::getParameters() {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void ICommands::sendResponse(int clientSocket, const std::string& message) {
-	if (send(clientSocket, message.c_str(), message.size(), 0) == -1)
-		DEBUG_MSG("Failed to send message to the client: " << message)
-}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::getCommandInfo(const int& clientSocket, const std::string& clientMessage) {
 	(void)clientSocket;
 	std::string messageLine, command, parameter;
@@ -67,12 +63,17 @@ void ICommands::getCommandInfo(const int& clientSocket, const std::string& clien
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void ICommands::sendResponse(int clientSocket, const std::string& message) {
+	if (send(clientSocket, message.c_str(), message.size(), 0) == -1)
+		DEBUG_MSG("Failed to send message to the client: " << message)
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 std::string ICommands::toLowerCase(const std::string& str) {
 	std::string lowerCaseStr = str;
 	std::transform(lowerCaseStr.begin(), lowerCaseStr.end(), lowerCaseStr.begin(), ::tolower);
 	return (lowerCaseStr);
 }
-
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 /**
@@ -87,6 +88,8 @@ std::string ICommands::toLowerCase(const std::string& str) {
 void ICommands::registerCommands() {
 	_commandsMap["join"] = new IRC::JoinCommand();
 	_commandsMap["nick"] = new IRC::NickCommand();
+	_commandsMap["user"] = new IRC::UserCommand();
+	_commandsMap["whois"] = new IRC::UserCommand();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -98,6 +101,12 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 	}
 	else if (toLowerCase(_command) == "nick") {
 		_commandsMap["nick"]->executeCommand(this, clientSocket, server, client);
+	}
+	else if (toLowerCase(_command) == "user") {
+		_commandsMap["user"]->executeCommand(this, clientSocket, server, client);
+	}
+	else if (toLowerCase(_command) == "whois") {
+		_commandsMap["whois"]->executeCommand(this, clientSocket, server, client);
 	}
 }
 

@@ -18,7 +18,7 @@ set(HEADERS
 		include/Server.hpp
 		include/Client.hpp
 		include/HandShake.hpp
-		src/channel/Channel.cpp main.cpp src/commands/ICommands.cpp include/commands/NickCommand.hpp src/commands/NickCommand.cpp include/Commands.hpp)
+		src/channel/Channel.cpp main.cpp src/commands/ICommands.cpp include/commands/NickCommand.hpp src/commands/NickCommand.cpp include/Commands.hpp src/commands/UserCommand.cpp src/commands/WhoisCommand.cpp include/commands/WhoisCommand.hpp)
 
 # Create an executable target and link the source and header files
 add_executable(${SOURCES} ${HEADERS})

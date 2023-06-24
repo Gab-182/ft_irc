@@ -1,18 +1,17 @@
-#ifndef JOINCOMMAND_HPP
-#define JOINCOMMAND_HPP
+#ifndef WHOISCOMMAND_HPP
+#define WHOISCOMMAND_HPP
 
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #include "ICommands.hpp"
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 namespace IRC {
-	class JoinCommand : public ICommands {
+	class WhoisCommand : public ICommands {
 		public:
-			JoinCommand();
-			~JoinCommand();
-			void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client);
+			WhoisCommand();
+			~WhoisCommand();
+			void executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client);
 	};
-}
+};
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-#endif //JOIN
+#endif //WHOISCOMMAND_HPP
