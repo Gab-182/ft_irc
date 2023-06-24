@@ -7,6 +7,9 @@
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 namespace IRC {
+	// Forward declarations:
+	class Server;
+
 	class Client {
 		private:
 			int _socket;
@@ -30,6 +33,8 @@ namespace IRC {
 			std::string getUserName();
 			std::string getNickName();
 		/*--------------------------------------------------------*/
+			static bool isClientAuthenticated(const int& clientSocket, Server* server);
+			static bool isClientRegistered(const int& clientSocket, Server* server);
 	};
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

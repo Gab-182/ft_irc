@@ -13,8 +13,6 @@
 #include <sys/socket.h>
 #include <fstream>
 
-#include "Client.hpp"
-
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #define BOLDWHITE		"\033[1m\033[37m"		/* Bold White */
 #define RESET			"\033[0m"				/* Reset the color */
@@ -43,8 +41,9 @@
 // Forward declaration of the server class
 
 namespace IRC {
-	// Forward declaration of the server class.
+	// Forward declarations:
 	class Server;
+	class Client;
 
 	class HandShake {
 		public:
@@ -62,9 +61,6 @@ namespace IRC {
 			void sendResponse(int clientSocket, const std::string& message);
 			void welcomeMessage(int clientSocket, Server* server);
 
-			// ⟫⟫ Helper function to register the authenticated client to the server.
-			static bool isClientAuthenticated(const int& clientSocket, Server* server);
-
 			// ⟫⟫ Helper functions to process USER message.
 			void generateUserName(int clientSocket, Server* server);
 			bool validUserName(int clientSocket, const std::string& userName, Server* server);
@@ -79,7 +75,6 @@ namespace IRC {
 			HandShake();
 			~HandShake();
 			int processHandShake(int clientSocket, std::string& clientsMessage, Server* server);
-			static bool isClientRegistered(const int& clientSocket, Server* server);
 			void removeClient(int clientSocket, IRC::Server* server);
 	};
 }

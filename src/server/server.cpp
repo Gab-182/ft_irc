@@ -1,4 +1,5 @@
 #include "../../include/Server.hpp"
+#include "../../include/Client.hpp"
 #include "../../include/HandShake.hpp"
 #include "../../include/commands/ICommands.hpp"
 
@@ -57,7 +58,7 @@ void IRC::Server::create_socket(char *av)
 bool Server::respondToClient(const int& clientSocket, std::string& clientMsg, HandShake* handShaker, ICommands* commands) {
 	DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
 
-	if (!HandShake::isClientRegistered(clientSocket, this)) {
+	if (!Client::isClientAuthenticated(clientSocket, this)) {
 		if (!handShaker->processHandShake(clientSocket, clientMsg, this))
 			return (false);
 	}

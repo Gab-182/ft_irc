@@ -1,5 +1,6 @@
 #include "../../include/HandShake.hpp"
 #include "../../include/Server.hpp"
+#include "../../include/Client.hpp"
 
 using namespace IRC;
 
@@ -13,7 +14,7 @@ HandShake::~HandShake() {
 
 /*-----------------------------------------⟪⟪⟪⟪⟪⟪ Debugging ⟫⟫⟫⟫⟫⟫----------------------------------------------------*/
 void HandShake::debugClientData(int clientSocket, Server* server) {
-	if (isClientAuthenticated(clientSocket, server)) {
+	if (Client::isClientAuthenticated(clientSocket, server)) {
 		std::cout << "-------------------------------------------------------------" << std::endl;
 		DEBUG_MSG(BOLDMAGENTA << "Connected client Data: " << std::endl << BOLDBLUE
 							  << '\t' << " Socket [" << clientSocket << "]" << std::endl
@@ -191,7 +192,7 @@ void HandShake::processModeMessage(int clientSocket, std::istringstream& lineStr
 
 /*-----------------------------------------⟪⟪⟪⟪⟪⟪ WHOIS ⟫⟫⟫⟫⟫⟫--------------------------------------------------------*/
 void HandShake::processWhoisMessage(const int& clientSocket, Server* server) {
-	if (isClientAuthenticated(clientSocket, server)) {
+	if (Client::isClientAuthenticated(clientSocket, server)) {
 		std::string response ="311 "+ server->serverClientsMap[clientSocket]->getNickName()
 								+ " " + server->serverClientsMap[clientSocket]->getUserName()
 								+ " * :" + server->serverClientsMap[clientSocket]->getUserName()
@@ -202,28 +203,6 @@ void HandShake::processWhoisMessage(const int& clientSocket, Server* server) {
 		sendResponse(clientSocket, "401 "
 										+ server->serverClientsMap[clientSocket]->getNickName()
 										+ " :No such nick/channel\r\n");
-}
-
-/*-------------------------------------⟪⟪⟪⟪⟪⟪ Register Client ⟫⟫⟫⟫⟫⟫--------------------------------------------------*/
-bool HandShake::isClientRegistered(const int& clientSocket, Server* server) {
-	std::map<int, IRC::Client*>::iterator it;
-	for (it = server->serverClientsMap.begin(); it != server->serverClientsMap.end(); it++) {
-		// First check if the client exist and allocated correctly.
-		if (it->second) {
-			// Second, compare the sockets.
-			if (it->second->getSocket() == clientSocket)
-				return (true);
-		}
-	}
-	return (false);
-}
-
-bool HandShake::isClientAuthenticated(const int& clientSocket, Server* server) {
-	if (server->serverClientsMap[clientSocket] != nullptr
-		&& !server->serverClientsMap[clientSocket]->getNickName().empty()
-		&& !server->serverClientsMap[clientSocket]->getUserName().empty())
-		return (true);
-	return (false);
 }
 
 /*-----------------------------------------⟪⟪⟪⟪⟪⟪ HandShake ⟫⟫⟫⟫⟫⟫----------------------------------------------------*/
@@ -248,10 +227,10 @@ int HandShake::processHandShake(int clientSocket, std::string& clientMsg, Server
 		else if (toLowerCase(command) == "pass") {
 			// If the client entered the server's pass correctly then proceed ->
 			if (processPassMessage(clientSocket, _parameter, server)) {
-				if (toLowerCase(command) == "nick")
-					processNickMessage(clientSocket, _parameter, server);
+//				if (toLowerCase(command) == "nick")
+//					processNickMessage(clientSocket, _parameter, server);
 				/*-------------------------------------------------------*/
-				else if (toLowerCase(command) == "user")
+				if (toLowerCase(command) == "user")
 					processUserMessage(clientSocket, _parameter, server);
 				/*-------------------------------------------------------*/
 				else if (toLowerCase(command) == "mode")
@@ -274,14 +253,14 @@ int HandShake::processHandShake(int clientSocket, std::string& clientMsg, Server
 		}
 	}
 
-	if (isClientAuthenticated(clientSocket, server))
+	if (Client::isClientRegistered(clientSocket, server))
 		welcomeMessage(clientSocket, server);
 	debugClientData(clientSocket, server);
 	return (1);
 }
 
 void HandShake::removeClient(int clientSocket, IRC::Server* server) {
-	if (isClientAuthenticated(clientSocket, server)) {
+	if (Client::isClientRegistered(clientSocket, server)) {
 
 		// Delete the client from the serverClientsMap in the server
 		std::map<int, Client*>::iterator toDelete;

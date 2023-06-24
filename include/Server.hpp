@@ -20,7 +20,6 @@
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #include "./Channel.hpp"
-#include "./Client.hpp"
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #define BOLDWHITE		"\033[1m\033[37m"		/* Bold White */
@@ -51,10 +50,10 @@
 
 namespace IRC
 {
-	// Forward declaration of the HandShake class
+	// Forward declarations:
 	class HandShake;
-	// Forward declaration of the ICommands class
 	class ICommands;
+	class Client;
 
 	class Server {
 		/*-----------------------------------------------------------------*/
