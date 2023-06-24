@@ -54,6 +54,23 @@ void IRC::Server::create_socket(char *av)
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+bool Server::respondToClient(const int& clientSocket, std::string& clientMsg, HandShake* handShaker, ICommands* commands) {
+	DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
+
+	if (!HandShake::isClientRegistered(clientSocket, this)) {
+		if (!handShaker->processHandShake(clientSocket, clientMsg, this))
+			return (false);
+	}
+	else {
+		commands->getCommandInfo(clientSocket, clientMsg);
+//		commands->debugCommands();
+		std::map<int, Client *>::iterator it = this->serverClientsMap.find(clientSocket);
+		commands->executeCommand(commands, clientSocket, this, *(it->second));
+	}
+	return (true);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
  	int res;
  	int max_sd = 0;
@@ -112,30 +129,8 @@ void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
  				buffer[res] = '\0';
  				clientMsg += buffer;
  				std::memset(buffer, 0, 1024);
-
-				/*-------------------------------------------------------------------------------------*/
-				// Check if client is registered, if not, process handshake and register client
-				DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
-				/*-------------------------------------------------------------------------------------*/
-				// parse the client message, then check if username and nick and pass are correct,
-				// if so, that mean that the client is authenticated and can proceed to the next step.
-
-				if (!HandShake::isClientRegistered(clientSocket, this)) {
-					if (!handShaker->processHandShake(clientSocket, clientMsg, this))
-						continue;
-				}
-				/*-------------------------------------------------------------------------------------*/
-				// parse the message from the interface then, execute the requested command
-				//from the map of commands, then send the response to the client.
-
-				commands->getCommandInfo(clientSocket, clientMsg);
-//				commands->debugCommands();
-
-				// pass the client pointer to the commands, so we can know who is executing
-				std::map<int, Client*>::iterator it = this->serverClientsMap.find(clientSocket);
-				commands->executeCommand(commands, clientSocket, this, *(it->second));
-				/*-------------------------------------------------------------------------------------*/
-
+				if (!respondToClient(clientSocket, clientMsg, handShaker, commands))
+					continue;
 			}
 		}
 		 this->printClients();
@@ -161,3 +156,5 @@ void Server::printClients() {
 		i++;
 	}
 }
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/

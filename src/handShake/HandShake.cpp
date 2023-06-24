@@ -143,14 +143,13 @@ bool HandShake::validUserName(int clientSocket, const std::string& userName, Ser
 void HandShake::processUserMessage(int clientSocket, std::string& userName, Server* server) {
 	if (!validUserName(clientSocket, userName, server))
 		generateUserName(clientSocket, server);
-		//	Username accepted
+	//	Username accepted
 	else
 		server->serverClientsMap[clientSocket]->setUserName(userName);
 
 	sendResponse(clientSocket, "UserName " +
 								server->serverClientsMap[clientSocket]->getUserName()
 								+ "\r\n");
-//	_clientData[clientSocket].host = host;
 }
 
 /*------------------------------------------⟪⟪⟪⟪⟪⟪ PASS ⟫⟫⟫⟫⟫⟫--------------------------------------------------------*/
@@ -222,9 +221,8 @@ bool HandShake::isClientRegistered(const int& clientSocket, Server* server) {
 bool HandShake::isClientAuthenticated(const int& clientSocket, Server* server) {
 	if (server->serverClientsMap[clientSocket] != nullptr
 		&& !server->serverClientsMap[clientSocket]->getNickName().empty()
-		&& !server->serverClientsMap[clientSocket]->getUserName().empty()) {
+		&& !server->serverClientsMap[clientSocket]->getUserName().empty())
 		return (true);
-	}
 	return (false);
 }
 
@@ -241,28 +239,41 @@ int HandShake::processHandShake(int clientSocket, std::string& clientMsg, Server
 		/* ⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪⟪ Messages ⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫⟫*/
 		if (toLowerCase(command) == "cap" && toLowerCase(_parameter) == "ls")
 			sendResponse(clientSocket, "CAP * ACK :302 CAP LS\r\n");
+			/*---------------------------------------------------------------------------*/
 
 		else if (toLowerCase(command) == "cap" && toLowerCase(_parameter) == "end")
 			sendResponse(clientSocket, "CAP * ACK :CAP END\r\n");
+		/*---------------------------------------------------------------------------*/
 
 		else if (toLowerCase(command) == "pass") {
-			if (!processPassMessage(clientSocket, _parameter, server))
+			// If the client entered the server's pass correctly then proceed ->
+			if (processPassMessage(clientSocket, _parameter, server)) {
+				if (toLowerCase(command) == "nick")
+					processNickMessage(clientSocket, _parameter, server);
+				/*-------------------------------------------------------*/
+				else if (toLowerCase(command) == "user")
+					processUserMessage(clientSocket, _parameter, server);
+				/*-------------------------------------------------------*/
+				else if (toLowerCase(command) == "mode")
+					processModeMessage(clientSocket, lineStream, server);
+				/*-------------------------------------------------------*/
+				else if (toLowerCase(command) == "ping")
+					sendResponse(clientSocket, "PONG :ircserv\r\n");
+				/*-------------------------------------------------------*/
+				else if (toLowerCase(command) == "whois")
+					processWhoisMessage(clientSocket, server);
+			}
+			else
 				return (0);
 		}
-		else if (toLowerCase(command) == "nick")
-			processNickMessage(clientSocket, _parameter, server);
+		/*---------------------------------------------------------------------------*/
 
-		else if (toLowerCase(command) == "user")
-			processUserMessage(clientSocket, _parameter, server);
-
-		else if (toLowerCase(command) == "mode")
-			processModeMessage(clientSocket, lineStream, server);
-
-		else if (toLowerCase(command) == "ping")
-			sendResponse(clientSocket, "PONG :ircserv\r\n");
-		else if (toLowerCase(command) == "whois")
-			processWhoisMessage(clientSocket, server);
+		else {
+			std::string passMsg = BOLDYELLOW "WARNING: " BOLDWHITE "please enter server's password first !!!" RESET "\r\n";
+			sendResponse(clientSocket, passMsg);
+		}
 	}
+
 	if (isClientAuthenticated(clientSocket, server))
 		welcomeMessage(clientSocket, server);
 	debugClientData(clientSocket, server);
