@@ -1,6 +1,5 @@
 #include "../../include/Server.hpp"
 #include "../../include/Client.hpp"
-#include "../../include/HandShake.hpp"
 #include "../../include/commands/ICommands.hpp"
 
 using namespace IRC;
@@ -55,24 +54,20 @@ void IRC::Server::create_socket(char *av)
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-bool Server::respondToClient(const int& clientSocket, std::string& clientMsg, HandShake* handShaker, ICommands* commands) {
+void Server::respondToClient(const int& clientSocket, std::string& clientMsg, ICommands* commands) {
 	DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
+	commands->getCommandInfo(clientSocket, clientMsg);
+	std::map<int, Client *>::iterator it = this->serverClientsMap.find(clientSocket);
+	commands->executeCommand(commands, clientSocket, this, *(it->second));
 
-	if (!Client::isClientAuthenticated(clientSocket, this)) {
-		if (!handShaker->processHandShake(clientSocket, clientMsg, this))
-			return (false);
-	}
-	else {
-		commands->getCommandInfo(clientSocket, clientMsg);
-//		commands->debugCommands();
-		std::map<int, Client *>::iterator it = this->serverClientsMap.find(clientSocket);
-		commands->executeCommand(commands, clientSocket, this, *(it->second));
-	}
-	return (true);
+	// TODO: Don't send the welcome message each time.
+	if (Client::isClientRegistered(clientSocket, this))
+		ICommands::welcomeMessage(clientSocket, this);
+
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
+void IRC::Server::multi_connection(ICommands* commands) {
  	int res;
  	int max_sd = 0;
  	char buffer[1024];
@@ -121,7 +116,7 @@ void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
  			if (FD_ISSET(clientSocket, &fdset)) {
  				if ((res = recv(clientSocket, buffer, 1024, 0)) == 0) {
 					DEBUG_MSG("Client disconnected from socket")
-					handShaker->removeClient(clientSocket, this);
+					Client::removeClient(clientSocket, this);
  					close(clientSocket);
  					this->sockets.erase(this->sockets.begin() + i);
  					continue; // Continue to the next iteration
@@ -130,8 +125,7 @@ void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
  				buffer[res] = '\0';
  				clientMsg += buffer;
  				std::memset(buffer, 0, 1024);
-				if (!respondToClient(clientSocket, clientMsg, handShaker, commands))
-					continue;
+				respondToClient(clientSocket, clientMsg, commands);
 			}
 		}
 		 this->printClients();

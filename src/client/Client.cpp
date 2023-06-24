@@ -38,6 +38,12 @@ std::string Client::getUserName() { return (this->_userName); }
 std::string Client::getNickName() { return (this->_nickName); }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Client::sendResponse(int clientSocket, const std::string& message) {
+	if (send(clientSocket, message.c_str(), message.size(), 0) == -1)
+		DEBUG_MSG("Failed to send message to the client: " << message)
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 bool Client::isClientAuthenticated(const int& clientSocket, Server* server) {
 	std::map<int, IRC::Client*>::iterator it;
 	for (it = server->serverClientsMap.begin(); it != server->serverClientsMap.end(); it++) {
@@ -58,6 +64,28 @@ bool Client::isClientRegistered(const int& clientSocket, Server* server) {
 		&& !server->serverClientsMap[clientSocket]->getUserName().empty())
 		return (true);
 	return (false);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Client::removeClient(int clientSocket, IRC::Server* server) {
+	if (Client::isClientRegistered(clientSocket, server)) {
+
+		// Delete the client from the serverClientsMap in the server
+		std::map<int, Client*>::iterator toDelete;
+		toDelete = server->serverClientsMap.find(clientSocket);
+		if (toDelete != server->serverClientsMap.end()) {
+			// First delete the client object
+			delete(toDelete->second);
+			// second erase the element from the map
+			server->serverClientsMap.erase(toDelete);
+		}
+
+		DEBUG_MSG( BOLDRED << "Disconnecting client [" << clientSocket << "]"<< RESET)
+		std::string removalMsg = "QUIT :Client disconnected\r\n";
+		sendResponse(clientSocket, removalMsg);
+	}
+	else
+		DEBUG_MSG( BOLDRED << "Client [" << clientSocket << "] not found" << RESET)
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

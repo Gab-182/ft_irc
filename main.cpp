@@ -2,11 +2,11 @@
 # include "./include/commands/ICommands.hpp"
 
 using namespace IRC;
-/*------------------------------------------------------------------------------------------------------------------*/
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 // socket -> bind -> listen -> accept(pre req (master socket))
 int main(int ac,char **av) {
 	Server* ircServer = new IRC::Server();
-	HandShake* handShaker = new IRC::HandShake();
 	ICommands* commands = new IRC::ICommands();
 
 
@@ -17,7 +17,7 @@ int main(int ac,char **av) {
 	if(ac == 3) {
 		ircServer->setServPass(atoi(av[2]));
 		ircServer->create_socket(av[1]);
-		ircServer->multi_connection(handShaker, commands);
+		ircServer->multi_connection(commands);
 	}
 	else {
 		std::cout << "Please provide the following arguments:" << std::endl;
@@ -25,14 +25,11 @@ int main(int ac,char **av) {
 		std::cout << "  <password> : The password for the server." << std::endl;
 	}
 
-	// Deleting all the objects created in the main function to prevent memory leaks.
-	// TODO: You should properly delete all the objects of the commands classes.
-
+	commands->unRegisterCommands();
 	delete commands;
-	delete handShaker;
 	delete ircServer;
 
 	return (0);
 }
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/

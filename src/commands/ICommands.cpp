@@ -9,13 +9,17 @@
 #include "../../include/commands/NickCommand.hpp"
 #include "../../include/commands/UserCommand.hpp"
 #include "../../include/commands/WhoisCommand.hpp"
+#include "../../include/commands/ModeCommand.hpp"
+#include "../../include/commands/PassCommand.hpp"
+#include "../../include/commands/PingCommand.hpp"
+#include "../../include/commands/CapCommand.hpp"
+
 
 using namespace IRC;
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::debugCommands() {
-	std::cout << BOLDGREEN << "Command name: " << RESET << this->_command << std::endl;
-	std::cout << BOLDGREEN << "Command parameters: " << RESET << std::endl;
+	std::cout << BOLDYELLOW << "Command parameters: " << RESET << std::endl;
 	std::vector<std::string>::iterator it;
 	for(it = this->_parameters.begin(); it != this->_parameters.end(); it++) {
 		std::cout << BOLDWHITE << *it << RESET << std::endl;
@@ -46,26 +50,17 @@ std::vector<std::string> ICommands::getParameters() {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void ICommands::getCommandInfo(const int& clientSocket, const std::string& clientMessage) {
-	(void)clientSocket;
-	std::string messageLine, command, parameter;
-	std::istringstream messageStream(clientMessage);
-
-	messageStream >> command;
-	this->_command = command;
-
-	// Cleaning the parameters vector before adding new ones to it.
-	if (_parameters.size() > 0)
-		this->_parameters.clear();
-	while (messageStream >> parameter) {
-		this->_parameters.push_back(parameter);
-	}
-}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::sendResponse(int clientSocket, const std::string& message) {
 	if (send(clientSocket, message.c_str(), message.size(), 0) == -1)
 		DEBUG_MSG("Failed to send message to the client: " << message)
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void ICommands::welcomeMessage(int clientSocket, Server* server) {
+	std::string welcomeMsg = ":"
+							 + server->serverClientsMap[clientSocket]->getNickName()
+							 + " 001 :Welcome to the Internet Relay Network\r\n";
+	sendResponse(clientSocket, welcomeMsg);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -73,6 +68,23 @@ std::string ICommands::toLowerCase(const std::string& str) {
 	std::string lowerCaseStr = str;
 	std::transform(lowerCaseStr.begin(), lowerCaseStr.end(), lowerCaseStr.begin(), ::tolower);
 	return (lowerCaseStr);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void ICommands::getCommandInfo(const int& clientSocket, const std::string& clientMessage) {
+	(void)clientSocket;
+
+	std::string messageLine, parameter;
+	std::istringstream messageStream(clientMessage);
+
+	while (std::getline(messageStream, messageLine)) {
+		std::istringstream lineStream(messageLine);
+		lineStream >> this->_command;
+		if (_parameters.size() > 0)
+			this->_parameters.clear();
+		while (lineStream >> parameter)
+			this->_parameters.push_back(parameter);
+	}
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -85,11 +97,29 @@ std::string ICommands::toLowerCase(const std::string& str) {
  * @param commands map of commands to register
  * @return void
  */
+
 void ICommands::registerCommands() {
 	_commandsMap["join"] = new IRC::JoinCommand();
 	_commandsMap["nick"] = new IRC::NickCommand();
 	_commandsMap["user"] = new IRC::UserCommand();
-	_commandsMap["whois"] = new IRC::UserCommand();
+	_commandsMap["whois"] = new IRC::WhoisCommand();
+	_commandsMap["mode"] = new IRC::ModeCommand();
+	_commandsMap["pass"] = new IRC::PassCommand();
+	_commandsMap["ping"] = new IRC::PingCommand();
+	_commandsMap["cap"] = new IRC::CapCommand();
+
+}
+
+void ICommands::unRegisterCommands() {
+	delete (_commandsMap["join"]);
+	delete (_commandsMap["nick"]);
+	delete (_commandsMap["user"]);
+	delete (_commandsMap["whois"]);
+	delete (_commandsMap["mode"]);
+	delete (_commandsMap["pass"]);
+	delete (_commandsMap["ping"]);
+	delete (_commandsMap["cap"]);
+	_commandsMap.clear();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -107,6 +137,18 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 	}
 	else if (toLowerCase(_command) == "whois") {
 		_commandsMap["whois"]->executeCommand(this, clientSocket, server, client);
+	}
+	else if (toLowerCase(_command) == "mode") {
+		_commandsMap["mode"]->executeCommand(this, clientSocket, server, client);
+	}
+	else if (toLowerCase(_command) == "pass") {
+		_commandsMap["pass"]->executeCommand(this, clientSocket, server, client);
+	}
+	else if (toLowerCase(_command) == "ping") {
+		_commandsMap["ping"]->executeCommand(this, clientSocket, server, client);
+	}
+	else if (toLowerCase(_command) == "cap") {
+		_commandsMap["cap"]->executeCommand(this, clientSocket, server, client);
 	}
 }
 

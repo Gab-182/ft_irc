@@ -1,17 +1,17 @@
-#ifndef WHOISCOMMAND_HPP
-#define WHOISCOMMAND_HPP
+#ifndef CAPCOMMAND_HPP
+#define CAPCOMMAND_HPP
 
 #include "ICommands.hpp"
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 namespace IRC {
-	class WhoisCommand : public ICommands {
+	class CapCommand : public ICommands {
 		public:
-			WhoisCommand();
-			~WhoisCommand();
+			CapCommand();
+			~CapCommand();
 			void executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client);
 	};
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-#endif //WHOISCOMMAND_HPP
+#endif //CAPCOMMAND_HPP

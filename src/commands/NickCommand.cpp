@@ -49,33 +49,43 @@ bool NickCommand::validNickName(int clientSocket, std::string& clientNick, Serve
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void NickCommand::executeCommand(ICommands* base,  const int& clientSocket, Server* server, Client& client) {
+void NickCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client) {
 	(void) client;
 
 	if (!base->getParameters().empty()) {
-		std::string clientNick = base->getParameters()[0];
+		// Check if the client has already entered a correct password before.
 
-		// Nickname is too long
-		if (clientNick.length() > 9) {
-			std::string fixedNick = clientNick.substr(0, 9);
-			if (validNickName(clientSocket, fixedNick, server))
-				server->serverClientsMap[clientSocket]->setNickName(fixedNick);
+		if (Client::isClientAuthenticated(clientSocket, server)) {
+			std::string clientNick = base->getParameters()[0];
+
+			// Nickname is too long
+			if (clientNick.length() > 9) {
+				std::string fixedNick = clientNick.substr(0, 9);
+				if (validNickName(clientSocket, fixedNick, server))
+					server->serverClientsMap[clientSocket]->setNickName(fixedNick);
+			} else if (!validNickName(clientSocket, clientNick, server)) {
+				if (server->serverClientsMap[clientSocket]->getNickName().empty())
+					generateNickName(clientSocket, server);
+			}
+
+			//	Nickname accepted
+			else
+				server->serverClientsMap[clientSocket]->setNickName(clientNick);
+
+			std::string nickMsg = BOLDGREEN "You're now known as "
+								  + server->serverClientsMap[clientSocket]->getNickName()
+								  + RESET + "\r\n";
+			sendResponse(clientSocket, nickMsg);
 		}
-		else if (!validNickName(clientSocket, clientNick, server)) {
-			if (server->serverClientsMap[clientSocket]->getNickName().empty())
-				generateNickName(clientSocket, server);
+
+		// The client is not authenticated correctly.
+		else {
+			std::string authErrMsg = BOLDRED "Please make sure you entered: "
+									 BOLDWHITE "[PassWord] "
+									 BOLDRED "correctly!!" RESET "\r\n";
+			sendResponse(clientSocket, authErrMsg);
 		}
-
-		//	Nickname accepted
-		else
-			server->serverClientsMap[clientSocket]->setNickName(clientNick);
-
-		std::string nickMsg = BOLDGREEN "You're now known as "
-							  + server->serverClientsMap[clientSocket]->getNickName()
-							  + RESET + "\r\n";
-		sendResponse(clientSocket, nickMsg);
 	}
-
 	// Cleaning the parameters vector before adding new ones to it.
 	base->getParameters().clear();
 }

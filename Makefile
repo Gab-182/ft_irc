@@ -2,17 +2,21 @@ NAME = ircserv
 
 INCLUDE_DIR := ./include
 
-SRC = main.cpp \
+SRC =	main.cpp \
+		\
 		src/server/server.cpp \
 		src/channel/Channel.cpp \
 		src/client/Client.cpp \
-		src/handShake/HandShake.cpp \
 		\
 		src/commands/ICommands.cpp \
 		src/commands/JoinCommand.cpp \
 		src/commands/NickCommand.cpp \
 		src/commands/UserCommand.cpp \
 		src/commands/WhoisCommand.cpp \
+		src/commands/ModeCommand.cpp \
+		src/commands/PassCommand.cpp \
+		src/commands/PingCommand.cpp \
+		src/commands/CapCommand.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 
@@ -28,14 +32,14 @@ RM = rm -rf
 all: $(NAME) irssi
 
 $(NAME): $(OBJ)
-	$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
+	@$(CXX) $(CXXFLAGS) $(OBJ) -o $(NAME)
 
 
 clean:
-	$(RM) $(OBJ)
+	@$(RM) $(OBJ)
 
 fclean: clean
-	$(RM) $(NAME)
+	@$(RM) $(NAME)
 
 re: fclean all
 

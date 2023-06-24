@@ -92,8 +92,8 @@ namespace IRC
 		/*-----------------------------------------------------------------*/
 			void printClients();
 			void create_socket(char *av);
-			bool respondToClient(const int& clientSocket, std::string& clientMsg, HandShake* handShaker, ICommands* commands);
-			void multi_connection(IRC::HandShake* handShaker, IRC::ICommands* commands);
+			void respondToClient(const int& clientSocket, std::string& clientMsg, ICommands* commands);
+			void multi_connection(IRC::ICommands* commands);
 	};
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

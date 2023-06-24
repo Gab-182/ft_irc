@@ -1,7 +1,7 @@
 #ifndef IRC_HPP
 #define IRC_HPP
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄❄︎❄❄︎❄*/
+/*------------------------*/
 #include <unistd.h>
 #include <cstring>
 #include <cstdio>
@@ -19,12 +19,11 @@
 #include <vector>
 #include <algorithm>
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄❄︎❄❄︎❄*/
+/*-------------------------*/
 # include "./Server.hpp"
-# include "./HandShake.hpp"
 # include "./Client.hpp"
 # include "./Channel.hpp"
 
-/*❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄︎❄❄︎❄❄︎❄*/
+/*-------------------------*/
 
 #endif

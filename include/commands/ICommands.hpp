@@ -58,7 +58,9 @@ namespace IRC {
 			std::vector<std::string> getParameters();
 
 			void registerCommands();
-			void sendResponse(int clientSocket, const std::string& message);
+			void unRegisterCommands();
+			static void welcomeMessage(int clientSocket, Server* server);
+			static void sendResponse(int clientSocket, const std::string& message);
 			static std::string toLowerCase(const std::string& str);
 			void getCommandInfo(const int& clientSocket, const std::string& clientMessage);
 			virtual void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client);
