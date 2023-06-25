@@ -145,8 +145,9 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 	(void)command;
 
 
-	// loop through all the commands in the map, and pass the command to the execute function.
+	// loop through all the commands in the vector, and pass the command to the execute function.
 	std::vector<std::pair<std::string, std::vector<std::string> > >::iterator it;
+
 	for (it = _messages.begin(); it != _messages.end(); ++it) {
 		if (toLowerCase(it->first) == "join") {
 			_commandsMap["join"]->executeCommand(this, clientSocket, server, client, it->first);

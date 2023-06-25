@@ -4,9 +4,9 @@
 using namespace IRC;
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-Client::Client() : _socket(), _userName(), _nickName(), _isWelcommed(false) { }
+Client::Client() : _socket(), _userName("user"), _nickName("user"), _realName("unknown"), _hostName(), _isWelcomed(false) { }
 
-Client::Client(int socket) : _socket(socket), _userName(), _nickName(), _isWelcommed(false) { }
+Client::Client(int socket) : _socket(socket), _userName("user"), _nickName("user"), _realName("unknown"), _hostName(), _isWelcomed(false) { }
 
 Client::~Client() { }
 
@@ -31,13 +31,17 @@ Client& Client::operator=(const Client& other) {
 void Client::setSocket(const int& socket) { _socket = socket; }
 void Client::setUserName(const std::string& user) { _userName = user; }
 void Client::setNickName(const std::string& nick) { _nickName = nick; }
-void Client::welcomeClient(bool welcome) { _isWelcommed = welcome; }
+void Client::setRealName(const std::string& realName) { _realName = realName; }
+void Client::setHostName(const std::string& host) { _hostName = host; }
+void Client::welcomeClient(bool welcome) { _isWelcomed = welcome; }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 int Client::getSocket() const { return (this->_socket); }
 std::string Client::getUserName() { return (this->_userName); }
 std::string Client::getNickName() { return (this->_nickName); }
-bool Client::isWelcomed() const { return (this->_isWelcommed); }
+std::string Client::getRealName() { return (this->_realName); }
+std::string Client::getHostName() { return (this->_hostName); }
+bool Client::isWelcomed() const { return (this->_isWelcomed); }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Client::sendResponse(int clientSocket, const std::string& message) {
@@ -63,14 +67,16 @@ bool Client::isClientAuthenticated(const int& clientSocket, Server* server) {
 bool Client::isClientRegistered(const int& clientSocket, Server* server) {
 	if (server->serverClientsMap[clientSocket] != nullptr
 		&& !server->serverClientsMap[clientSocket]->getNickName().empty()
-		&& !server->serverClientsMap[clientSocket]->getUserName().empty())
+		&& !server->serverClientsMap[clientSocket]->getUserName().empty()
+		&& !server->serverClientsMap[clientSocket]->getRealName().empty()
+		&& !server->serverClientsMap[clientSocket]->getHostName().empty())
 		return (true);
 	return (false);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Client::removeClient(int clientSocket, IRC::Server* server) {
-	if (Client::isClientRegistered(clientSocket, server)) {
+	if (Client::isClientAuthenticated(clientSocket, server)) {
 
 		// Delete the client from the serverClientsMap in the server
 		std::map<int, Client*>::iterator toDelete;
@@ -81,13 +87,7 @@ void Client::removeClient(int clientSocket, IRC::Server* server) {
 			// second erase the element from the map
 			server->serverClientsMap.erase(toDelete);
 		}
-
-		DEBUG_MSG( BOLDRED << "Disconnecting client [" << clientSocket << "]"<< RESET)
-		std::string removalMsg = "QUIT :Client disconnected\r\n";
-		sendResponse(clientSocket, removalMsg);
 	}
-	else
-		DEBUG_MSG( BOLDRED << "Client [" << clientSocket << "] not found" << RESET)
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

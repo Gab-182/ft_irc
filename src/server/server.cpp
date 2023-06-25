@@ -60,6 +60,7 @@ void Server::respondToClient(const int& clientSocket, std::string& clientMsg, IC
 	std::map<int, Client *>::iterator it = this->serverClientsMap.find(clientSocket);
 	commands->executeCommand(commands, clientSocket, this, *(it->second), "");
 
+	// If the client registered to the server, and we did not send welcome message before to him:
 	if (Client::isClientRegistered(clientSocket, this) && !it->second->isWelcomed()) {
 		ICommands::welcomeMessage(clientSocket, this);
 		it->second->welcomeClient(true);
@@ -115,11 +116,10 @@ void IRC::Server::multi_connection(ICommands* commands) {
 
  			if (FD_ISSET(clientSocket, &fdset)) {
  				if ((res = recv(clientSocket, buffer, 1024, 0)) == 0) {
-					DEBUG_MSG("Client disconnected from socket")
 					Client::removeClient(clientSocket, this);
  					close(clientSocket);
  					this->sockets.erase(this->sockets.begin() + i);
- 					continue; // Continue to the next iteration
+ 					continue;
  				}
 
  				buffer[res] = '\0';

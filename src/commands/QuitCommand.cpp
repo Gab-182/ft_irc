@@ -4,7 +4,6 @@
 
 using namespace IRC;
 
-/** TODO: Send message for all users indicating that client has left. **/
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 QuitCommand::QuitCommand() : ICommands() { }
 
@@ -13,13 +12,13 @@ QuitCommand::~QuitCommand() { }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void QuitCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
 	if (!base->getParameters(command).empty()) {
-		if (!Client::isClientAuthenticated(clientSocket, server)) {
+		if (Client::isClientAuthenticated(clientSocket, server)) {
 
 			/*** [1] send quit message to client using sendResponse() function.*/
 			std::string quitMsg = ": 221" + client.getNickName() + " QUIT :Closing connection\"\r\n";
 			sendResponse(clientSocket, quitMsg);
 
-			/*** [2] Send message for all users indicating that client has left.*/
+			/*** TODO: [2] Send message for all users indicating that client has left.*/
 
 			/*** [3] Remove the client from all the channels.*/
 			std::map<std::string, Channel*>::iterator itChannels;
