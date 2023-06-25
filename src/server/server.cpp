@@ -58,12 +58,12 @@ void Server::respondToClient(const int& clientSocket, std::string& clientMsg, IC
 	DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
 	commands->getCommandInfo(clientSocket, clientMsg);
 	std::map<int, Client *>::iterator it = this->serverClientsMap.find(clientSocket);
-	commands->executeCommand(commands, clientSocket, this, *(it->second));
+	commands->executeCommand(commands, clientSocket, this, *(it->second), "");
 
-	// TODO: Don't send the welcome message each time.
-	if (Client::isClientRegistered(clientSocket, this))
+	if (Client::isClientRegistered(clientSocket, this) && !it->second->isWelcomed()) {
 		ICommands::welcomeMessage(clientSocket, this);
-
+		it->second->welcomeClient(true);
+	}
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

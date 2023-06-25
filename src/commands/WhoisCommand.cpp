@@ -10,11 +10,11 @@ WhoisCommand::WhoisCommand() : ICommands() { }
 WhoisCommand::~WhoisCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void WhoisCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client) {
+void WhoisCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
 	(void) client;
 
-	if (!base->getParameters().empty()) {
-		std::string clientNick = base->getParameters()[0];
+	if (!base->getParameters(command).empty()) {
+		std::string clientNick = base->getParameters(command)[0];
 
 		std::map<int, Client*>::iterator whoisIt;
 		for (whoisIt = server->serverClientsMap.begin(); whoisIt != server->serverClientsMap.end(); ++whoisIt) {
@@ -33,9 +33,6 @@ void WhoisCommand::executeCommand(ICommands* base, const int& clientSocket, IRC:
 									+ server->serverClientsMap[clientSocket]->getNickName()
 									+ " :No such nick/channel\r\n");
 	}
-
-	// Cleaning the parameters vector before adding new ones to it.
-	base->getParameters().clear();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

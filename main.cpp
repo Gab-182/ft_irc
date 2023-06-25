@@ -25,9 +25,8 @@ int main(int ac,char **av) {
 		std::cout << "  <password> : The password for the server." << std::endl;
 	}
 
-	commands->unRegisterCommands();
-	delete commands;
-	delete ircServer;
+	delete (commands);
+	delete (ircServer);
 
 	return (0);
 }

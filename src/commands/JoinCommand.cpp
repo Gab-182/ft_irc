@@ -10,14 +10,14 @@ JoinCommand::JoinCommand() : ICommands() { }
 JoinCommand::~JoinCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client) {
+void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
 	// If the command 'join' has the correct parameters, then we can
 	// execute the command and join or create the desired channel.
-	if (base->getParameters().size() >= 1) {
+	if (base->getParameters(command).size() >= 1) {
 		// Check if the client has already entered a correct [password, nick, user] before continue.
 
 		if (Client::isClientRegistered(clientSocket, server)) {
-			std::string channelName = base->getParameters()[0];
+			std::string channelName = base->getParameters(command)[0];
 			if (channelName[0] == '#') {
 				channelName = channelName.substr(1); // Remove the '#' character from the channel name.
 				/*-----------------------------------------------------------------------------------------*/
@@ -65,7 +65,5 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 		std::string response = BOLDRED "Invalid parameters. Usage: /join #channel";
 		sendResponse(clientSocket, response); // Assuming you have a function to send the response
 	}
-	// Cleaning the parameters vector before adding new ones to it.
-	base->getParameters().clear();
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

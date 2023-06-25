@@ -43,19 +43,29 @@ namespace IRC {
 
 	class ICommands {
 		/*-----------------------------------------------------------------------*/
-		protected:
-			std::string _command;
-			std::vector<std::string> _parameters;
-		/*-----------------------------------------------------------------------*/
 		public:
+			/**
+			 ** The reason to create it: irssi send one message that contain (3, 4 ...)
+			 ** commands in one time.
+			 *
+			 ** vector that contain pair of <command, parameters vector> _messages
+			 ** command		-> the command name.
+			 ** parameters	-> the parameter vector of that command
+			 **/
+			std::vector<std::pair<std::string, std::vector<std::string> > > _messages;
+
+			/**
+			 ** <command, pointer to function in the commands interface> _commandsMap
+			 ** key -> the command name.
+			 ** value -> pointer to the execute function in the commands interface class.
+			 **/
 			std::map<std::string, IRC::ICommands*> _commandsMap;
 		/*-----------------------------------------------------------------------*/
 		public:
 			ICommands();
 			virtual ~ICommands();
 			void debugCommands();
-			std::string getCommand();
-			std::vector<std::string> getParameters();
+			std::vector<std::string> getParameters(std::string command);
 
 			void registerCommands();
 			void unRegisterCommands();
@@ -63,7 +73,7 @@ namespace IRC {
 			static void sendResponse(int clientSocket, const std::string& message);
 			static std::string toLowerCase(const std::string& str);
 			void getCommandInfo(const int& clientSocket, const std::string& clientMessage);
-			virtual void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client);
+			virtual void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client, const std::string& command);
 	};
 }
 

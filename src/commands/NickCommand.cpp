@@ -49,14 +49,14 @@ bool NickCommand::validNickName(int clientSocket, std::string& clientNick, Serve
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void NickCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client) {
+void NickCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client, const std::string& command) {
 	(void) client;
 
-	if (!base->getParameters().empty()) {
+	if (!base->getParameters(command).empty()) {
 		// Check if the client has already entered a correct password before.
 
 		if (Client::isClientAuthenticated(clientSocket, server)) {
-			std::string clientNick = base->getParameters()[0];
+			std::string clientNick = base->getParameters(command)[0];
 
 			// Nickname is too long
 			if (clientNick.length() > 9) {
@@ -86,8 +86,6 @@ void NickCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 			sendResponse(clientSocket, authErrMsg);
 		}
 	}
-	// Cleaning the parameters vector before adding new ones to it.
-	base->getParameters().clear();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

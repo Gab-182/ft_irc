@@ -10,19 +10,16 @@ PingCommand::PingCommand() : ICommands() { }
 PingCommand::~PingCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void PingCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client) {
+void PingCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
 	(void) server;
 	(void) client;
 
-	if (!base->getParameters().empty()) {
-		std::string uniqueToken = base->getParameters()[0];
+	if (!base->getParameters(command).empty()) {
+		std::string uniqueToken = base->getParameters(command)[0];
 
 		std::string pongMsg = "PONG :" + uniqueToken + "\r\n";
 		sendResponse(clientSocket, pongMsg);
 	}
-
-	// Cleaning the parameters vector before adding new ones to it.
-	base->getParameters().clear();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

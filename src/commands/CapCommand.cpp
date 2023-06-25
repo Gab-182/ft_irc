@@ -10,12 +10,12 @@ CapCommand::CapCommand() : ICommands() { }
 CapCommand::~CapCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void CapCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client) {
+void CapCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
 	(void) server;
 	(void) client;
 
-	if (!base->getParameters().empty()) {
-		std::string capType = base->getParameters()[0];
+	if (!base->getParameters(command).empty()) {
+		std::string capType = base->getParameters(command)[0];
 
 		if (toLowerCase(capType) == "ls")
 			sendResponse(clientSocket, "CAP * ACK :302 CAP LS\r\n");
@@ -23,8 +23,5 @@ void CapCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::S
 		else if (toLowerCase(capType) == "end")
 			sendResponse(clientSocket, "CAP * ACK :CAP END\r\n");
 	}
-
-	// Cleaning the parameters vector before adding new ones to it.
-	base->getParameters().clear();
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

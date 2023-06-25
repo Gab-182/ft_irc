@@ -17,14 +17,14 @@ ModeCommand::ModeCommand() : ICommands() { }
 ModeCommand::~ModeCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client) {
+void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
 	(void) client;
 
-	if (!base->getParameters().empty()) {
+	if (!base->getParameters(command).empty()) {
 		// Check if the client has already entered a correct password before.
 
 		if (Client::isClientAuthenticated(clientSocket, server)) {
-			if (base->getParameters().back() == "+i") {
+			if (base->getParameters(command).back() == "+i") {
 				std::string modMsg = "MODE "
 									 + server->serverClientsMap[clientSocket]->getNickName()
 									 + " +i\r\n";
@@ -40,8 +40,6 @@ void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 			sendResponse(clientSocket, authErrMsg);
 		}
 	}
-	// Cleaning the parameters vector before adding new ones to it.
-	base->getParameters().clear();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

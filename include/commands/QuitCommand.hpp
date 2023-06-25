@@ -1,17 +1,18 @@
-#ifndef CAPCOMMAND_HPP
-#define CAPCOMMAND_HPP
+#ifndef QUITCOMMAND_HPP
+#define QUITCOMMAND_HPP
 
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #include "ICommands.hpp"
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 namespace IRC {
-	class CapCommand : public ICommands {
+	class QuitCommand : public ICommands {
 		public:
-			CapCommand();
-			~CapCommand();
-			void executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command);
+			QuitCommand();
+			~QuitCommand();
+			void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client, const std::string& command);
 	};
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-#endif //CAPCOMMAND_HPP
+#endif //QUITCOMMAND_HPP

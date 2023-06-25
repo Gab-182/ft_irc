@@ -17,6 +17,7 @@ namespace IRC {
 			std::string _nickName;
 //			std::string _realName;
 //			std::string _host;
+			bool _isWelcommed;
 		/*--------------------------------------------------------*/
 		public:
 			Client();
@@ -28,10 +29,12 @@ namespace IRC {
 			void setSocket(const int& socket);
 			void setUserName(const std::string& userName);
 			void setNickName(const std::string& nickName);
+			void welcomeClient(bool welcome);
 		/*--------------------------------------------------------*/
 			int getSocket() const;
 			std::string getUserName();
 			std::string getNickName();
+			bool isWelcomed() const;
 		/*--------------------------------------------------------*/
 			static void sendResponse(int clientSocket, const std::string& message);
 			static bool isClientAuthenticated(const int& clientSocket, Server* server);

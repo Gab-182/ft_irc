@@ -17,6 +17,7 @@ SRC =	main.cpp \
 		src/commands/PassCommand.cpp \
 		src/commands/PingCommand.cpp \
 		src/commands/CapCommand.cpp \
+		src/commands/QuitCommand.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 

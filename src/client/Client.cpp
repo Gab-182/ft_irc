@@ -4,9 +4,9 @@
 using namespace IRC;
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-Client::Client() : _socket(), _userName(), _nickName() { }
+Client::Client() : _socket(), _userName(), _nickName(), _isWelcommed(false) { }
 
-Client::Client(int socket) : _socket(socket), _userName(), _nickName() { }
+Client::Client(int socket) : _socket(socket), _userName(), _nickName(), _isWelcommed(false) { }
 
 Client::~Client() { }
 
@@ -31,11 +31,13 @@ Client& Client::operator=(const Client& other) {
 void Client::setSocket(const int& socket) { _socket = socket; }
 void Client::setUserName(const std::string& user) { _userName = user; }
 void Client::setNickName(const std::string& nick) { _nickName = nick; }
+void Client::welcomeClient(bool welcome) { _isWelcommed = welcome; }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 int Client::getSocket() const { return (this->_socket); }
 std::string Client::getUserName() { return (this->_userName); }
 std::string Client::getNickName() { return (this->_nickName); }
+bool Client::isWelcomed() const { return (this->_isWelcommed); }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Client::sendResponse(int clientSocket, const std::string& message) {

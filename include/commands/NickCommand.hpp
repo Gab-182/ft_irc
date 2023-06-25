@@ -15,7 +15,7 @@ namespace IRC {
 		public:
 			NickCommand();
 			~NickCommand();
-			void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client);
+			void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client, const std::string& command);
 	};
 }
 

@@ -35,14 +35,14 @@ bool UserCommand::validUserName(int clientSocket, std::string& userName, Server*
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void UserCommand::executeCommand(ICommands* base,  const int& clientSocket, Server* server, Client& client) {
+void UserCommand::executeCommand(ICommands* base,  const int& clientSocket, Server* server, Client& client, const std::string& command) {
 	(void) client;
 
-	if (!base->getParameters().empty()) {
+	if (!base->getParameters(command).empty()) {
 		// Check if the client has already entered a correct password before.
 
 		if (Client::isClientAuthenticated(clientSocket, server)) {
-			std::string userName = base->getParameters()[0];
+			std::string userName = base->getParameters(command)[0];
 
 			// Username is too long
 			if (userName.length() > 16) {
@@ -72,8 +72,6 @@ void UserCommand::executeCommand(ICommands* base,  const int& clientSocket, Serv
 			sendResponse(clientSocket, authErrMsg);
 		}
 	}
-	// Cleaning the parameters vector before adding new ones to it.
-	base->getParameters().clear();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

@@ -9,14 +9,14 @@ PassCommand::PassCommand() : ICommands() { }
 
 PassCommand::~PassCommand() { }
 
-void PassCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client) {
+void PassCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
 	(void) client;
 
-	if (!base->getParameters().empty()) {
+	if (!base->getParameters(command).empty()) {
 		// Check if the client has already entered a correct password before.
 
 		if (!Client::isClientAuthenticated(clientSocket, server)) {
-			std::string clientPass = base->getParameters()[0];
+			std::string clientPass = base->getParameters(command)[0];
 			if (clientPass.empty())
 				sendResponse(clientSocket, BOLDRED "ERROR :No password given" RESET "\r\n");
 
@@ -34,9 +34,6 @@ void PassCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 			}
 		}
 	}
-
-	// Cleaning the parameters vector before adding new ones to it.
-	base->getParameters().clear();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
