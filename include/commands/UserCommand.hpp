@@ -8,8 +8,11 @@
 namespace IRC {
 	class UserCommand : public ICommands {
 		private:
-			void generateUserName(int clientSocket, Server* server);
-			bool validUserName(int clientSocket, std::string& userName, Server* server);
+			static void generateUserName(int clientSocket, Server* server);
+			static bool validUserName(int clientSocket, std::string& userName, Server* server);
+			void processUserName(const int& clientSocket ,std::string& userName, Server* server);
+//			void processRealName(const int& clientSocket ,std::string& userName, Server* server);
+//			void processHostName(const int& clientSocket ,std::string& userName, Server* server);
 
 		public:
 			UserCommand();

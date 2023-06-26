@@ -35,46 +35,71 @@ bool UserCommand::validUserName(int clientSocket, std::string& userName, Server*
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void UserCommand::processUserName(const int& clientSocket ,std::string& userName, Server* server) {
+	// Username is too long
+	if (userName.length() > 16) {
+		std::string fixedUser = userName.substr(0, 16);
+		if (validUserName(clientSocket, fixedUser, server))
+			server->serverClientsMap[clientSocket]->setUserName(fixedUser);
+	}
+	else if (!validUserName(clientSocket, userName, server)) {
+		if (server->serverClientsMap[clientSocket]->getUserName().empty())
+			generateUserName(clientSocket, server);
+	}
+
+	//	userName accepted
+	else
+		server->serverClientsMap[clientSocket]->setUserName(userName);
+
+	std::string userMsg = BOLDGREEN "You're username now is "
+						  + server->serverClientsMap[clientSocket]->getUserName()
+						  + RESET + "\r\n";
+	sendResponse(clientSocket, userMsg);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+//void UserCommand::processRealName(const int& clientSocket ,std::string& userName, Server* server) {
+//
+//}
+//
+///*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+//void UserCommand::processHostName(const int& clientSocket ,std::string& userName, Server* server) {
+//
+//}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void UserCommand::executeCommand(ICommands* base,  const int& clientSocket, Server* server, Client& client, const std::string& command) {
 	(void) client;
 
 	/** USER <username> <realname> <hostname> */
+	// from irssi:
+	// USER gabdoush gabdoush 10.19.246.77 :Ghaiath Abdoush
 
 	if (base->getParameters(command).size() >= 2) {
 		// Check if the client has already entered a correct password before.
+		std::string userName = base->getParameters(command)[0];
+//		std::string realName = base->getParameters(command)[1];
+//		std::string hostName = base->getParameters(command)[2];
 
 		if (Client::isClientAuthenticated(clientSocket, server)) {
-			std::string userName = base->getParameters(command)[0];
-			std::string realName = base->getParameters(command)[1];
-			std::string hostName = base->getParameters(command)[2];
-
-			// Username is too long
-			if (userName.length() > 16) {
-				std::string fixedUser = userName.substr(0, 16);
-				if (validUserName(clientSocket, fixedUser, server))
-					server->serverClientsMap[clientSocket]->setUserName(fixedUser);
-			} else if (!validUserName(clientSocket, userName, server)) {
-				if (server->serverClientsMap[clientSocket]->getUserName().empty())
-					generateUserName(clientSocket, server);
-			}
-
-				//	userName accepted
-			else
-				server->serverClientsMap[clientSocket]->setUserName(userName);
-
-			std::string userMsg = BOLDGREEN "You're username now is "
-								  + server->serverClientsMap[clientSocket]->getUserName()
-								  + RESET + "\r\n";
-			sendResponse(clientSocket, userMsg);
+			processUserName(clientSocket, userName, server);
+//			processRealName(clientSocket, realName, server);
+//			processHostName(clientSocket, hostName, server);
 		}
 
 		// The client is not authenticated correctly.
 		else {
 			std::string authErrMsg = BOLDRED "Please make sure you entered: "
-									BOLDWHITE "[PassWord] "
-									BOLDRED "correctly!!" RESET "\r\n";
+									 BOLDWHITE "[PassWord] "
+									 BOLDRED "correctly!!" RESET "\r\n";
 			sendResponse(clientSocket, authErrMsg);
 		}
+	}
+
+	// The number of parameters is wrong.
+	else {
+		std::string userErrMsg = BOLDYELLOW "WARNING: "BOLDWHITE"user <username> <realname> <hostname>"RESET"\r\n";
+		sendResponse(clientSocket, userErrMsg);
 	}
 }
 

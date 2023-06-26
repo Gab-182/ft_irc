@@ -68,8 +68,9 @@ bool Client::isClientRegistered(const int& clientSocket, Server* server) {
 	if (server->serverClientsMap[clientSocket] != nullptr
 		&& !server->serverClientsMap[clientSocket]->getNickName().empty()
 		&& !server->serverClientsMap[clientSocket]->getUserName().empty()
-		&& !server->serverClientsMap[clientSocket]->getRealName().empty()
-		&& !server->serverClientsMap[clientSocket]->getHostName().empty())
+//		&& !server->serverClientsMap[clientSocket]->getRealName().empty()
+//		&& !server->serverClientsMap[clientSocket]->getHostName().empty()
+		)
 		return (true);
 	return (false);
 }

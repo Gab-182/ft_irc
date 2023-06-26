@@ -146,6 +146,8 @@ void Server::printClients() {
 					  << std::endl;
 			std::cout << BOLDBLUE << '\t' << "User: [" << BOLDWHITE << it->second->getUserName() << BOLDBLUE << "]"
 					  << std::endl;
+			std::cout << BOLDBLUE << '\t' << "isWelcomed: [" << BOLDWHITE << it->second->isWelcomed() << BOLDBLUE << "]"
+					  << std::endl;
 			std::cout << BOLDYELLOW << "-----------------------------------------------" << std::endl;
 		}
 		i++;
