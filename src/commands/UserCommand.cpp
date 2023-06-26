@@ -58,34 +58,14 @@ void UserCommand::processUserName(const int& clientSocket ,std::string& userName
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-//void UserCommand::processRealName(const int& clientSocket ,std::string& userName, Server* server) {
-//
-//}
-//
-///*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-//void UserCommand::processHostName(const int& clientSocket ,std::string& userName, Server* server) {
-//
-//}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void UserCommand::executeCommand(ICommands* base,  const int& clientSocket, Server* server, Client& client, const std::string& command) {
 	(void) client;
 
-	/** USER <username> <realname> <hostname> */
-	// from irssi:
-	// USER gabdoush gabdoush 10.19.246.77 :Ghaiath Abdoush
-
-	if (base->getParameters(command).size() >= 2) {
-		// Check if the client has already entered a correct password before.
+	if (!base->getParameters(command).empty()) {
 		std::string userName = base->getParameters(command)[0];
-//		std::string realName = base->getParameters(command)[1];
-//		std::string hostName = base->getParameters(command)[2];
-
-		if (Client::isClientAuthenticated(clientSocket, server)) {
+		// Check if the client has already entered a correct password before.
+		if (Client::isClientAuthenticated(clientSocket, server))
 			processUserName(clientSocket, userName, server);
-//			processRealName(clientSocket, realName, server);
-//			processHostName(clientSocket, hostName, server);
-		}
 
 		// The client is not authenticated correctly.
 		else {
@@ -94,12 +74,6 @@ void UserCommand::executeCommand(ICommands* base,  const int& clientSocket, Serv
 									 BOLDRED "correctly!!" RESET "\r\n";
 			sendResponse(clientSocket, authErrMsg);
 		}
-	}
-
-	// The number of parameters is wrong.
-	else {
-		std::string userErrMsg = BOLDYELLOW "WARNING: "BOLDWHITE"user <username> <realname> <hostname>"RESET"\r\n";
-		sendResponse(clientSocket, userErrMsg);
 	}
 }
 
