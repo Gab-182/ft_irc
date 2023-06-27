@@ -27,6 +27,7 @@ void PassCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 
 			// Password accepted
 			sendResponse(clientSocket, BOLDGREEN "Password accepted" RESET "\r\n");
+
 			if (server->serverClientsMap[clientSocket] == nullptr) {
 				// Create new client object and setting the socket element.
 				server->serverClientsMap[clientSocket] = new Client(clientSocket);
