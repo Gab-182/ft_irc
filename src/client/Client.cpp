@@ -1,5 +1,6 @@
 #include "../../include/Client.hpp"
 #include "../../include/Server.hpp"
+#include "../../include/Channel.hpp"
 
 using namespace IRC;
 
@@ -67,6 +68,8 @@ bool Client::isClientRegistered(const int& clientSocket, Server* server) {
 		return (true);
 	return (false);
 }
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Client::removeClient(int clientSocket, IRC::Server* server) {

@@ -9,6 +9,7 @@ namespace IRC {
 	public:
 		ModeCommand();
 		~ModeCommand();
+		bool noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command);
 		void executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command);
 	};
 }

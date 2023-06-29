@@ -17,6 +17,14 @@ namespace IRC {
 			std::string _key;
 			std::string _mode;
 			/*----------------------------------------------*/
+			/*
+			std::map<std::string nickName, > _users;
+			std::vector<std::string nickName> _users;
+			std::vector<std::string nickName> _operators;
+			std::vector<std::string nickName> _banedUsers;
+			std::vector<std::string nickName> _invites;
+
+			 * */
 			std::vector<Client*> _users;
 			std::vector<Client*> _operators;
 			std::vector<Client*> _banedUsers;

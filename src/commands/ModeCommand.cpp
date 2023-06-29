@@ -33,62 +33,17 @@ using namespace IRC;
  *** ——————————————————————-----------------------------------———————————————————————
  ***/
 
-/**
- ** at eh beginning the irssi client will send:
- **
- ** MODE Welcome to the Internet Relay Network +i
- **
- ** if (base->getParameters(command).back() == "+i") {
- ** 		std::string modMsg = "MODE "
- ** 							 + server->serverClientsMap[clientSocket]->getNickName()
- ** 							 + " +i\r\n";
- ** 		sendResponse(clientSocket, modMsg);
- ** }
- **
- **/
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 ModeCommand::ModeCommand() : ICommands() { }
 
 ModeCommand::~ModeCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
+bool ModeCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
 	(void) client;
 
 	// MODE <channel name> <mode>
-	if (base->getParameters(command).size() == 2) {
-		std::string channelName = base->getParameters(command)[0];
-		std::string mode = base->getParameters(command)[1];
-
-		// Check if the channel exist,
-		// check if the user is operator in that channel,
-		// if so apply the mode
-
-		// Check if the client has already entered a correct password before.
-		if (Client::isClientAuthenticated(clientSocket, server)) {
-
-		}
-
-
-//		Client not authenticated exception
-//		if (!Client::isClientAuthenticated(clientSocket, server))
-
-		// [not authenticated] error
-		else {
-			DEBUG_MSG(BOLDRED << " client not authenticated yet!! ")
-
-			std::string authErrMsg = BOLDRED "Please make sure you entered: "
-									 BOLDWHITE "[PassWord] "
-									 BOLDRED "correctly!!" RESET "\r\n";
-			sendResponse(clientSocket, authErrMsg);
-		}
-	}
-
-//	wrong mode parameters exception
-//	if (base->getParameters(command).size() != 2)
-
-	// [MODE parameters] error
-	else {
+	if (base->getParameters(command).size() < 2) {
 		DEBUG_MSG(BOLDRED << " wrong parameters!! ")
 
 		std::string authErrMsg = BOLDRED "Please make sure you entered: "
@@ -96,7 +51,50 @@ void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 								 BOLDWHITE "<channel_name> <mode> "
 								 BOLDRED "correctly!!" RESET "\r\n";
 		sendResponse(clientSocket, authErrMsg);
+		return (false);
 	}
+
+	else if (!Client::isClientAuthenticated(clientSocket, server)) {
+		DEBUG_MSG(BOLDRED << " client not authenticated yet!! ")
+
+		std::string authErrMsg = BOLDRED "Please make sure you entered: "
+								 BOLDWHITE "[PassWord] "
+								 BOLDRED "correctly!!" RESET "\r\n";
+		sendResponse(clientSocket, authErrMsg);
+		return (false);
+	}
+
+//	// check if client is in channel and is channel operator
+//	else if (!server->isClientInChannel(client.getNickname(), base->getParameters(command)[0])) {
+//		DEBUG_MSG(BOLDRED << " client not in channel!! ")
+//
+//		std::string authErrMsg = BOLDRED "Please make sure you entered: "
+//								 BOLDWHITE "[Channel Name] "
+//								 BOLDRED "correctly!!" RESET "\r\n";
+//		sendResponse(clientSocket, authErrMsg);
+//		return (false);
+//	}
+//
+//	else if (!server->isClientChannelOperator(client.getNickname(), base->getParameters(command)[0])) {
+//		DEBUG_MSG(BOLDRED << " client not channel operator!! ")
+//
+//		std::string authErrMsg = BOLDRED "Please make sure you entered: "
+//								 BOLDWHITE "[Channel Operator] "
+//								 BOLDRED "correctly!!" RESET "\r\n";
+//		sendResponse(clientSocket, authErrMsg);
+//		return (false);
+//	}
+
+	return (true);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
+	if (!noErrorsExist(base, clientSocket, server, client, command))
+		return ;
+
+	std::string channelName = base->getParameters(command)[0];
+	std::string mode = base->getParameters(command)[1];
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
