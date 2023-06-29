@@ -5,29 +5,29 @@
 using namespace IRC;
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-IRC::Server::Server() :
+Server::Server() :
 	port(), servpass(), sockets(0), _clients(0), _channels(0), master_socket(), client_socket() { }
 
-IRC::Server::~Server(){}
+Server::~Server(){}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-int IRC::Server::getPort(){return port;}
+int Server::getPort() const{return port;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-int IRC::Server::getMasterSocket(){return master_socket;}
+int Server::getMasterSocket() const{return master_socket;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void IRC::Server::setMasterSocket(int socket){master_socket = socket;}
+void Server::setMasterSocket(int socket){master_socket = socket;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void IRC::Server::setServPass(int pass){servpass = pass;}
+void Server::setServPass(int pass){servpass = pass;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-int IRC::Server::getServPass() const{return servpass;}
+int Server::getServPass() const{return servpass;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 // socket -> bind -> listen 
-void IRC::Server::create_socket(char *av)
+void Server::create_socket(char *av)
 {
 	struct sockaddr_in sockin = {};
 	this->port = atoi(av);
@@ -57,8 +57,10 @@ void IRC::Server::create_socket(char *av)
 void Server::respondToClient(const int& clientSocket, std::string& clientMsg, ICommands* commands) {
 	DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
 	commands->getCommandInfo(clientSocket, clientMsg);
-	std::map<int, Client *>::iterator it = this->serverClientsMap.find(clientSocket);
-	commands->executeCommand(commands, clientSocket, this, *(it->second), "");
+
+	std::map<int, Client *>::iterator it;
+	it = this->serverClientsMap.find(clientSocket);
+	commands->executeCommand(commands, clientSocket, this, it->second, "");
 
 	// If the client registered to the server, and we did not send welcome message before to him:
 	if (Client::isClientRegistered(clientSocket, this) && !it->second->isWelcomed()) {
@@ -68,7 +70,7 @@ void Server::respondToClient(const int& clientSocket, std::string& clientMsg, IC
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void IRC::Server::multi_connection(ICommands* commands) {
+void Server::multi_connection(ICommands* commands) {
  	int res;
  	int max_sd = 0;
  	char buffer[1024];

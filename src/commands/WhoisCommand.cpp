@@ -10,7 +10,7 @@ WhoisCommand::WhoisCommand() : ICommands() { }
 WhoisCommand::~WhoisCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void WhoisCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
+void WhoisCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	(void) client;
 
 	if (!base->getParameters(command).empty()) {

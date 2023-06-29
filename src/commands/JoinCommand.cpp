@@ -10,7 +10,7 @@ JoinCommand::JoinCommand() : ICommands() { }
 JoinCommand::~JoinCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
+void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	// If the command 'join' has the correct parameters, then we can
 	// execute the command and join or create the desired channel.
 	if (base->getParameters(command).size() >= 1) {
@@ -26,7 +26,7 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 					Channel *newChannel = new Channel(channelName, client);
 
 					DEBUG_MSG("Channel: [" << channelName << "] has been created."
-										   << std::endl << "Adding user: [" << client.getNickName()
+										   << std::endl << "Adding user: [" << client->getNickName()
 										   << "] to the channel.")
 
 					// save the channel in the server's channels map.
@@ -37,7 +37,7 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 				else {
 
 					DEBUG_MSG("Channel " << channelName << " already exists." << std::endl
-										 << "Adding user: [" << client.getNickName() << "] to the channel.")
+										 << "Adding user: [" << client->getNickName() << "] to the channel.")
 
 					server->serverChannelsMap[channelName]->addUser(client);
 				}

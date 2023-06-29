@@ -10,7 +10,7 @@ QuitCommand::QuitCommand() : ICommands() { }
 QuitCommand::~QuitCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void QuitCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
+void QuitCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	if (!base->getParameters(command).empty()) {
 		if (Client::isClientAuthenticated(clientSocket, server)) {
 
@@ -27,7 +27,7 @@ void QuitCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 			DEBUG_MSG(BOLDRED << "Client has been removed!!")
 
 			/*** [4] send quit message to client using sendResponse() function.*/
-			std::string quitMsg = ": 221" + client.getNickName() + " QUIT :Closing connection\r\n";
+			std::string quitMsg = ": 221" + client->getNickName() + " QUIT :Closing connection\r\n";
 			sendResponse(clientSocket, quitMsg);
 
 			/*** TODO: [5] If the client was the only user inside the channel, delete the channel from the server map.*/

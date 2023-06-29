@@ -73,7 +73,7 @@ namespace IRC {
 			static void sendResponse(int clientSocket, const std::string& message);
 			static std::string toLowerCase(const std::string& str);
 			void getCommandInfo(const int& clientSocket, const std::string& clientMessage);
-			virtual void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client, const std::string& command);
+			virtual void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command);
 	};
 }
 

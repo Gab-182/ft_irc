@@ -58,7 +58,7 @@ void UserCommand::processUserName(const int& clientSocket ,std::string& userName
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void UserCommand::executeCommand(ICommands* base,  const int& clientSocket, Server* server, Client& client, const std::string& command) {
+void UserCommand::executeCommand(ICommands* base,  const int& clientSocket, Server* server, Client* client, const std::string& command) {
 	(void) client;
 
 	if (!base->getParameters(command).empty()) {

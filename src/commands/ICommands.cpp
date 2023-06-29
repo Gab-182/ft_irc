@@ -140,7 +140,7 @@ void ICommands::unRegisterCommands() {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client, const std::string& command) {
+void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
 	(void)base;
 	(void)command;
 

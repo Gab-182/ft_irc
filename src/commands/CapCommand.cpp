@@ -10,7 +10,7 @@ CapCommand::CapCommand() : ICommands() { }
 CapCommand::~CapCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void CapCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
+void CapCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	(void) server;
 	(void) client;
 

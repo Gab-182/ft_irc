@@ -85,9 +85,9 @@ namespace IRC
 		/*-----------------------------------------------------------------*/
 			void setMasterSocket(int socket);
 			void setServPass(int pass);
-			int getMasterSocket();
+			int getMasterSocket() const;
 			int getServPass() const;
-			int getPort();
+			int getPort() const;
 
 		/*-----------------------------------------------------------------*/
 			void printClients();

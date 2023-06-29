@@ -49,7 +49,7 @@ bool NickCommand::validNickName(int clientSocket, std::string& clientNick, Serve
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void NickCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client, const std::string& command) {
+void NickCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
 	(void) client;
 
 	if (!base->getParameters(command).empty()) {

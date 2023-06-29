@@ -39,7 +39,7 @@ ModeCommand::ModeCommand() : ICommands() { }
 ModeCommand::~ModeCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-bool ModeCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
+bool ModeCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	(void) client;
 
 	// MODE <channel name> <mode>
@@ -89,7 +89,7 @@ bool ModeCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command) {
+void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	if (!noErrorsExist(base, clientSocket, server, client, command))
 		return ;
 

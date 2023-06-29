@@ -9,7 +9,7 @@ namespace IRC {
 		public:
 			PingCommand();
 			~PingCommand();
-			void executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client, const std::string& command);
+			void executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command);
 	};
 }
 
