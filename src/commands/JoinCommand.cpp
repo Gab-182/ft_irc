@@ -27,7 +27,7 @@ bool JoinCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 		std::string authErrMsg = ":"
 								 ERR_NEEDMOREPARAMS
 								 BOLDRED " Please make sure you entered: "
-								 BOLDYELLOW "JOIN "
+								 BOLDYELLOW "/join "
 								 BOLDWHITE "<channel_name> "
 								 BOLDRED "correctly!!" RESET "\r\n";
 		sendResponse(clientSocket, authErrMsg);
@@ -67,12 +67,14 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 		itChannel = server->serverChannelsMap.find(channelName);
 		if (itChannel == server->serverChannelsMap.end()) {
 			Channel *newChannel;
-			newChannel = new Channel(channelName, client);
-
+			newChannel = new Channel(channelName);
 			server->serverChannelsMap.insert(std::pair<std::string, Channel *>(channelName, newChannel));
-			client->addClientToChannel(client, channelName, newChannel);
-			// send a response to the client.
-			std::string response = BOLDGREEN "Successfully joined channel: " + channelName + RESET "\r\n";
+
+			// add the client to the channels operator vector.
+			client->addOperatorToChannel(client, channelName, newChannel);
+			std::string response =  BOLDGREEN "Successfully joined channel: ["
+									+ channelName
+									+ "] as operator." + RESET "\r\n";
 			sendResponse(clientSocket, response);
 		}
 		/*-----------------------------------------------------------------------------------------*/

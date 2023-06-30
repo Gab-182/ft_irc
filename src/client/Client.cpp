@@ -94,17 +94,6 @@ bool Client::isBannedFromChannel(const int& clientSocket, const std::string& cha
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Client::addClientToServer(const int& clientSocket, Server* server) {
-	std::map<int, IRC::Client*>::iterator itClient;
-	itClient = server->serverClientsMap.find(clientSocket);
-
-	if (itClient == server->serverClientsMap.end()) {
-		Client* newClient = new IRC::Client(clientSocket);
-		server->serverClientsMap.insert(std::pair<int, IRC::Client*>(clientSocket, newClient));
-	}
-}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Client::addClientToChannel(Client* client, const std::string& channelName, Channel* channel) {
 	std::map<std::string, Channel*>::iterator itChannel;
 	itChannel = this->_clientChannelsMap.find(channelName);
@@ -116,15 +105,26 @@ void Client::addClientToChannel(Client* client, const std::string& channelName, 
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Client::addOperatorToChannel(Client* client, const std::string& channelName, Channel* channel) {
+	std::map<std::string, Channel*>::iterator itChannel;
+	itChannel = this->_clientChannelsMap.find(channelName);
+
+	if (itChannel == this->_clientChannelsMap.end()) {
+		this->_clientChannelsMap.insert(std::pair<std::string, Channel*>(channelName, channel));
+		channel->addOperatorToChannel(client);
+	}
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 /**
  * TODO: If the client was the last client in the channel, delete the channel from the server.
- * **/
+ **/
 void Client::removeClientFromChannel(Client* client, Channel* channel) {
 	std::map<std::string, Channel*>::iterator itChannel;
 	itChannel = this->_clientChannelsMap.find(channel->getChannelName());
 
 	if (itChannel != this->_clientChannelsMap.end()) {
-		channel->removeClientFromChannel(client);
+		channel->removeClientFromChannelVectors(client);
 		this->_clientChannelsMap.erase(itChannel);
 	}
 }

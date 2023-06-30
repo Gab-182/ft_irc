@@ -1,14 +1,25 @@
 # include "../../include/Channel.hpp"
 using namespace IRC;
 
+/**
+ ** TODO: Change the mode from a string to a vector of modes.
+ ** 		- Change the getter, setters, and the constructor.
+ ** -----------------------------------------------------------------------
+ ** TODO: Check if we can add the client first due to:
+ ** 		- Channel is full, _maxUsers reached.
+ ** 		- Channel is invite only, and the client is not invited.
+ ** 		- Channel requires a key, and the client entered a wrong key.
+ ** 		- # Add the correct numeric replies for each case.
+ ** -----------------------------------------------------------------------
+ **
+ **/
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 Channel::Channel() : _name(), _topic(), _key(), _mode(), _members(), _operators(), _banedUsers(), _invites(),
 					 _maxUsers() { }
 
-Channel::Channel(const std::string& name, Client* creator) : _topic(), _key(), _mode(), _members(), _operators(),
+Channel::Channel(const std::string& name) : _topic(), _key(), _mode(), _members(), _operators(),
 															 _banedUsers(), _invites(), _maxUsers() {
 	_name = name;
-	this->_operators.push_back(creator);
 }
 
 Channel::~Channel() {
@@ -44,14 +55,14 @@ std::vector<Client*> Channel::getInvites() { return (_invites); }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::addClientToChannel(Client* user) {
-	std::vector<Client *>::iterator it;
-	it = std::find(_members.begin(), _members.end(), user);
-	if (it == _members.end())
+	std::vector<Client *>::iterator itNormal;
+	itNormal = std::find(_members.begin(), _members.end(), user);
+	if (itNormal == _members.end())
 		_members.push_back(user);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::removeClientFromChannel(Client* client) {
+void Channel::removeClientFromChannelVectors(Client* client) {
 	std::vector<Client *>::iterator itClient;
 	itClient = std::find(_members.begin(), _members.end(), client);
 	if (itClient != _members.end())
@@ -69,35 +80,35 @@ void Channel::removeClientFromChannel(Client* client) {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::addOperator(Client* user) {
+void Channel::addOperatorToChannel(Client* user) {
 	// Remove the user from the users vector, if present.
-	std::vector<Client *>::iterator itu;
-	itu = std::find(_members.begin(), _members.end(), user);
-	if (itu != _members.end())
-		_members.erase(itu);
+	std::vector<Client *>::iterator itNormal;
+	itNormal = std::find(_members.begin(), _members.end(), user);
+	if (itNormal != _members.end())
+		_members.erase(itNormal);
 
 	// Remove the user from the banedUsers vector, if present.
-	std::vector<Client *>::iterator itb;
-	itb = std::find(_banedUsers.begin(), _banedUsers.end(), user);
-	if (itb != _banedUsers.end())
-		_banedUsers.erase(itb);
+	std::vector<Client *>::iterator itBanned;
+	itBanned = std::find(_banedUsers.begin(), _banedUsers.end(), user);
+	if (itBanned != _banedUsers.end())
+		_banedUsers.erase(itBanned);
 
 	// Remove the user from the invites vector, if present.
-	std::vector<Client *>::iterator iti;
-	iti = std::find(_invites.begin(), _invites.end(), user);
-	if (iti != _invites.end())
-		_invites.erase(iti);
+	std::vector<Client *>::iterator itInvite;
+	itInvite = std::find(_invites.begin(), _invites.end(), user);
+	if (itInvite != _invites.end())
+		_invites.erase(itInvite);
 
 	// Add the user to the operators vector, if not already in.
-	std::vector<Client *>::iterator ito;
-	ito = std::find(_operators.begin(), _operators.end(), user);
-	if (ito == _operators.end())
+	std::vector<Client *>::iterator itOperator;
+	itOperator = std::find(_operators.begin(), _operators.end(), user);
+	if (itOperator == _operators.end())
 		_operators.push_back(user);
 
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::removeOperator(Client* user) {
+void Channel::removeChannelOperator(Client* user) {
 	std::vector<Client *>::iterator it;
 	it = std::find(_operators.begin(), _operators.end(), user);
 	if (it != _operators.end())
@@ -105,30 +116,49 @@ void Channel::removeOperator(Client* user) {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::banUser(Client* user) {
+void Channel::banUserFromChannel(Client* user) {
 	// Remove the user from the users vector, if present.
-	std::vector<Client *>::iterator it;
-	it = std::find(_members.begin(), _members.end(), user);
-	if (it != _members.end())
-		_members.erase(it);
+	std::vector<Client *>::iterator itNormal;
+	itNormal = std::find(_members.begin(), _members.end(), user);
+	if (itNormal != _members.end())
+		_members.erase(itNormal);
 
 	// Add the user to the banedUsers vector, if not already in.
-	std::vector<Client *>::iterator itb;
-	itb = std::find(_banedUsers.begin(), _banedUsers.end(), user);
-	if (itb == _banedUsers.end())
+	std::vector<Client *>::iterator itBanned;
+	itBanned = std::find(_banedUsers.begin(), _banedUsers.end(), user);
+	if (itBanned == _banedUsers.end())
 		_banedUsers.push_back(user);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::unbanUser(Client* user) {
-	std::vector<Client *>::iterator it;
-	it = std::find(_banedUsers.begin(), _banedUsers.end(), user);
-	if (it != _banedUsers.end())
-		_banedUsers.erase(it);
+void Channel::unbanUserFromChannel(Client* user) {
+	std::vector<Client *>::iterator itUnBaned;
+	itUnBaned = std::find(_banedUsers.begin(), _banedUsers.end(), user);
+	if (itUnBaned != _banedUsers.end())
+		_banedUsers.erase(itUnBaned);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::inviteUser(Client* user) {
+void Channel::inviteUserToChannel(Client* user) {
+	// Check if the user is already in normal members vector the channel.
+	std::vector<Client *>::iterator itNormal;
+	itNormal = std::find(_members.begin(), _members.end(), user);
+	if (itNormal != _members.end())
+		return;
+
+	// Check if the user is already in operators vector the channel.
+	std::vector<Client *>::iterator itOperator;
+	itOperator = std::find(_operators.begin(), _operators.end(), user);
+	if (itOperator != _operators.end())
+		return;
+
+	// Check if the user is banned from the channel.
+	std::vector<Client *>::iterator itBanned;
+	itBanned = std::find(_banedUsers.begin(), _banedUsers.end(), user);
+	if (itBanned != _banedUsers.end())
+		return;
+
+	// if not add the user to the invites vector, if not already in.
 	std::vector<Client *>::iterator it;
 	it = std::find(_invites.begin(), _invites.end(), user);
 	if (it == _invites.end())
@@ -136,7 +166,7 @@ void Channel::inviteUser(Client* user) {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::removeInvitee(Client* user) {
+void Channel::removeInviteeFromChannel(Client* user) {
 	std::vector<Client *>::iterator it;
 	it = std::find(_invites.begin(), _invites.end(), user);
 	if (it != _invites.end())
@@ -153,24 +183,28 @@ void Channel::printChannelInfo() {
 	std::cout << BOLDYELLOW << "Channel max users: " << BOLDWHITE << _maxUsers << std::endl;
 
 	std::cout << std::endl;
-	std::cout << BOLDMAGENTA << "Channel users: ➤➤ ";
-	for (std::vector<Client *>::iterator it = _members.begin(); it != _members.end(); ++it)
-		std::cout << BOLDWHITE << (*it)->getNickName() << BOLDYELLOW << " - ";
+	std::cout << BOLDYELLOW << "Channel normal members: ➤➤ ";
+	std::vector<Client *>::iterator itNormal;
+	for (itNormal = _members.begin(); itNormal != _members.end(); ++itNormal)
+		std::cout << BOLDWHITE << (*itNormal)->getNickName() << BOLDYELLOW << " - ";
 
 	std::cout << std::endl;
 	std::cout << "Channel operators: ➤➤ ";
-	for (std::vector<Client *>::iterator it = _operators.begin(); it != _operators.end(); ++it)
-		std::cout << BOLDWHITE << (*it)->getNickName() << BOLDYELLOW << " - ";
+	std::vector<Client *>::iterator itOperator;
+	for (itOperator = _operators.begin(); itOperator != _operators.end(); ++itOperator)
+		std::cout << BOLDWHITE << (*itOperator)->getNickName() << BOLDYELLOW << " - ";
 
 	std::cout << std::endl;
 	std::cout << "Channel baned users: ➤➤ ";
-	for (std::vector<Client *>::iterator it = _banedUsers.begin(); it != _banedUsers.end(); ++it)
-		std::cout << BOLDWHITE << (*it)->getNickName() << BOLDYELLOW << " - ";
+	std::vector<Client *>::iterator itBanned;
+	for (itBanned = _banedUsers.begin(); itBanned != _banedUsers.end(); ++itBanned)
+		std::cout << BOLDWHITE << (*itBanned)->getNickName() << BOLDYELLOW << " - ";
 
 	std::cout << std::endl;
 	std::cout << "Channel invites: ➤➤ ";
-	for (std::vector<Client *>::iterator it = _invites.begin(); it != _invites.end(); ++it)
-		std::cout << BOLDWHITE << (*it)->getNickName() << BOLDYELLOW << " - ";
+	std::vector<Client *>::iterator itInvite;
+	for (itInvite = _invites.begin(); itInvite != _invites.end(); ++itInvite)
+		std::cout << BOLDWHITE << (*itInvite)->getNickName() << BOLDYELLOW << " - ";
 
 	std::cout << BOLDMAGENTA << std::endl << "—————————————————————————————————————————————————" << std::endl;
 }

@@ -54,9 +54,16 @@ namespace IRC {
 			bool isInvitedToChannel(const int& clientSocket, const std::string& channelName);
 			bool isBannedFromChannel(const int& clientSocket, const std::string& channelName);
 
-		/*------------------------------------------------------------------------------*/
-			static void addClientToServer(const int& clientSocket, Server* server);
+			/**-----------------------------------------------------------------------------------------
+			** @brief ➤ Add the channel to the channels map in the client side
+			** if it is not already there, then add the client to the channel
+			** through the channel's addClientToChannel method.
+			** @param client ➤ pointer of the client object to add to the channel
+			** @param channelName ➤ name of the channel to add the client to
+			** @param channel ➤ pointer to the channel object to add the client to
+			**/
 			void addClientToChannel(Client* client, const std::string& channelName, Channel* channel);
+			void addOperatorToChannel(Client* client, const std::string& channelName, Channel* channel);
 
 			void removeClientFromChannel(Client* client, Channel* channel);
 			void removeClientFromAllChannels(Client* client);

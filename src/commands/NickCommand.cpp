@@ -52,8 +52,16 @@ bool NickCommand::validNickName(int clientSocket, std::string& clientNick, Serve
 bool NickCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	(void) client;
 
-	if (base->getParameters(command).empty()) {
-		DEBUG_MSG(BOLDRED << " empty parameters!! ")
+	if (base->isParameterEmpty(command)) {
+		DEBUG_MSG(BOLDRED << " wrong parameters!! ")
+
+		std::string authErrMsg = ":"
+								 ERR_NEEDMOREPARAMS
+								 BOLDRED " Please make sure you entered: "
+								 BOLDYELLOW "/nick "
+								 BOLDWHITE "<nickname> "
+								 BOLDRED "correctly!!" RESET "\r\n";
+		sendResponse(clientSocket, authErrMsg);
 		return (false);
 	}
 
