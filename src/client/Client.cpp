@@ -116,6 +116,9 @@ void Client::addClientToChannel(Client* client, const std::string& channelName, 
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+/**
+ * TODO: If the client was the last client in the channel, delete the channel from the server.
+ * **/
 void Client::removeClientFromChannel(Client* client, Channel* channel) {
 	std::map<std::string, Channel*>::iterator itChannel;
 	itChannel = this->_clientChannelsMap.find(channel->getChannelName());
@@ -129,9 +132,8 @@ void Client::removeClientFromChannel(Client* client, Channel* channel) {
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Client::removeClientFromAllChannels(Client* client) {
 	std::map<std::string, Channel*>::iterator itChannel;
-	for (itChannel = this->_clientChannelsMap.begin(); itChannel != this->_clientChannelsMap.end(); ++itChannel) {
-		itChannel->second->removeClientFromChannel(client);
-	}
+	for (itChannel = this->_clientChannelsMap.begin(); itChannel != this->_clientChannelsMap.end(); ++itChannel)
+		this->removeClientFromChannel(client, itChannel->second);
 	this->_clientChannelsMap.clear();
 }
 

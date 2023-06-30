@@ -63,14 +63,16 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 		// 2. Add the client to the channel.
 		// 3. Send a response to the client.
 		/*-----------------------------------------------------------------------------------------*/
-		if (server->serverChannelsMap.find(channelName) == server->serverChannelsMap.end()) {
+		std::map<std::string, Channel *>::iterator itChannel;
+		itChannel = server->serverChannelsMap.find(channelName);
+		if (itChannel == server->serverChannelsMap.end()) {
 			Channel *newChannel;
 			newChannel = new Channel(channelName, client);
 
 			server->serverChannelsMap.insert(std::pair<std::string, Channel *>(channelName, newChannel));
 			client->addClientToChannel(client, channelName, newChannel);
 			// send a response to the client.
-			std::string response = "Successfully joined channel: " + channelName;
+			std::string response = BOLDGREEN "Successfully joined channel: " + channelName + RESET "\r\n";
 			sendResponse(clientSocket, response);
 		}
 		/*-----------------------------------------------------------------------------------------*/
@@ -82,7 +84,7 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 			Channel *existingChannel = server->serverChannelsMap[channelName];
 			client->addClientToChannel(client, channelName, existingChannel);
 			// send a response to the client.
-			std::string response = "Successfully joined channel: " + channelName;
+			std::string response = BOLDGREEN "Successfully joined channel: " + channelName + RESET "\r\n";
 			sendResponse(clientSocket, response);
 		}
 	}
@@ -90,8 +92,10 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 	// If the channel name is invalid: Send a response to the client.
 	/*-----------------------------------------------------------------------------------------*/
 	else {
-		std::string response = "Invalid channel name. Channel names should start with '#'.";
-		sendResponse(clientSocket, response); // Assuming you have a function to send the response
+		std::string response =  BOLDRED"Invalid channel name."
+								BOLDWHITE "Channel names should start with '#'."
+								RESET "\r\n";
+		sendResponse(clientSocket, response);
 	}
 
 	/*-----------------------------------------------------------------------------------------*/

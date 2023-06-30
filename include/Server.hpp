@@ -91,6 +91,9 @@ namespace IRC
 
 		/*-----------------------------------------------------------------*/
 			void printClients();
+			void printChannels();
+
+		/*-----------------------------------------------------------------*/
 			void create_socket(char *av);
 			void respondToClient(const int& clientSocket, std::string& clientMsg, ICommands* commands);
 			void multi_connection(IRC::ICommands* commands);

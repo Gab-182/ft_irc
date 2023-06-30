@@ -131,6 +131,7 @@ void Server::multi_connection(ICommands* commands) {
 			}
 		}
 //		 this->printClients();
+		this->printChannels();
 	}
  	close(this->master_socket);
 }
@@ -154,6 +155,17 @@ void Server::printClients() {
 		}
 		i++;
 	}
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Server::printChannels() {
+	std::map<std::string, Channel*>::iterator it;
+	std::cout << BOLDGREEN << "Channels" << std::endl;
+	for (it = serverChannelsMap.begin(); it != serverChannelsMap.end() ;++it) {
+		if (!(it ->first.empty()))
+			std::cout << BOLDBLUE << "Channel: [" << BOLDGREEN << it->first << BOLDBLUE << "]" << std::endl;
+	}
+	std::cout << BOLDYELLOW << "-----------------------------------------------" << std::endl;
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

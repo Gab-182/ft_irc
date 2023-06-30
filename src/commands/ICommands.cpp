@@ -104,7 +104,7 @@ void ICommands::getCommandInfo(const std::string& clientMessage) {
 		_messages.push_back(std::make_pair(command, parameters));
 		parameters.clear();
 	}
-	debugCommands();
+//	debugCommands();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
