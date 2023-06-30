@@ -5,9 +5,9 @@ using namespace IRC;
 Channel::Channel() : _name(), _topic(), _key(), _mode(), _members(), _operators(), _banedUsers(), _invites(),
 					 _maxUsers() { }
 
-Channel::Channel(const std::string& name, Client* creator) : _name(name), _topic(), _key(), _mode(), _members(),
-															 _operators(), _banedUsers(), _invites(), _maxUsers() {
-	// Adding creator to channel's operators
+Channel::Channel(const std::string& name, Client* creator) : _topic(), _key(), _mode(), _members(), _operators(),
+															 _banedUsers(), _invites(), _maxUsers() {
+	_name = name;
 	this->_operators.push_back(creator);
 }
 
@@ -30,20 +30,20 @@ void Channel::setMode(const std::string& mode) {_mode = mode;}
 void Channel::setMaxUsers(const size_t& maxUsers) {_maxUsers = maxUsers;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-std::string Channel::getName() { return (_name); }
+std::string Channel::getChannelName() { return (_name); }
 std::string Channel::getTopic() { return (_topic); }
 std::string Channel::getMode() { return (_mode); }
 std::string Channel::getKey() { return (_key); }
 size_t Channel::getMaxUsers() const { return (_maxUsers); }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-std::vector<Client*> Channel::getUsers() { return (_members); }
+std::vector<Client*> Channel::getNormalClients() { return (_members); }
 std::vector<Client*> Channel::getOperators() { return (_operators); }
 std::vector<Client*> Channel::getBanedUsers() { return (_banedUsers); }
 std::vector<Client*> Channel::getInvites() { return (_invites); }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::addUser(Client* user) {
+void Channel::addClientToChannel(Client* user) {
 	std::vector<Client *>::iterator it;
 	it = std::find(_members.begin(), _members.end(), user);
 	if (it == _members.end())
@@ -51,11 +51,21 @@ void Channel::addUser(Client* user) {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::removeUser(Client* user) {
-	std::vector<Client *>::iterator it;
-	it = std::find(_members.begin(), _members.end(), user);
-	if (it != _members.end())
-		_members.erase(it);
+void Channel::removeClientFromChannel(Client* client) {
+	std::vector<Client *>::iterator itClient;
+	itClient = std::find(_members.begin(), _members.end(), client);
+	if (itClient != _members.end())
+		_members.erase(itClient);
+
+	std::vector<Client *>::iterator itOperator;
+	itOperator = std::find(_operators.begin(), _operators.end(), client);
+	if (itOperator != _operators.end())
+		_operators.erase(itOperator);
+
+	std::vector<Client *>::iterator itInvite;
+	itInvite = std::find(_invites.begin(), _invites.end(), client);
+	if (itInvite != _invites.end())
+		_invites.erase(itInvite);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -131,6 +141,38 @@ void Channel::removeInvitee(Client* user) {
 	it = std::find(_invites.begin(), _invites.end(), user);
 	if (it != _invites.end())
 		_invites.erase(it);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Channel::printChannelInfo() {
+	std::cout << BOLDMAGENTA << std::endl << "—————————————————————————————————————————————————" << std::endl;
+	std::cout << BOLDYELLOW << "Channel name: " << BOLDWHITE << _name << std::endl;
+	std::cout << BOLDYELLOW << "Channel topic: " << BOLDWHITE << _topic << std::endl;
+	std::cout << BOLDYELLOW << "Channel mode: " << BOLDWHITE << _mode << std::endl;
+	std::cout << BOLDYELLOW << "Channel key: " << BOLDWHITE << _key << std::endl;
+	std::cout << BOLDYELLOW << "Channel max users: " << BOLDWHITE << _maxUsers << std::endl;
+
+	std::cout << std::endl;
+	std::cout << BOLDMAGENTA << "Channel users: ➤➤ ";
+	for (std::vector<Client *>::iterator it = _members.begin(); it != _members.end(); ++it)
+		std::cout << BOLDWHITE << (*it)->getNickName() << BOLDYELLOW << " - ";
+
+	std::cout << std::endl;
+	std::cout << "Channel operators: ➤➤ ";
+	for (std::vector<Client *>::iterator it = _operators.begin(); it != _operators.end(); ++it)
+		std::cout << BOLDWHITE << (*it)->getNickName() << BOLDYELLOW << " - ";
+
+	std::cout << std::endl;
+	std::cout << "Channel baned users: ➤➤ ";
+	for (std::vector<Client *>::iterator it = _banedUsers.begin(); it != _banedUsers.end(); ++it)
+		std::cout << BOLDWHITE << (*it)->getNickName() << BOLDYELLOW << " - ";
+
+	std::cout << std::endl;
+	std::cout << "Channel invites: ➤➤ ";
+	for (std::vector<Client *>::iterator it = _invites.begin(); it != _invites.end(); ++it)
+		std::cout << BOLDWHITE << (*it)->getNickName() << BOLDYELLOW << " - ";
+
+	std::cout << BOLDMAGENTA << std::endl << "—————————————————————————————————————————————————" << std::endl;
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

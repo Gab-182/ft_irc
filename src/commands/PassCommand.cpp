@@ -9,32 +9,60 @@ PassCommand::PassCommand() : ICommands() { }
 
 PassCommand::~PassCommand() { }
 
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void PassCommand::setClientPass(const std::string& pass) { clientPass = pass; }
+
+std::string PassCommand::getClientPass() const { return (clientPass); }
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+bool PassCommand::noErrorsExist(ICommands* base, const int& clientSocket, Server* server, const std::string& command) const {
+
+	if (base->isParameterEmpty(command)) {
+		std::string errMsg = ":"
+							 ERR_NEEDMOREPARAMS
+							 BOLDRED " ERROR :"
+							 BOLDWHITE "No password given"
+							 RESET "\r\n";
+		sendResponse(clientSocket, errMsg);
+		return (false);
+	}
+
+	if (Client::isClientAuthenticated(clientSocket, server)) {
+		std::string errMsg = ":"
+							 BOLDRED "ERROR :"
+							 BOLDWHITE "Already authenticated"
+							 RESET "\r\n";
+		sendResponse(clientSocket, errMsg);
+		return (false);
+	}
+
+	if (std::stoi(getClientPass()) != server->getServPass()) {
+		std::string errMsg = ":"
+							 ERR_PASSWDMISMATCH
+							 BOLDRED " ERROR :"
+							 BOLDWHITE "Invalid password"
+							 RESET "\r\n";
+		sendResponse(clientSocket, errMsg);
+		return (false);
+	}
+	return (true);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void PassCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	(void) client;
+	setClientPass(base->getParameters(command)[0]);
+	if (!noErrorsExist(base, clientSocket, server, command))
+		return;
 
-	if (!base->getParameters(command).empty()) {
-		// Check if the client has already entered a correct password before.
-
-		if (!Client::isClientAuthenticated(clientSocket, server)) {
-			std::string clientPass = base->getParameters(command)[0];
-			if (clientPass.empty())
-				sendResponse(clientSocket, BOLDRED "ERROR :No password given" RESET "\r\n");
-
-			else if (std::stoi(clientPass) != server->getServPass()) {
-				std::string errMsg = BOLDRED "ERROR :Invalid password" RESET "\r\n";
-				sendResponse(clientSocket, errMsg);
-			}
-
-			// Password accepted
-			sendResponse(clientSocket, BOLDGREEN "Password accepted" RESET "\r\n");
-
-			if (server->serverClientsMap[clientSocket] == nullptr) {
-				// Create new client object and setting the socket element.
-				server->serverClientsMap[clientSocket] = new Client(clientSocket);
-				server->serverClientsMap[clientSocket]->setSocket(clientSocket);
-			}
-		}
+	// Password accepted
+	if (server->serverClientsMap[clientSocket] == nullptr) {
+		// Create new client object and setting the socket element.
+		server->serverClientsMap[clientSocket] = new Client(clientSocket);
+		server->serverClientsMap[clientSocket]->setSocket(clientSocket);
 	}
+
+	sendResponse(clientSocket, BOLDGREEN "Password accepted" RESET "\r\n");
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

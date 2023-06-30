@@ -82,8 +82,12 @@ std::string ICommands::toLowerCase(const std::string& str) {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void ICommands::getCommandInfo(const int& clientSocket, const std::string& clientMessage) {
-	(void)clientSocket;
+bool ICommands::isParameterEmpty(const std::string& command) {
+	return (getParameters(command).empty());
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void ICommands::getCommandInfo(const std::string& clientMessage) {
 
 	std::string messageLine, command, para;
 	std::vector<std::string> parameters;
@@ -100,7 +104,7 @@ void ICommands::getCommandInfo(const int& clientSocket, const std::string& clien
 		_messages.push_back(std::make_pair(command, parameters));
 		parameters.clear();
 	}
-//	debugCommands();
+	debugCommands();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -140,6 +144,16 @@ void ICommands::unRegisterCommands() {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void ICommands::unknownCommand(int clientSocket, Server* server,  const std::string& command) {
+	std::string response = ":"
+							+ server->serverClientsMap[clientSocket]->getNickName()
+							+ ERR_UNKNOWNCOMMAND
+							+ command
+							+ " :Unknown command\r\n";
+	sendResponse(clientSocket, response);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
 	(void)base;
 	(void)command;
@@ -169,7 +183,7 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 			_commandsMap["quit"]->executeCommand(this, clientSocket, server, client, it->first);
 		}
 		else
-			DEBUG_MSG(BOLDRED "WRONG COMMAND!!!")
+			unknownCommand(clientSocket, server, it->first);
 	}
 	_messages.clear();
 }

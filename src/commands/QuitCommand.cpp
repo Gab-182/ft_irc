@@ -19,7 +19,7 @@ void QuitCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 			/*** [2] Remove the client from all the channels.*/
 			std::map<std::string, Channel*>::iterator itChannels;
 			for (itChannels = server->serverChannelsMap.begin(); itChannels != server->serverChannelsMap.end(); ++itChannels) {
-				itChannels->second->removeUser(client);
+				itChannels->second->removeClientFromChannel(client);
 			}
 
 			/*** [3] delete the client from the clients map in the server.*/

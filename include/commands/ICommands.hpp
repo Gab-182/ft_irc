@@ -35,6 +35,43 @@
 #endif
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+// Pass command replies (see RFC).
+#define ERR_PASSWDMISMATCH "464" // Password incorrect.
+#define ERR_NEEDMOREPARAMS "461" // Not enough parameters.
+
+// Nick command replies (see RFC).
+#define ERR_NONICKNAMEGIVEN "431" // No nickname given.
+#define ERR_ERRONEUSNICKNAME "432" // Erroneous nickname.
+#define ERR_NICKNAMEINUSE "433" // Nickname in use.
+
+// User command replies (see RFC).
+#define ERR_NOTREGISTERED "451" // You have not registered.
+
+// Join command replies (see RFC).
+#define ERR_NOSUCHCHANNEL "403" // No such channel.
+#define ERR_CHANNELISFULL "471" // Cannot join channel (+l).
+#define ERR_INVITEONLYCHAN "473" // Cannot join channel (+i).
+#define ERR_BANNEDFROMCHAN "474" // Cannot join channel (+b).
+#define ERR_BADCHANNELKEY "475" // Cannot join channel (+k).
+
+// Mode command replies (see RFC).
+#define ERR_UNKNOWNMODE "472" // Unknown mode char.
+
+// Channel command replies (see RFC).
+#define ERR_NOTONCHANNEL "442" // You're not on that channel.
+#define ERR_NOSUCHCHANNEL "403" // No such channel.
+#define ERR_CHANOPRIVSNEEDED "482" // You're not channel operator.
+
+//WHOIS command replies (see RFC).
+#define RPL_WHOISUSER "311" // Whois user, <nick> <user> <host> * :<real name>.
+#define RPL_WHOISSERVER "312" // Whois server reply.
+#define RPL_ENDOFWHOIS "318" // End of whois reply.
+#define RPL_WHOISCHANNELS "319" // list of channels a user is in.
+
+
+#define ERR_UNKNOWNCOMMAND "421" // Unknown command.
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 namespace IRC {
 	// Forward declaration of the Server class.
 	class Server;
@@ -64,15 +101,25 @@ namespace IRC {
 		public:
 			ICommands();
 			virtual ~ICommands();
+		/*-----------------------------------------------------------------------*/
 			void debugCommands();
 			std::vector<std::string> getParameters(std::string command);
 
+		/*-----------------------------------------------------------------------*/
 			void registerCommands();
 			void unRegisterCommands();
+
+		/*-----------------------------------------------------------------------*/
 			static void welcomeMessage(int clientSocket, Server* server);
 			static void sendResponse(int clientSocket, const std::string& message);
+
+		/*-----------------------------------------------------------------------*/
 			static std::string toLowerCase(const std::string& str);
-			void getCommandInfo(const int& clientSocket, const std::string& clientMessage);
+			bool isParameterEmpty(const std::string& command);
+
+		/*-----------------------------------------------------------------------*/
+			void getCommandInfo(const std::string& clientMessage);
+			static void unknownCommand(int clientSocket, Server* server,  const std::string& command);
 			virtual void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command);
 	};
 }

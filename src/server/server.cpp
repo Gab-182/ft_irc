@@ -56,14 +56,14 @@ void Server::create_socket(char *av)
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Server::respondToClient(const int& clientSocket, std::string& clientMsg, ICommands* commands) {
 	DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
-	commands->getCommandInfo(clientSocket, clientMsg);
+	commands->getCommandInfo(clientMsg);
 
 	std::map<int, Client *>::iterator it;
 	it = this->serverClientsMap.find(clientSocket);
 	commands->executeCommand(commands, clientSocket, this, it->second, "");
 
 	// If the client registered to the server, and we did not send welcome message before to him:
-	if (Client::isClientRegistered(clientSocket, this) && !it->second->isWelcomed()) {
+	if (it->second && Client::isClientRegistered(clientSocket, this) && !it->second->isWelcomed()) {
 		ICommands::welcomeMessage(clientSocket, this);
 		it->second->welcomeClient(true);
 	}
@@ -130,7 +130,7 @@ void Server::multi_connection(ICommands* commands) {
 				respondToClient(clientSocket, clientMsg, commands);
 			}
 		}
-		 this->printClients();
+//		 this->printClients();
 	}
  	close(this->master_socket);
 }
