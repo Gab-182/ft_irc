@@ -17,6 +17,14 @@ using namespace IRC;
  **
  **/
 
+/*
+ * TODO: ********************************* IMPORTANT ***************************************
+ * 		- Create an error class that will be thrown when an error occurs.
+ * 		- The error class will be inherited from std::exception.
+ * 		- The error class will have a constructor that will take a string as a parameter.
+ * 		- The string will be the error message.
+ * 		************************************************************************************
+ * */
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 Channel::Channel() : _name(), _topic(), _key(), _modes(), _members(), _operators(), _banedUsers(), _invites(),
 					 _maxUsers(999) { }
@@ -107,6 +115,9 @@ bool Channel::isChannelProtected() const {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+/*
+ * TODO: Split this function into easier to read && smaller functions.
+ * */
 bool Channel::isValidToAddToChannel(Client* client) {
 	std::string numericReply;
 	std::string clientAddError;
@@ -135,7 +146,7 @@ bool Channel::isValidToAddToChannel(Client* client) {
 	}
 	if (this->isChannelInviteOnly() && !client->isInvitedToChannel(client, this->getChannelName())) {
 		numericReply = ERR_INVITEONLYCHAN;
-		clientAddError = BOLDRED "ERROR: "q
+		clientAddError = BOLDRED "ERROR: "
 						 BOLDWHITE "User is not invited to the channel."
 						 RESET "\r\n";
 		return (false);
@@ -213,6 +224,9 @@ void Channel::banMemberFromChannel(Client* client, IRC::Server* server) {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+/*
+ * TODO: Split this function into easier to read && smaller functions.
+ * */
 void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IRC::Server* server) {
 	if (operatorClient->isOperatorOfChannel(operatorClient, this->getChannelName())) {
 		if (clientToBan->isBannedFromChannel(clientToBan, this->getChannelName())) {
@@ -241,7 +255,7 @@ void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IR
 	}
 	else {
 		std::string errMsg = ": "
-							 ERR_CHANOPRIVSNEEDED
+							 ERR_NOPRIVILEGES
 							 BOLDWHITE " " + operatorClient->getNickName() + " " + this->getChannelName()
 							 + BOLDRED " :You're not channel operator."
 							 RESET "\r\n";
@@ -261,30 +275,72 @@ void Channel::unbanUserFromChannel(Client* client) {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::inviteUserToChannel(Client* user) {
-	// Check if the user is already in normal members vector the channel.
-	std::vector<Client *>::iterator itNormal;
-	itNormal = std::find(_members.begin(), _members.end(), user);
-	if (itNormal != _members.end())
-		return;
+/*
+ * TODO: Split this function into easier to read && smaller functions.
+ * */
+void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite) {
+	if (this->isChannelInviteOnly() && operatorClient->isOperatorOfChannel(operatorClient, this->getChannelName())) {
 
-	// Check if the user is already in operators vector the channel.
-	std::vector<Client *>::iterator itOperator;
-	itOperator = std::find(_operators.begin(), _operators.end(), user);
-	if (itOperator != _operators.end())
-		return;
+		if (this->isChannelFull()) {
+			std::string errMsg = ERR_CHANNELISFULL;
+								 BOLDRED "ERROR: "
+								 BOLDWHITE "Can not invite user, channel is full."
+								 RESET "\r\n";
+			Client::sendResponse(operatorClient->getSocket(), errMsg);
+		}
 
-	// Check if the user is banned from the channel.
-	std::vector<Client *>::iterator itBanned;
-	itBanned = std::find(_banedUsers.begin(), _banedUsers.end(), user);
-	if (itBanned != _banedUsers.end())
-		return;
+		if (clientToInvite->isMemberInChannel(clientToInvite, this->getChannelName())) {
+			std::string errMsg = ": "
+								 ERR_USERONCHANNEL
+								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
+								 + BOLDRED " :User is already a member of the channel."
+								   RESET "\r\n";
+			Client::sendResponse(clientToInvite->getSocket(), errMsg);
+		}
 
-	// if not add the user to the invites vector, if not already in.
-	std::vector<Client *>::iterator it;
-	it = std::find(_invites.begin(), _invites.end(), user);
-	if (it == _invites.end())
-		_invites.push_back(user);
+		else if (clientToInvite->isOperatorOfChannel(clientToInvite, this->getChannelName())) {
+			std::string errMsg = ": "
+								 ERR_USERONCHANNEL
+								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
+								 + BOLDRED " :User is already an operator of the channel."
+								  RESET "\r\n";
+			Client::sendResponse(clientToInvite->getSocket(), errMsg);
+		}
+		else if (clientToInvite->isBannedFromChannel(clientToInvite, this->getChannelName())) {
+			std::string errMsg = ": "
+								 ERR_BANNEDFROMCHAN
+								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
+								 + BOLDRED " :User is banned from the channel."
+								   RESET "\r\n";
+			Client::sendResponse(clientToInvite->getSocket(), errMsg);
+		}
+		else if (clientToInvite->isInvitedToChannel(clientToInvite, this->getChannelName())) {
+			std::string errMsg = ": "
+								 ERR_USERONCHANNEL
+								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
+								 + BOLDRED " :User is already invited to the channel."
+								   RESET "\r\n";
+			Client::sendResponse(clientToInvite->getSocket(), errMsg);
+		}
+		else {
+			clientToInvite->addChannelToClientChannelsMap(this);
+			_invites.push_back(clientToInvite->getNickName());
+			std::string inviteMsg = ": "
+									RPL_INVITING
+									BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
+									+ BOLDGREEN " :You have been invited to the channel."
+									  RESET "\r\n";
+			Client::sendResponse(clientToInvite->getSocket(), inviteMsg);
+		}
+	}
+	else {
+		std::string errMsg = ": "
+							 ERR_CHANOPRIVSNEEDED
+							 BOLDWHITE " " + operatorClient->getNickName() + " " + this->getChannelName()
+							 + BOLDRED " :You're not channel operator."
+							 RESET "\r\n";
+		Client::sendResponse(operatorClient->getSocket(), errMsg);
+	}
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
