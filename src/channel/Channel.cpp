@@ -6,7 +6,6 @@ using namespace IRC;
  ** 		- Change the getter, setters, and the constructor.
  ** -----------------------------------------------------------------------
  ** TODO: Check if we can add the client first due to:
- ** 		- Channel is full, _maxUsers reached.
  ** 		- Channel is invite only, and the client is not invited.
  ** 		- Channel requires a key, and the client entered a wrong key.
  ** 		- # Add the correct numeric replies for each case.
@@ -15,10 +14,10 @@ using namespace IRC;
  **/
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 Channel::Channel() : _name(), _topic(), _key(), _mode(), _members(), _operators(), _banedUsers(), _invites(),
-					 _maxUsers() { }
+					 _maxUsers(999) { }
 
 Channel::Channel(const std::string& name) : _topic(), _key(), _mode(), _members(), _operators(),
-															 _banedUsers(), _invites(), _maxUsers() {
+															 _banedUsers(), _invites(), _maxUsers(999) {
 	_name = name;
 }
 
@@ -52,17 +51,88 @@ std::vector<Client*> Channel::getNormalClients() { return (_members); }
 std::vector<Client*> Channel::getOperators() { return (_operators); }
 std::vector<Client*> Channel::getBanedUsers() { return (_banedUsers); }
 std::vector<Client*> Channel::getInvites() { return (_invites); }
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::addClientToChannel(Client* user) {
-	std::vector<Client *>::iterator itNormal;
-	itNormal = std::find(_members.begin(), _members.end(), user);
-	if (itNormal == _members.end())
-		_members.push_back(user);
+size_t Channel::getChannelUsersNumber() const {
+	return (_members.size() + _operators.size() + _banedUsers.size() + _invites.size());
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::removeClientFromChannelVectors(Client* client) {
+bool Channel::isChannelFull() const {
+	if (_maxUsers == 0)
+		return (false);
+	return (getChannelUsersNumber() >= _maxUsers);
+}
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+bool Channel::isValidToAddToChannel(Client* client) {
+	std::string numericReply;
+	std::string clientAddError;
+	std::string errMsg;
+
+	/*
+	 * TODO: Check if the client key matches the channel key.
+	 * TODO: Split the function into smaller ones so:
+	 * 		- one to check if the channel is full.
+	 * 		- one to check if the client is an operator.
+	 * 		- one to check if the client is banned.
+	 * 		- one to check if the client is already a member.
+	 * 		- one to check if the channel is invite only and the client is invited.
+	 * 		- one to check if the client key matches the channel key.
+	 * 		- each function will return a boolean.
+	 * 			- if true, then add the client to the channel.
+	 * 			- if false, then send the correct numeric reply according to the case.
+	 * */
+	if (this->isChannelFull()) {
+		numericReply = ERR_CHANNELISFULL;
+		clientAddError = BOLDRED "ERROR: "
+						 BOLDWHITE "Channel is full."
+						 RESET "\r\n";
+		return (false);
+	}
+	if (client->isOperatorOfChannel(client, this->getChannelName())) {
+		numericReply = ERR_USERONCHANNEL;
+		clientAddError = BOLDRED "ERROR: "
+						 BOLDWHITE "User is already an operator of the channel."
+						 RESET "\r\n";
+		return (false);
+	}
+	if (client->isBannedFromChannel(client, this->getChannelName())) {
+		numericReply = ERR_BANNEDFROMCHAN;
+		clientAddError = BOLDRED "ERROR: "
+						 BOLDWHITE "User is banned from the channel."
+						 RESET "\r\n";
+		return (false);
+	}
+	if (client->isInvitedToChannel(client, this->getChannelName())) {
+		numericReply = ERR_INVITEONLYCHAN;
+		clientAddError = BOLDRED "ERROR: "
+						 BOLDWHITE "User is not invited to the channel."
+						 RESET "\r\n";
+		return (false);
+	}
+	if (client->isMemberInChannel(client, this->getChannelName())) {
+		numericReply = ERR_USERONCHANNEL;
+		clientAddError = BOLDRED "ERROR: "
+						 BOLDWHITE "User is already a member of the channel."
+						 RESET "\r\n";
+		return (false);
+	}
+
+
+	errMsg = ": " + numericReply + " " + client->getNickName() + " " + this->getChannelName() + clientAddError;
+	Client::sendResponse(client->getSocket(), errMsg);
+
+	return (true);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Channel::addMemberToChannel(Client* client) {
+	if (this->isValidToAddToChannel(client)) {
+		client->addChannelToClientChannelsMap(this);
+		_members.push_back(client);
+	}
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Channel::removeMemberFromChannel(Client* client) {
 	std::vector<Client *>::iterator itClient;
 	itClient = std::find(_members.begin(), _members.end(), client);
 	if (itClient != _members.end())

@@ -37,6 +37,7 @@ namespace IRC {
 			std::string _topic;
 			std::string _key;
 			std::string _mode;
+			size_t _chennelUsersNumber;
 			/*----------------------------------------------*/
 			/**
 			 * @brief ➤ The normal members of the channel.
@@ -70,16 +71,31 @@ namespace IRC {
 			~Channel();
 		public:
 			/**-----------------------------------------------------------------------------------------
-			** @brief ➤ Add the client to the members vector if it's not already in it.
-			** @param user ➤ pointer to the client to add to the channel.
+			 * @brief ➤ Check if the channel is full.
+			 * @return true ➤ if the channel is full.
+			 * @return false ➤ if the channel is not full.
+			 */
+			bool isChannelFull() const;
+
+			/**-----------------------------------------------------------------------------------------
+			 * @brief ➤ Check if the client is already in the channel.
+			 * @param client ➤ pointer to the client to check if it's in the channel.
+			 * @return true ➤ if the client is not the channel.
+			 * @return false ➤ if the client is in the channel.
+			 */
+			bool isValidToAddToChannel(Client* client);
+
+			/**-----------------------------------------------------------------------------------------
+			** @brief ➤ Add a normal client to the _members vector if it's not already in it.
+			** @param client ➤ pointer to the client to add to the channel.
 			**/
-			void addClientToChannel(Client* user);
+			void addMemberToChannel(Client* client);
 
 			/**-----------------------------------------------------------------------------------------
 			 ** @brief ➤ Remove the client from all the vectors of the channel.
 			 ** @param user ➤ pointer to the client to remove from the channel.
 			 **/
-			void removeClientFromChannelVectors(Client* user);
+			void removeMemberFromChannel(Client* user);
 
 			/**-----------------------------------------------------------------------------------------
 			 ** @brief Add the client to the operators vector if it's not already in it.
@@ -131,6 +147,7 @@ namespace IRC {
 			std::string getMode();
 			std::string getKey();
 			size_t getMaxUsers() const;
+			size_t getChannelUsersNumber() const;
 
 			/*----------------------------------------------*/
 			std::vector<Client*> getNormalClients();

@@ -35,6 +35,7 @@ namespace IRC {
 			explicit Client(int socket);
 			Client(const Client& other);
 			Client& operator=(const Client& other);
+			bool operator==(const Client& other) const;
 
 		/*------------------------------------------------------------------------------*/
 			void setSocket(const int& socket);
@@ -49,25 +50,18 @@ namespace IRC {
 			bool isWelcomed() const;
 
 		/*------------------------------------------------------------------------------*/
-			bool isClientInChannel(const std::string& channelName);
-			bool isOperatorOfChannel(const int& clientSocket, const std::string& channelName);
-			bool isInvitedToChannel(const int& clientSocket, const std::string& channelName);
-			bool isBannedFromChannel(const int& clientSocket, const std::string& channelName);
+			bool isMemberInChannel(Client* client, const std::string& channelName);
+			bool isOperatorOfChannel(Client* client, const std::string& channelName);
+			bool isInvitedToChannel(Client* client, const std::string& channelName);
+			bool isBannedFromChannel(Client* client, const std::string& channelName);
 
-			/**-----------------------------------------------------------------------------------------
-			** @brief ➤ Add the channel to the channels map in the client side
-			** if it is not already there, then add the client to the channel
-			** through the channel's addClientToChannel method.
-			** @param client ➤ pointer of the client object to add to the channel
-			** @param channelName ➤ name of the channel to add the client to
-			** @param channel ➤ pointer to the channel object to add the client to
-			**/
-			void addClientToChannel(Client* client, const std::string& channelName, Channel* channel);
-			void addOperatorToChannel(Client* client, const std::string& channelName, Channel* channel);
+		/*------------------------------------------------------------------------------*/
+			void addChannelToClientChannelsMap(Channel* channel);
+			void removeChannelFromClientChannelsMap(const std::string& channelName);
 
-			void removeClientFromChannel(Client* client, Channel* channel);
-			void removeClientFromAllChannels(Client* client);
-			void removeClientFromServer(const int& clientSocket, Server* server, Client* client);
+		/*------------------------------------------------------------------------------*/
+//			void removeClientFromAllChannels(Client* client);
+//			void removeClientFromServer(const int& clientSocket, Server* server, Client* client);
 
 		/*------------------------------------------------------------------------------*/
 			static void sendResponse(int clientSocket, const std::string& message);

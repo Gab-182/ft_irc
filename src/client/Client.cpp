@@ -29,36 +29,50 @@ Client& Client::operator=(const Client& other) {
 	return (*this);
 }
 
-/*====================================================================================================================*/
-void Client::setSocket(const int& socket) { _socket = socket; }
-void Client::setUserName(const std::string& user) { _userName = user; }
-void Client::setNickName(const std::string& nick) { _nickName = nick; }
-void Client::welcomeClient(bool welcome) { _isWelcomed = welcome; }
-
-/*====================================================================================================================*/
-int Client::getSocket() const { return (this->_socket); }
-std::string Client::getUserName() { return (this->_userName); }
-std::string Client::getNickName() { return (this->_nickName); }
-bool Client::isWelcomed() const { return (this->_isWelcomed); }
-
-/*====================================================================================================================*/
-bool Client::isClientInChannel(const std::string& channelName) {
-	std::map<std::string, Channel*>::iterator itChannelMap;
-	itChannelMap = this->_clientChannelsMap.find(channelName);
-	if (itChannelMap != this->_clientChannelsMap.end())
+bool Client::operator==(const Client& other) const {
+	if (this->_socket == other._socket
+		&& this->_userName == other._userName
+		&& this->_nickName == other._nickName)
 		return (true);
 	return (false);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-bool Client::isOperatorOfChannel(const int& clientSocket, const std::string& channelName) {
+void Client::setSocket(const int& socket) { _socket = socket; }
+void Client::setUserName(const std::string& user) { _userName = user; }
+void Client::setNickName(const std::string& nick) { _nickName = nick; }
+void Client::welcomeClient(bool welcome) { _isWelcomed = welcome; }
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+int Client::getSocket() const { return (this->_socket); }
+std::string Client::getUserName() { return (this->_userName); }
+std::string Client::getNickName() { return (this->_nickName); }
+bool Client::isWelcomed() const { return (this->_isWelcomed); }
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+bool Client::isMemberInChannel(Client* client, const std::string& channelName) {
+	std::map<std::string, Channel*>::iterator itMap;
+	std::vector<Client*>::iterator itMember;
+
+	itMap = this->_clientChannelsMap.find(channelName);
+	if (itMap != this->_clientChannelsMap.end()) {
+		for (itMember = itMap->second->getNormalClients().begin(); itMember != itMap->second->getNormalClients().end(); ++itMember) {
+			if (*itMember == client)
+				return (true);
+		}
+	}
+	return (false);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+bool Client::isOperatorOfChannel(Client* client, const std::string& channelName) {
 	std::map<std::string, Channel*>::iterator itMap;
 	std::vector<Client*>::iterator itOper;
 
 	itMap = this->_clientChannelsMap.find(channelName);
 	if (itMap != this->_clientChannelsMap.end()) {
 		for (itOper = itMap->second->getOperators().begin(); itOper != itMap->second->getOperators().end(); ++itOper) {
-			if ((*itOper)->getSocket() == clientSocket)
+			if (*itOper == client)
 				return (true);
 		}
 	}
@@ -66,13 +80,13 @@ bool Client::isOperatorOfChannel(const int& clientSocket, const std::string& cha
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-bool Client::isInvitedToChannel(const int &clientSocket, const std::string& channelName) {
+bool Client::isInvitedToChannel(Client* client, const std::string& channelName) {
 	std::map<std::string, Channel*>::iterator itMap;
 	std::vector<Client*>::iterator itInv;
 	itMap = this->_clientChannelsMap.find(channelName);
 	if (itMap != this->_clientChannelsMap.end()) {
 		for (itInv = itMap->second->getInvites().begin(); itInv != itMap->second->getInvites().end(); ++itInv) {
-			if ((*itInv)->getSocket() == clientSocket)
+			if (*itInv == client)
 				return (true);
 		}
 	}
@@ -80,13 +94,13 @@ bool Client::isInvitedToChannel(const int &clientSocket, const std::string& chan
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-bool Client::isBannedFromChannel(const int& clientSocket, const std::string& channelName) {
+bool Client::isBannedFromChannel(Client* client, const std::string& channelName) {
 	std::map<std::string, Channel*>::iterator itMap;
 	std::vector<Client*>::iterator itBan;
 	itMap = this->_clientChannelsMap.find(channelName);
 	if (itMap != this->_clientChannelsMap.end()) {
 		for (itBan = itMap->second->getBanedUsers().begin(); itBan != itMap->second->getBanedUsers().end(); ++itBan) {
-			if ((*itBan)->getSocket() == clientSocket)
+			if (*itBan == client)
 				return (true);
 		}
 	}
@@ -94,60 +108,42 @@ bool Client::isBannedFromChannel(const int& clientSocket, const std::string& cha
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Client::addClientToChannel(Client* client, const std::string& channelName, Channel* channel) {
-	std::map<std::string, Channel*>::iterator itChannel;
-	itChannel = this->_clientChannelsMap.find(channelName);
+void Client::addChannelToClientChannelsMap(IRC::Channel *channel) {
+	std::map<std::string, Channel*>::iterator itMap;
+	itMap = this->_clientChannelsMap.find(channel->getChannelName());
 
-	if (itChannel == this->_clientChannelsMap.end()) {
-		this->_clientChannelsMap.insert(std::pair<std::string, Channel*>(channelName, channel));
-		channel->addClientToChannel(client);
-	}
+	if (itMap == this->_clientChannelsMap.end())
+		this->_clientChannelsMap.insert(std::pair<std::string, Channel*>(channel->getChannelName(), channel));
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Client::addOperatorToChannel(Client* client, const std::string& channelName, Channel* channel) {
-	std::map<std::string, Channel*>::iterator itChannel;
-	itChannel = this->_clientChannelsMap.find(channelName);
+void Client::removeChannelFromClientChannelsMap(const std::string& channelName) {
+	std::map<std::string, Channel*>::iterator itMap;
+	itMap = this->_clientChannelsMap.find(channelName);
 
-	if (itChannel == this->_clientChannelsMap.end()) {
-		this->_clientChannelsMap.insert(std::pair<std::string, Channel*>(channelName, channel));
-		channel->addOperatorToChannel(client);
-	}
+	if (itMap != this->_clientChannelsMap.end())
+		this->_clientChannelsMap.erase(itMap);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-/**
- * TODO: If the client was the last client in the channel, delete the channel from the server.
- **/
-void Client::removeClientFromChannel(Client* client, Channel* channel) {
-	std::map<std::string, Channel*>::iterator itChannel;
-	itChannel = this->_clientChannelsMap.find(channel->getChannelName());
-
-	if (itChannel != this->_clientChannelsMap.end()) {
-		channel->removeClientFromChannelVectors(client);
-		this->_clientChannelsMap.erase(itChannel);
-	}
-}
+//void Client::removeClientFromAllChannels(Client* client) {
+//	std::map<std::string, Channel*>::iterator itChannel;
+//	for (itChannel = this->_clientChannelsMap.begin(); itChannel != this->_clientChannelsMap.end(); ++itChannel)
+//		itChannel->removeClientFromChannel(client, itChannel->second);
+//	this->_clientChannelsMap.clear();
+//}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Client::removeClientFromAllChannels(Client* client) {
-	std::map<std::string, Channel*>::iterator itChannel;
-	for (itChannel = this->_clientChannelsMap.begin(); itChannel != this->_clientChannelsMap.end(); ++itChannel)
-		this->removeClientFromChannel(client, itChannel->second);
-	this->_clientChannelsMap.clear();
-}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Client::removeClientFromServer(const int& clientSocket, Server* server, Client* client) {
-	this->removeClientFromAllChannels(this);
-	std::map<int, IRC::Client*>::iterator itServerMap;
-	itServerMap = server->serverClientsMap.find(clientSocket);
-
-	if (itServerMap != server->serverClientsMap.end()) {
-		server->serverClientsMap.erase(itServerMap);
-		delete client;
-	}
-}
+//void Client::removeClientFromServer(const int& clientSocket, Server* server, Client* client) {
+//	this->removeClientFromAllChannels(this);
+//	std::map<int, IRC::Client*>::iterator itServerMap;
+//	itServerMap = server->serverClientsMap.find(clientSocket);
+//
+//	if (itServerMap != server->serverClientsMap.end()) {
+//		server->serverClientsMap.erase(itServerMap);
+//		delete client;
+//	}
+//}
 
 /*====================================================================================================================*/
 void Client::sendResponse(int clientSocket, const std::string& message) {
