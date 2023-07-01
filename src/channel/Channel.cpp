@@ -344,11 +344,16 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::removeInviteeFromChannel(Client* user) {
-	std::vector<Client *>::iterator it;
-	it = std::find(_invites.begin(), _invites.end(), user);
-	if (it != _invites.end())
-		_invites.erase(it);
+void Channel::removeInviteeFromChannel(Client* client) {
+	if (client->isOperatorOfChannel(client, this->getChannelName())) {
+		std::vector<std::string>::iterator itInvitee;
+		for (itInvitee = _invites.begin(); itInvitee != _invites.end(); ++itInvitee) {
+			if (*itInvitee == client->getNickName()) {
+				_invites.erase(itInvitee);
+				return;
+			}
+		}
+	}
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -356,7 +361,13 @@ void Channel::printChannelInfo() {
 	std::cout << BOLDMAGENTA << std::endl << "—————————————————————————————————————————————————" << std::endl;
 	std::cout << BOLDYELLOW << "Channel name: " << BOLDWHITE << _name << std::endl;
 	std::cout << BOLDYELLOW << "Channel topic: " << BOLDWHITE << _topic << std::endl;
-	std::cout << BOLDYELLOW << "Channel mode: " << BOLDWHITE << _mode << std::endl;
+
+	std::cout << BOLDYELLOW << "Channel modes: " << std::endl;
+	std::vector<char>::iterator itModes;
+	for (itModes = _modes.begin(); itModes != _modes.end(); ++itModes)
+		std::cout << BOLDWHITE << *itModes << BOLDYELLOW << " - ";
+
+
 	std::cout << BOLDYELLOW << "Channel key: " << BOLDWHITE << _key << std::endl;
 	std::cout << BOLDYELLOW << "Channel max users: " << BOLDWHITE << _maxUsers << std::endl;
 
@@ -374,15 +385,15 @@ void Channel::printChannelInfo() {
 
 	std::cout << std::endl;
 	std::cout << "Channel baned users: ➤➤ ";
-	std::vector<Client *>::iterator itBanned;
+	std::vector<std::string>::iterator itBanned;
 	for (itBanned = _banedUsers.begin(); itBanned != _banedUsers.end(); ++itBanned)
-		std::cout << BOLDWHITE << (*itBanned)->getNickName() << BOLDYELLOW << " - ";
+		std::cout << BOLDWHITE << *itBanned << BOLDYELLOW << " - ";
 
 	std::cout << std::endl;
 	std::cout << "Channel invites: ➤➤ ";
-	std::vector<Client *>::iterator itInvite;
+	std::vector<std::string>::iterator itInvite;
 	for (itInvite = _invites.begin(); itInvite != _invites.end(); ++itInvite)
-		std::cout << BOLDWHITE << (*itInvite)->getNickName() << BOLDYELLOW << " - ";
+		std::cout << BOLDWHITE << *itInvite << BOLDYELLOW << " - ";
 
 	std::cout << BOLDMAGENTA << std::endl << "—————————————————————————————————————————————————" << std::endl;
 }
