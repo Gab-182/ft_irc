@@ -38,18 +38,6 @@ namespace IRC {
 			bool operator==(const Client& other) const;
 
 		/*------------------------------------------------------------------------------*/
-			void setSocket(const int& socket);
-			void setUserName(const std::string& userName);
-			void setNickName(const std::string& nickName);
-			void welcomeClient(bool welcome);
-
-		/*------------------------------------------------------------------------------*/
-			int getSocket() const;
-			std::string getUserName();
-			std::string getNickName();
-			bool isWelcomed() const;
-
-		/*------------------------------------------------------------------------------*/
 			bool isMemberInChannel(Client* client, const std::string& channelName);
 			bool isOperatorOfChannel(Client* client, const std::string& channelName);
 			bool isInvitedToChannel(Client* client, const std::string& channelName);
@@ -60,14 +48,25 @@ namespace IRC {
 			void removeChannelFromClientChannelsMap(const std::string& channelName);
 
 		/*------------------------------------------------------------------------------*/
-//			void removeClientFromAllChannels(Client* client);
-//			void removeClientFromServer(const int& clientSocket, Server* server, Client* client);
+			void removeClientFromServer(const int& clientSocket, Server* server, Client* client);
 
 		/*------------------------------------------------------------------------------*/
 			static void sendResponse(int clientSocket, const std::string& message);
 			static bool isClientAuthenticated(const int& clientSocket, Server* server);
 			static bool isClientRegistered(const int& clientSocket, Server* server);
 			static void removeClient(int clientSocket, IRC::Server* server);
+
+		/*------------------------------------------------------------------------------*/
+			void setSocket(const int& socket);
+			void setUserName(const std::string& userName);
+			void setNickName(const std::string& nickName);
+			void welcomeClient(bool welcome);
+
+		/*------------------------------------------------------------------------------*/
+			int getSocket() const;
+			std::string getUserName();
+			std::string getNickName();
+			bool isWelcomed() const;
 
 		/*------------------------------------------------------------------------------*/
 			void printClientChannelsMap();

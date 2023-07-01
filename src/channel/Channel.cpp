@@ -357,6 +357,16 @@ void Channel::removeInviteeFromChannel(Client* client) {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Channel::removeClientFromChannel(Client* client, IRC::Server* server) {
+	if (client->isMemberInChannel(client, this->getChannelName()))
+		this->removeMemberFromChannel(client, server);
+	else if (client->isOperatorOfChannel(client, this->getChannelName()))
+		this->removeOperatorFromChannel(client, server);
+	else if (client->isInvitedToChannel(client, this->getChannelName()))
+		this->removeInviteeFromChannel(client);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::printChannelInfo() {
 	std::cout << BOLDMAGENTA << std::endl << "—————————————————————————————————————————————————" << std::endl;
 	std::cout << BOLDYELLOW << "Channel name: " << BOLDWHITE << _name << std::endl;

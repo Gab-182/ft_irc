@@ -126,26 +126,22 @@ void Client::removeChannelFromClientChannelsMap(const std::string& channelName) 
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-//void Client::removeClientFromAllChannels(Client* client) {
-//	std::map<std::string, Channel*>::iterator itChannel;
-//	for (itChannel = this->_clientChannelsMap.begin(); itChannel != this->_clientChannelsMap.end(); ++itChannel)
-//		itChannel->removeClientFromChannel(client, itChannel->second);
-//	this->_clientChannelsMap.clear();
-//}
+void Client::removeClientFromServer(const int& clientSocket, Server* server, Client* client) {
+	std::map<std::string, Channel*>::iterator itChannelMap;
+	for (itChannelMap = _clientChannelsMap.begin(); itChannelMap != _clientChannelsMap.end(); ++itChannelMap) {
+		itChannelMap->second->removeClientFromChannel(client, server);
+	}
+	_clientChannelsMap.clear();
+
+	std::map<int, IRC::Client*>::iterator itServerMap;
+	itServerMap = server->serverClientsMap.find(clientSocket);
+	if (itServerMap != server->serverClientsMap.end()) {
+		server->serverClientsMap.erase(itServerMap);
+		delete client;
+	}
+}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-//void Client::removeClientFromServer(const int& clientSocket, Server* server, Client* client) {
-//	this->removeClientFromAllChannels(this);
-//	std::map<int, IRC::Client*>::iterator itServerMap;
-//	itServerMap = server->serverClientsMap.find(clientSocket);
-//
-//	if (itServerMap != server->serverClientsMap.end()) {
-//		server->serverClientsMap.erase(itServerMap);
-//		delete client;
-//	}
-//}
-
-/*====================================================================================================================*/
 void Client::sendResponse(int clientSocket, const std::string& message) {
 	if (send(clientSocket, message.c_str(), message.size(), 0) == -1)
 		DEBUG_MSG("Failed to send message to the client: " << message)
@@ -175,6 +171,9 @@ bool Client::isClientRegistered(const int& clientSocket, Server* server) {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+/*
+ * TODO: Work it around to be able to replace it with the removeClientFromServer() function.
+ * */
 void Client::removeClient(int clientSocket, IRC::Server* server) {
 	if (Client::isClientAuthenticated(clientSocket, server)) {
 
