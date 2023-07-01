@@ -18,10 +18,10 @@ using namespace IRC;
  **/
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-Channel::Channel() : _name(), _topic(), _key(), _mode(), _members(), _operators(), _banedUsers(), _invites(),
+Channel::Channel() : _name(), _topic(), _key(), _modes(), _members(), _operators(), _banedUsers(), _invites(),
 					 _maxUsers(999) { }
 
-Channel::Channel(const std::string& name) : _topic(), _key(), _mode(), _members(), _operators(),
+Channel::Channel(const std::string& name) : _topic(), _key(), _modes(), _members(), _operators(),
 															 _banedUsers(), _invites(), _maxUsers(999) {
 	_name = name;
 }
@@ -35,30 +35,31 @@ Channel::~Channel() {
 		_banedUsers.clear();
 	if (!_invites.empty())
 		_invites.clear();
+	if (!_modes.empty())
+		_modes.clear();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::setName(const std::string& name) { _name = name;}
 void Channel::setTopic(const std::string& topic) {_topic = topic;}
 void Channel::setKey(const std::string& key) {_key = key;}
-void Channel::setMode(const std::string& mode) {_mode = mode;}
 void Channel::setMaxUsers(const size_t& maxUsers) {_maxUsers = maxUsers;}
-
+void Channel::addMode(const char& mode) {_modes.push_back(mode);}
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 std::string Channel::getChannelName() { return (_name); }
 std::string Channel::getTopic() { return (_topic); }
-std::string Channel::getMode() { return (_mode); }
+std::vector<char> Channel::getModes() { return (_modes); }
 std::string Channel::getKey() { return (_key); }
 size_t Channel::getMaxUsers() const { return (_maxUsers); }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 std::vector<Client*> Channel::getNormalClients() { return (_members); }
 std::vector<Client*> Channel::getOperators() { return (_operators); }
-std::vector<Client*> Channel::getBanedUsers() { return (_banedUsers); }
-std::vector<Client*> Channel::getInvites() { return (_invites); }
+std::vector<std::string> Channel::getBanedUsers() { return (_banedUsers); }
+std::vector<std::string> Channel::getInvites() { return (_invites); }
 size_t Channel::getChannelUsersNumber() const {
-	// We don't cout the baned users, because they are not inside the channel.
-	// They are just baned from joining the channel.
+	// We also count the invited users,
+	// because we want to make sure there is a space for them if they joined
 	return (_members.size() + _operators.size() + _invites.size());
 }
 
@@ -86,25 +87,31 @@ bool Channel::isChannelFull() const {
 		return (false);
 	return (getChannelUsersNumber() >= _maxUsers);
 }
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+bool Channel::isChannelInviteOnly() const {
+	std::vector<char>::const_iterator it;
+	it = std::find(_modes.begin(), _modes.end(), 'i');
+	if (it != _modes.end())
+		return (true);
+	return (false);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+bool Channel::isChannelProtected() const {
+	std::vector<char>::const_iterator it;
+	it = std::find(_modes.begin(), _modes.end(), 'k');
+	if (it != _modes.end())
+		return (true);
+	return (false);
+}
+
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 bool Channel::isValidToAddToChannel(Client* client) {
 	std::string numericReply;
 	std::string clientAddError;
 	std::string errMsg;
 
-	/*
-	 * TODO: Check if the client key matches the channel key.
-	 * TODO: Split the function into smaller ones so:
-	 * 		- one to check if the channel is full.
-	 * 		- one to check if the client is an operator.
-	 * 		- one to check if the client is banned.
-	 * 		- one to check if the client is already a member.
-	 * 		- one to check if the channel is invite only and the client is invited.
-	 * 		- one to check if the client key matches the channel key.
-	 * 		- each function will return a boolean.
-	 * 			- if true, then add the client to the channel.
-	 * 			- if false, then send the correct numeric reply according to the case.
-	 * */
 	if (this->isChannelFull()) {
 		numericReply = ERR_CHANNELISFULL;
 		clientAddError = BOLDRED "ERROR: "
@@ -126,13 +133,22 @@ bool Channel::isValidToAddToChannel(Client* client) {
 						 RESET "\r\n";
 		return (false);
 	}
-	if (client->isInvitedToChannel(client, this->getChannelName())) {
+	if (this->isChannelInviteOnly() && !client->isInvitedToChannel(client, this->getChannelName())) {
 		numericReply = ERR_INVITEONLYCHAN;
-		clientAddError = BOLDRED "ERROR: "
+		clientAddError = BOLDRED "ERROR: "q
 						 BOLDWHITE "User is not invited to the channel."
 						 RESET "\r\n";
 		return (false);
 	}
+	// TODO: Add the isKeyMatchesChannelKey() function and uncomment the following lines
+
+//	if (this->isChannelProtected() && !client->isKeyMatchesChannelKey(client, this->getChannelName())) {
+//		numericReply = ERR_BADCHANNELKEY;
+//		clientAddError = BOLDRED "ERROR: "
+//						 BOLDWHITE "User key does not match the channel key."
+//						 RESET "\r\n";
+//		return (false);
+//	}
 	if (client->isMemberInChannel(client, this->getChannelName())) {
 		numericReply = ERR_USERONCHANNEL;
 		clientAddError = BOLDRED "ERROR: "
@@ -189,23 +205,17 @@ void Channel::removeOperatorFromChannel(Client* client, IRC::Server* server) {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Channel::banMemberFromChannel(Client* client, IRC::Server* server) {
+	if (client->isMemberInChannel(client, this->getChannelName())) {
+		this->removeMemberFromChannel(client, server);
+		_banedUsers.push_back(client->getNickName());
+	}
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IRC::Server* server) {
 	if (operatorClient->isOperatorOfChannel(operatorClient, this->getChannelName())) {
-
-		// If member client is in the channel, remove him from the channel.
-		if (clientToBan->isMemberInChannel(clientToBan, this->getChannelName()))
-			this->removeMemberFromChannel(clientToBan, server);
-		else if (clientToBan->isOperatorOfChannel(clientToBan, this->getChannelName()))
-			this->removeOperatorFromChannel(clientToBan, server);
-
-		//
-
-
-
-		if (!clientToBan->isBannedFromChannel(clientToBan, this->getChannelName()))
-			_banedUsers.push_back(clientToBan);
-		// ERROR: No such user in the channel
-		else {
+		if (clientToBan->isBannedFromChannel(clientToBan, this->getChannelName())) {
 			std::string errMsg = ": "
 								 ERR_USERONCHANNEL
 								 BOLDWHITE " " + clientToBan->getNickName() + " " + this->getChannelName()
@@ -213,6 +223,19 @@ void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IR
 								 RESET "\r\n";
 			Client::sendResponse(clientToBan->getSocket(), errMsg);
 		}
+
+		else if (clientToBan->isOperatorOfChannel(clientToBan, this->getChannelName())) {
+			std::string errMsg = ": "
+								 ERR_CHANOPRIVSNEEDED
+								 BOLDWHITE " " + operatorClient->getNickName() + " " + this->getChannelName()
+								 + BOLDRED " :You can't ban a channel operator."
+								 RESET "\r\n";
+			Client::sendResponse(operatorClient->getSocket(), errMsg);
+		}
+
+		else if (clientToBan->isMemberInChannel(clientToBan, this->getChannelName()))
+			this->banMemberFromChannel(clientToBan, server);
+
 
 	// ERROR: Client is not operator of the channel to ban a user.
 	}
@@ -227,12 +250,14 @@ void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IR
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::unbanUserFromChannel(Client* user) {
-	std::vector<Client *>::iterator itUnBaned;
-	itUnBaned = std::find(_banedUsers.begin(), _banedUsers.end(), user);
-
-	if (itUnBaned != _banedUsers.end())
-		_banedUsers.erase(itUnBaned);
+void Channel::unbanUserFromChannel(Client* client) {
+	std::vector<std::string>::iterator itUnBaned;
+	for (itUnBaned = _banedUsers.begin(); itUnBaned != _banedUsers.end(); itUnBaned++) {
+		if (*itUnBaned == client->getNickName()) {
+			_banedUsers.erase(itUnBaned);
+			return;
+		}
+	}
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

@@ -82,11 +82,11 @@ bool Client::isOperatorOfChannel(Client* client, const std::string& channelName)
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 bool Client::isInvitedToChannel(Client* client, const std::string& channelName) {
 	std::map<std::string, Channel*>::iterator itMap;
-	std::vector<Client*>::iterator itInv;
+	std::vector<std::string>::iterator itInv;
 	itMap = this->_clientChannelsMap.find(channelName);
 	if (itMap != this->_clientChannelsMap.end()) {
 		for (itInv = itMap->second->getInvites().begin(); itInv != itMap->second->getInvites().end(); ++itInv) {
-			if (*itInv == client)
+			if (*itInv == client->getNickName())
 				return (true);
 		}
 	}
@@ -96,11 +96,11 @@ bool Client::isInvitedToChannel(Client* client, const std::string& channelName) 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 bool Client::isBannedFromChannel(Client* client, const std::string& channelName) {
 	std::map<std::string, Channel*>::iterator itMap;
-	std::vector<Client*>::iterator itBan;
+	std::vector<std::string>::iterator itBan;
 	itMap = this->_clientChannelsMap.find(channelName);
 	if (itMap != this->_clientChannelsMap.end()) {
 		for (itBan = itMap->second->getBanedUsers().begin(); itBan != itMap->second->getBanedUsers().end(); ++itBan) {
-			if (*itBan == client)
+			if (*itBan == client->getNickName())
 				return (true);
 		}
 	}

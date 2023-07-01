@@ -39,8 +39,7 @@ namespace IRC {
 			std::string _name;
 			std::string _topic;
 			std::string _key;
-			std::string _mode;
-			size_t _chennelUsersNumber;
+			std::vector<char> _modes;
 			/*----------------------------------------------*/
 			/**
 			 * @brief ➤ The normal members of the channel.
@@ -51,13 +50,13 @@ namespace IRC {
 			 */
 			std::vector<Client*> _operators;
 			/**
-			 * @brief ➤ The baned users from the channel.
+			 * @brief ➤ The nicknames of baned users from the channel.
 			 */
-			std::vector<Client*> _banedUsers;
+			std::vector<std::string> _banedUsers;
 			/**
-			 * @brief ➤ The users that are invited to the channel.
+			 * @brief ➤ The nicknames of invited users to the channel.
 			 */
-			std::vector<Client*> _invites;
+			std::vector<std::string> _invites;
 			/**
 			 * @brief ➤ The max users that can be in the channel.
 			 */
@@ -74,7 +73,20 @@ namespace IRC {
 			~Channel();
 		public:
 			/**-----------------------------------------------------------------------------------------
+			 * @brief ➤  Check if the joining the channel required a key.
+			 * @return true ➤ if the channel required a key.
+			 * @return false ➤ if the channel did not require a key.
+			 */
+			bool isChannelProtected() const;
+			/**-----------------------------------------------------------------------------------------
+			 * @brief ➤ Check if the channel is invite only.
+			 * @return true ➤ if the channel is invite only.
+			 * @return false ➤ if the channel is not invite only.
+			 */
+			bool isChannelInviteOnly() const;
+			/**-----------------------------------------------------------------------------------------
 			 * @brief ➤ If the channel is empty then delete it.
+			 ** @param server ➤ pointer to the server.
 			 * @return
 			 */
 			void ifChannelIsEmptyThenDeleteIt(IRC::Server* server);
@@ -103,6 +115,7 @@ namespace IRC {
 			/**-----------------------------------------------------------------------------------------
 			 ** @brief ➤ Remove the client from all the vectors of the channel.
 			 ** @param user ➤ pointer to the client to remove from the channel.
+			 ** @param server ➤ pointer to the server.
 			 **/
 			void removeMemberFromChannel(Client* client, IRC::Server* server);
 
@@ -115,14 +128,23 @@ namespace IRC {
 			/**-----------------------------------------------------------------------------------------
 			 ** @brief ➤ Remove the client from the operators vector if it's in it.
 			 ** @param user ➤ pointer to the operator client to remove from the channel.
+			 ** @param server ➤ pointer to the server.
 			 **/
 			void removeOperatorFromChannel(Client* client, IRC::Server* server);
 
 			/**-----------------------------------------------------------------------------------------
+			 ** @brief ➤ Ban members from the channel.
+			 ** @param client ➤ pointer to the member client to ban from the channel.
+			 ** @param server ➤ pointer to the server.
+			 **/
+			void banMemberFromChannel(Client* client, IRC::Server* server);
+			/**-----------------------------------------------------------------------------------------
 			 ** @brief ➤ Add the client to the baned users vector if it's not already in it.
 			 ** only the operators can ban users from the channel.
 			 ** the channel is not removed from the client's channels vector.
-			 ** @param user ➤ pointer to the client to ban from the channel.
+			 ** @param operatorClient ➤ pointer to the operator client.
+			 ** @param clientToBan ➤ pointer to the client to ban from the channel.
+			 ** @param server ➤ pointer to the server.
 			 **/
 			void banUserFromChannel(Client* operatorClient, Client* clientToBan, IRC::Server* server);
 
@@ -130,30 +152,30 @@ namespace IRC {
 			 ** @brief ➤ Remove the client from the baned users vector if it's in it.
 			 ** @param user ➤ pointer to the client to unban from the channel.
 			 **/
-			void unbanUserFromChannel(Client* user);
+			void unbanUserFromChannel(Client* client);
 
 			/**-----------------------------------------------------------------------------------------
 			 ** @brief ➤ Add the client to the invites vector if it's not already in it.
 			 ** @param user ➤ pointer to the client to invite to the channel.
 			 **/
-			void inviteUserToChannel(Client* user);
+			void inviteUserToChannel(Client* client);
 
 			/**-----------------------------------------------------------------------------------------
 			 ** @brief ➤ Remove the client from the invites vector if it's in it.
 			 ** @param user ➤ pointer to the client to remove from the invites vector.
 			 **/
-			void removeInviteeFromChannel(Client* user);
+			void removeInviteeFromChannel(Client* client);
 
 			/*------------  SETTERS && GETTERS  ----------------*/
 			void setName(const std::string& name);
 			void setTopic(const std::string& topic);
 			void setKey(const std::string& key);
-			void setMode(const std::string& mode);
 			void setMaxUsers(const size_t& maxUsers);
+			void addMode(const char& mode);
 
 			std::string getChannelName();
 			std::string getTopic();
-			std::string getMode();
+			std::vector<char> getModes();
 			std::string getKey();
 			size_t getMaxUsers() const;
 			size_t getChannelUsersNumber() const;
@@ -161,8 +183,8 @@ namespace IRC {
 			/*----------------------------------------------*/
 			std::vector<Client*> getNormalClients();
 			std::vector<Client*> getOperators();
-			std::vector<Client*> getBanedUsers();
-			std::vector<Client*> getInvites();
+			std::vector<std::string> getBanedUsers();
+			std::vector<std::string> getInvites();
 			/*----------------------------------------------*/
 			void printChannelInfo();
 	};
