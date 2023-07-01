@@ -32,6 +32,9 @@
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 namespace IRC {
 	class Channel {
+		// Forward declarations:
+		class Server;
+
 		private:
 			std::string _name;
 			std::string _topic;
@@ -71,6 +74,12 @@ namespace IRC {
 			~Channel();
 		public:
 			/**-----------------------------------------------------------------------------------------
+			 * @brief ➤ If the channel is empty then delete it.
+			 * @return
+			 */
+			void ifChannelIsEmptyThenDeleteIt(IRC::Server* server);
+
+			/**-----------------------------------------------------------------------------------------
 			 * @brief ➤ Check if the channel is full.
 			 * @return true ➤ if the channel is full.
 			 * @return false ➤ if the channel is not full.
@@ -95,27 +104,27 @@ namespace IRC {
 			 ** @brief ➤ Remove the client from all the vectors of the channel.
 			 ** @param user ➤ pointer to the client to remove from the channel.
 			 **/
-			void removeMemberFromChannel(Client* user);
+			void removeMemberFromChannel(Client* client, IRC::Server* server);
 
 			/**-----------------------------------------------------------------------------------------
-			 ** @brief Add the client to the operators vector if it's not already in it.
-			 ** and remove it from all the other vectors of the channel.
+			 ** @brief Add the operator client to the operators vector if it's not already in it.
 			 ** @param user ➤ pointer to the operator client to add to the channel.
 			 **/
-			void addOperatorToChannel(Client* user);
+			void addOperatorToChannel(Client* client);
 
 			/**-----------------------------------------------------------------------------------------
 			 ** @brief ➤ Remove the client from the operators vector if it's in it.
 			 ** @param user ➤ pointer to the operator client to remove from the channel.
 			 **/
-			void removeChannelOperator(Client* user);
+			void removeOperatorFromChannel(Client* client, IRC::Server* server);
 
 			/**-----------------------------------------------------------------------------------------
 			 ** @brief ➤ Add the client to the baned users vector if it's not already in it.
-			 ** and remove it from all the other vectors of the channel.
+			 ** only the operators can ban users from the channel.
+			 ** the channel is not removed from the client's channels vector.
 			 ** @param user ➤ pointer to the client to ban from the channel.
 			 **/
-			void banUserFromChannel(Client* user);
+			void banUserFromChannel(Client* operatorClient, Client* clientToBan);
 
 			/**-----------------------------------------------------------------------------------------
 			 ** @brief ➤ Remove the client from the baned users vector if it's in it.

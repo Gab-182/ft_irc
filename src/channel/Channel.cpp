@@ -1,6 +1,10 @@
 # include "../../include/Channel.hpp"
+# include "../../include/Server.hpp"
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 using namespace IRC;
 
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 /**
  ** TODO: Change the mode from a string to a vector of modes.
  ** 		- Change the getter, setters, and the constructor.
@@ -12,6 +16,7 @@ using namespace IRC;
  ** -----------------------------------------------------------------------
  **
  **/
+
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 Channel::Channel() : _name(), _topic(), _key(), _mode(), _members(), _operators(), _banedUsers(), _invites(),
 					 _maxUsers(999) { }
@@ -52,7 +57,27 @@ std::vector<Client*> Channel::getOperators() { return (_operators); }
 std::vector<Client*> Channel::getBanedUsers() { return (_banedUsers); }
 std::vector<Client*> Channel::getInvites() { return (_invites); }
 size_t Channel::getChannelUsersNumber() const {
-	return (_members.size() + _operators.size() + _banedUsers.size() + _invites.size());
+	// We don't cout the baned users, because they are not inside the channel.
+	// They are just baned from joining the channel.
+	return (_members.size() + _operators.size() + _invites.size());
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+/*
+ * TODO: Check if this function is working properly.
+ * */
+void Channel::ifChannelIsEmptyThenDeleteIt(IRC::Server* server) {
+	// If the number of users inside the channel is 0, then delete the channel.
+	if (getChannelUsersNumber() == 0) {
+		std::map<std::string, Channel*>::iterator it;
+		it = server->serverChannelsMap.find(this->getChannelName());
+		// Delete the channel from the server's channels map.
+		if (it != server->serverChannelsMap.end())
+			server->serverChannelsMap.erase(it);
+
+		// Delete the instance of the channel.
+		delete (this);
+	}
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -132,78 +157,72 @@ void Channel::addMemberToChannel(Client* client) {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::removeMemberFromChannel(Client* client) {
-	std::vector<Client *>::iterator itClient;
-	itClient = std::find(_members.begin(), _members.end(), client);
-	if (itClient != _members.end())
-		_members.erase(itClient);
-
-	std::vector<Client *>::iterator itOperator;
-	itOperator = std::find(_operators.begin(), _operators.end(), client);
-	if (itOperator != _operators.end())
-		_operators.erase(itOperator);
-
-	std::vector<Client *>::iterator itInvite;
-	itInvite = std::find(_invites.begin(), _invites.end(), client);
-	if (itInvite != _invites.end())
-		_invites.erase(itInvite);
-}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::addOperatorToChannel(Client* user) {
-	// Remove the user from the users vector, if present.
-	std::vector<Client *>::iterator itNormal;
-	itNormal = std::find(_members.begin(), _members.end(), user);
-	if (itNormal != _members.end())
-		_members.erase(itNormal);
-
-	// Remove the user from the banedUsers vector, if present.
-	std::vector<Client *>::iterator itBanned;
-	itBanned = std::find(_banedUsers.begin(), _banedUsers.end(), user);
-	if (itBanned != _banedUsers.end())
-		_banedUsers.erase(itBanned);
-
-	// Remove the user from the invites vector, if present.
-	std::vector<Client *>::iterator itInvite;
-	itInvite = std::find(_invites.begin(), _invites.end(), user);
-	if (itInvite != _invites.end())
-		_invites.erase(itInvite);
-
-	// Add the user to the operators vector, if not already in.
-	std::vector<Client *>::iterator itOperator;
-	itOperator = std::find(_operators.begin(), _operators.end(), user);
-	if (itOperator == _operators.end())
-		_operators.push_back(user);
-
-}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::removeChannelOperator(Client* user) {
+void Channel::removeMemberFromChannel(Client* client, IRC::Server* server) {
 	std::vector<Client *>::iterator it;
-	it = std::find(_operators.begin(), _operators.end(), user);
-	if (it != _operators.end())
-		_operators.erase(it);
+	it = std::find(_members.begin(), _members.end(), client);
+
+	if (it != _members.end()) {
+		client->removeChannelFromClientChannelsMap(this->getChannelName());
+		_members.erase(it);
+	}
+	ifChannelIsEmptyThenDeleteIt(server);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::banUserFromChannel(Client* user) {
-	// Remove the user from the users vector, if present.
-	std::vector<Client *>::iterator itNormal;
-	itNormal = std::find(_members.begin(), _members.end(), user);
-	if (itNormal != _members.end())
-		_members.erase(itNormal);
+void Channel::addOperatorToChannel(Client* client) {
+	if (this->isValidToAddToChannel(client)) {
+		client->addChannelToClientChannelsMap(this);
+		_operators.push_back(client);
+	}
+}
 
-	// Add the user to the banedUsers vector, if not already in.
-	std::vector<Client *>::iterator itBanned;
-	itBanned = std::find(_banedUsers.begin(), _banedUsers.end(), user);
-	if (itBanned == _banedUsers.end())
-		_banedUsers.push_back(user);
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Channel::removeOperatorFromChannel(Client* client, IRC::Server* server) {
+	std::vector<Client *>::iterator it;
+	it = std::find(_operators.begin(), _operators.end(), client);
+
+	if (it != _operators.end()) {
+		client->removeChannelFromClientChannelsMap(this->getChannelName());
+		_operators.erase(it);
+	}
+	ifChannelIsEmptyThenDeleteIt(server);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan) {
+	if (operatorClient->isOperatorOfChannel(operatorClient, this->getChannelName())) {
+		if (clientToBan->isMemberInChannel(clientToBan, this->getChannelName())
+			|| clientToBan->isInvitedToChannel(clientToBan, this->getChannelName())) {
+			if (!clientToBan->isBannedFromChannel(clientToBan, this->getChannelName()))
+				// No need to remove the channel from the client's channels map.
+				_banedUsers.push_back(clientToBan);
+			// ERROR: No such user in the channel
+			else {
+				std::string errMsg = ": "
+									 ERR_USERONCHANNEL
+									 BOLDWHITE " " + clientToBan->getNickName() + " " + this->getChannelName()
+									 + BOLDRED " :User is already banned from the channel."
+									 RESET "\r\n";
+				Client::sendResponse(clientToBan->getSocket(), errMsg);
+			}
+		}
+	// ERROR: Client is not operator of the channel to ban a user.
+	}
+	else {
+		std::string errMsg = ": "
+							 ERR_CHANOPRIVSNEEDED
+							 BOLDWHITE " " + operatorClient->getNickName() + " " + this->getChannelName()
+							 + BOLDRED " :You're not channel operator."
+							 RESET "\r\n";
+		Client::sendResponse(operatorClient->getSocket(), errMsg);
+	}
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::unbanUserFromChannel(Client* user) {
 	std::vector<Client *>::iterator itUnBaned;
 	itUnBaned = std::find(_banedUsers.begin(), _banedUsers.end(), user);
+
 	if (itUnBaned != _banedUsers.end())
 		_banedUsers.erase(itUnBaned);
 }
