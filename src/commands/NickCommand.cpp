@@ -14,9 +14,12 @@ bool NickCommand::isDuplicatedNick(const int& clientSocket, const std::string& n
 	std::map<int, Client*>::const_iterator it;
 	for (it = server->serverClientsMap.begin(); it != server->serverClientsMap.end() ;++it) {
 		if (toLowerCase(it->second->getNickName()) == toLowerCase(nickName) && it->first != clientSocket) {
-			std::string errMsg = BOLDRED + server->serverClientsMap[clientSocket]->getNickName()
-								+ " Duplicated Nickname" + RESET + "\r\n";
-			sendResponse(clientSocket, errMsg);
+			std::string nickErrMsg = ": "
+									 ERR_NICKNAMEINUSE
+									 BOLDRED" ERROR: "
+									 BOLDWHITE + server->serverClientsMap[clientSocket]->getNickName()
+									 + " Nickname is already in use" + RESET + "\r\n";
+			sendResponse(clientSocket, nickErrMsg);
 			return (true);
 		}
 	}
@@ -40,9 +43,12 @@ bool NickCommand::validNickName(int clientSocket, std::string& clientNick, Serve
 
 	if (isDuplicatedNick(clientSocket, clientNick, server) || clientNick.empty() || !std::isalpha(clientNick[0])
 		|| clientNick.find_first_of(allowedChars) == std::string::npos) {
-		std::string errMsg = BOLDRED + server->serverClientsMap[clientSocket]->getNickName()
-								+ " Erroneous Nickname" + RESET + "\r\n";
-		sendResponse(clientSocket, errMsg);
+		std::string nickErrMsg = ": "
+								 ERR_ERRONEUSNICKNAME
+								 BOLDRED " ERROR: "
+								 BOLDWHITE + server->serverClientsMap[clientSocket]->getNickName()
+								 + " Erroneous Nickname" + RESET + "\r\n";
+		sendResponse(clientSocket, nickErrMsg);
 		return (false);
 	}
 	return (true);
@@ -68,7 +74,9 @@ bool NickCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 	else if (!Client::isClientAuthenticated(clientSocket, server)) {
 		DEBUG_MSG(BOLDRED << " client not authenticated yet!! ")
 
-		std::string authErrMsg = BOLDRED "Please make sure you entered: "
+		std::string authErrMsg = ": "
+								 ERR_PASSWDMISMATCH
+								 BOLDRED " Please make sure you entered: "
 								 BOLDWHITE "[PassWord] "
 								 BOLDRED "correctly!!" RESET "\r\n";
 		sendResponse(clientSocket, authErrMsg);
@@ -79,7 +87,6 @@ bool NickCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void NickCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
-	(void) client;
 
 	if (!noErrorsExist(base, clientSocket, server, client, command))
 		return;
@@ -102,9 +109,10 @@ void NickCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 	else
 		server->serverClientsMap[clientSocket]->setNickName(clientNick);
 
-	std::string nickMsg = BOLDGREEN "You're now known as "
-						  + server->serverClientsMap[clientSocket]->getNickName()
-						  + RESET + "\r\n";
+	std::string nickMsg = ": "
+							BOLDGREEN "You're now known as "
+							+ server->serverClientsMap[clientSocket]->getNickName()
+							+ RESET + "\r\n";
 	sendResponse(clientSocket, nickMsg);
 }
 

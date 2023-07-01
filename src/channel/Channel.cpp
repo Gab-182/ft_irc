@@ -6,25 +6,26 @@ using namespace IRC;
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 /**
- ** TODO: Change the mode from a string to a vector of modes.
- ** 		- Change the getter, setters, and the constructor.
- ** -----------------------------------------------------------------------
- ** TODO: Check if we can add the client first due to:
+ ** TODO: ********************************* IMPORTANT ***************************************
  ** 		- Channel is invite only, and the client is not invited.
  ** 		- Channel requires a key, and the client entered a wrong key.
  ** 		- # Add the correct numeric replies for each case.
- ** -----------------------------------------------------------------------
- **
+ *
+ *
+ ** TODO: ********************************* IMPORTANT ***************************************
+ ** 		- When client successfully joins a channel:
+ ** 				- Send the client the channel modes.
+ ** 				- Send the client the channel topic.
+ ** 				- Send the client the channel members (Names list).
+ *
+ *
+ ** TODO: ********************************* IMPORTANT ***************************************
+ ** 		- Create an error class that will be thrown when an error occurs.
+ ** 		- The error class will be inherited from std::exception.
+ ** 		- The error class will have a constructor that will take a string as a parameter.
+ ** 		- The string will be the error message.
+ *
  **/
-
-/*
- * TODO: ********************************* IMPORTANT ***************************************
- * 		- Create an error class that will be thrown when an error occurs.
- * 		- The error class will be inherited from std::exception.
- * 		- The error class will have a constructor that will take a string as a parameter.
- * 		- The string will be the error message.
- * 		************************************************************************************
- * */
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 Channel::Channel() : _name(), _topic(), _key(), _modes(), _members(), _operators(), _banedUsers(), _invites(),
 					 _maxUsers(999) { }
@@ -344,7 +345,7 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::removeInviteeFromChannel(Client* client) {
+void Channel::removeInviteeFromChannel(Client* client, IRC::Server* server) {
 	if (client->isOperatorOfChannel(client, this->getChannelName())) {
 		std::vector<std::string>::iterator itInvitee;
 		for (itInvitee = _invites.begin(); itInvitee != _invites.end(); ++itInvitee) {
@@ -354,6 +355,7 @@ void Channel::removeInviteeFromChannel(Client* client) {
 			}
 		}
 	}
+	this->ifChannelIsEmptyThenDeleteIt(server);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -363,7 +365,7 @@ void Channel::removeClientFromChannel(Client* client, IRC::Server* server) {
 	else if (client->isOperatorOfChannel(client, this->getChannelName()))
 		this->removeOperatorFromChannel(client, server);
 	else if (client->isInvitedToChannel(client, this->getChannelName()))
-		this->removeInviteeFromChannel(client);
+		this->removeInviteeFromChannel(client, server);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

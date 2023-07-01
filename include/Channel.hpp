@@ -162,7 +162,7 @@ namespace IRC {
 			 ** @brief ➤ Remove the client from the invites vector if it's in it.
 			 ** @param client ➤ pointer to the client to remove from the invites vector.
 			 **/
-			void removeInviteeFromChannel(Client* client);
+			void removeInviteeFromChannel(Client* client, IRC::Server* server);
 
 			/**-----------------------------------------------------------------------------------------
 			 ** @brief ➤ Remove the client from the channel completely.

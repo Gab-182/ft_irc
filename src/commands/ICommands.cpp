@@ -154,6 +154,18 @@ void ICommands::unknownCommand(int clientSocket, Server* server,  const std::str
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+// Commands that can be executed without Authentication or Registration
+// cap
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+// Commands that require Authentication to be executed
+// pass, nick, user, quit
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+// Commands that require Registration to be executed
+// join, mode, whois, ping
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
 	(void)base;
 	(void)command;
@@ -163,25 +175,43 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 	std::vector<std::pair<std::string, std::vector<std::string> > >::iterator it;
 
 	for (it = _messages.begin(); it != _messages.end(); ++it) {
-		if (toLowerCase(it->first) == "join") {
+		if (toLowerCase(it->first) == "join")
 			_commandsMap["join"]->executeCommand(this, clientSocket, server, client, it->first);
-		} else if (toLowerCase(it->first) == "nick") {
+		else if (toLowerCase(it->first) == "nick")
 			_commandsMap["nick"]->executeCommand(this, clientSocket, server, client, it->first);
-		} else if (toLowerCase(it->first) == "user") {
+		else if (toLowerCase(it->first) == "user")
 			_commandsMap["user"]->executeCommand(this, clientSocket, server, client, it->first);
-		} else if (toLowerCase(it->first) == "whois") {
+		else if (toLowerCase(it->first) == "whois")
 			_commandsMap["whois"]->executeCommand(this, clientSocket, server, client, it->first);
-		} else if (toLowerCase(it->first) == "mode") {
+		else if (toLowerCase(it->first) == "mode")
 			_commandsMap["mode"]->executeCommand(this, clientSocket, server, client, it->first);
-		} else if (toLowerCase(it->first) == "pass") {
+		else if (toLowerCase(it->first) == "pass")
 			_commandsMap["pass"]->executeCommand(this, clientSocket, server, client, it->first);
-		} else if (toLowerCase(it->first) == "ping") {
+		else if (toLowerCase(it->first) == "ping")
 			_commandsMap["ping"]->executeCommand(this, clientSocket, server, client, it->first);
-		} else if (toLowerCase(it->first) == "cap") {
+		else if (toLowerCase(it->first) == "cap")
 			_commandsMap["cap"]->executeCommand(this, clientSocket, server, client, it->first);
-		}else if (toLowerCase(it->first) == "quit") {
+		else if (toLowerCase(it->first) == "quit")
 			_commandsMap["quit"]->executeCommand(this, clientSocket, server, client, it->first);
-		}
+
+// TODO: implement these commands:
+// ====================================================================================================
+//		else if (toLowerCase(it->first) == "privmsg")
+//			_commandsMap["privmsg"]->executeCommand(this, clientSocket, server, client, it->first);
+//		else if (toLowerCase(it->first) == "topic")
+//			_commandsMap["topic"]->executeCommand(this, clientSocket, server, client, it->first);
+//		else if (toLowerCase(it->first) == "oper")
+//			_commandsMap["oper"]->executeCommand(this, clientSocket, server, client, it->first);
+//		else if (toLowerCase(it->first) == "kill")
+//			_commandsMap["kill"]->executeCommand(this, clientSocket, server, client, it->first);
+//		else if (toLowerCase(it->first) == "invite")
+//			_commandsMap["invite"]->executeCommand(this, clientSocket, server, client, it->first);
+//		else if (toLowerCase(it->first) == "part")
+//			_commandsMap["part"]->executeCommand(this, clientSocket, server, client, it->first);
+//		else if (toLowerCase(it->first) == "mode")
+//			_commandsMap["mode"]->executeCommand(this, clientSocket, server, client, it->first);
+//		else if (toLowerCase(it->first) == "kick")
+//			_commandsMap["kick"]->executeCommand(this, clientSocket, server, client, it->first);
 		else
 			unknownCommand(clientSocket, server, it->first);
 	}

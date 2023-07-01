@@ -49,11 +49,6 @@
 
 // Join command replies (see RFC).
 #define RPL_YOUREOPER "381" // You are now an IRC operator.
-#define ERR_NOSUCHCHANNEL "403" // No such channel.
-#define ERR_CHANNELISFULL "471" // Cannot join channel (+l).
-#define ERR_INVITEONLYCHAN "473" // Cannot join channel (+i).
-#define ERR_BANNEDFROMCHAN "474" // Cannot join channel (+b).
-#define ERR_BADCHANNELKEY "475" // Cannot join channel (+k).
 
 // Mode command replies (see RFC).
 #define ERR_UNKNOWNMODE "472" // Unknown mode char.
@@ -90,6 +85,7 @@ namespace IRC {
 			 ** command		-> the command name.
 			 ** parameters	-> the parameter vector of that command
 			 **/
+			 // TODO: Change the _message vector to map.
 			std::vector<std::pair<std::string, std::vector<std::string> > > _messages;
 
 			/**
