@@ -75,7 +75,7 @@ void Channel::ifChannelIsEmptyThenDeleteIt(IRC::Server* server) {
 		if (it != server->serverChannelsMap.end())
 			server->serverChannelsMap.erase(it);
 
-		// Delete the instance of the channel.
+		// After erasing the channel from the server's channels map, delete the channel object itself.
 		delete (this);
 	}
 }
@@ -165,7 +165,7 @@ void Channel::removeMemberFromChannel(Client* client, IRC::Server* server) {
 		client->removeChannelFromClientChannelsMap(this->getChannelName());
 		_members.erase(it);
 	}
-	ifChannelIsEmptyThenDeleteIt(server);
+	this->ifChannelIsEmptyThenDeleteIt(server);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -185,27 +185,35 @@ void Channel::removeOperatorFromChannel(Client* client, IRC::Server* server) {
 		client->removeChannelFromClientChannelsMap(this->getChannelName());
 		_operators.erase(it);
 	}
-	ifChannelIsEmptyThenDeleteIt(server);
+	this->ifChannelIsEmptyThenDeleteIt(server);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan) {
+void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IRC::Server* server) {
 	if (operatorClient->isOperatorOfChannel(operatorClient, this->getChannelName())) {
-		if (clientToBan->isMemberInChannel(clientToBan, this->getChannelName())
-			|| clientToBan->isInvitedToChannel(clientToBan, this->getChannelName())) {
-			if (!clientToBan->isBannedFromChannel(clientToBan, this->getChannelName()))
-				// No need to remove the channel from the client's channels map.
-				_banedUsers.push_back(clientToBan);
-			// ERROR: No such user in the channel
-			else {
-				std::string errMsg = ": "
-									 ERR_USERONCHANNEL
-									 BOLDWHITE " " + clientToBan->getNickName() + " " + this->getChannelName()
-									 + BOLDRED " :User is already banned from the channel."
-									 RESET "\r\n";
-				Client::sendResponse(clientToBan->getSocket(), errMsg);
-			}
+
+		// If member client is in the channel, remove him from the channel.
+		if (clientToBan->isMemberInChannel(clientToBan, this->getChannelName()))
+			this->removeMemberFromChannel(clientToBan, server);
+		else if (clientToBan->isOperatorOfChannel(clientToBan, this->getChannelName()))
+			this->removeOperatorFromChannel(clientToBan, server);
+
+		//
+
+
+
+		if (!clientToBan->isBannedFromChannel(clientToBan, this->getChannelName()))
+			_banedUsers.push_back(clientToBan);
+		// ERROR: No such user in the channel
+		else {
+			std::string errMsg = ": "
+								 ERR_USERONCHANNEL
+								 BOLDWHITE " " + clientToBan->getNickName() + " " + this->getChannelName()
+								 + BOLDRED " :User is already banned from the channel."
+								 RESET "\r\n";
+			Client::sendResponse(clientToBan->getSocket(), errMsg);
 		}
+
 	// ERROR: Client is not operator of the channel to ban a user.
 	}
 	else {

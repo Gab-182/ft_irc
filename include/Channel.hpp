@@ -124,7 +124,7 @@ namespace IRC {
 			 ** the channel is not removed from the client's channels vector.
 			 ** @param user ➤ pointer to the client to ban from the channel.
 			 **/
-			void banUserFromChannel(Client* operatorClient, Client* clientToBan);
+			void banUserFromChannel(Client* operatorClient, Client* clientToBan, IRC::Server* server);
 
 			/**-----------------------------------------------------------------------------------------
 			 ** @brief ➤ Remove the client from the baned users vector if it's in it.
