@@ -48,6 +48,7 @@
 #define ERR_NOTREGISTERED "451" // You have not registered.
 
 // Join command replies (see RFC).
+#define RPL_YOUREOPER "381" // You are now an IRC operator.
 #define ERR_NOSUCHCHANNEL "403" // No such channel.
 #define ERR_CHANNELISFULL "471" // Cannot join channel (+l).
 #define ERR_INVITEONLYCHAN "473" // Cannot join channel (+i).

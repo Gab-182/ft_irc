@@ -71,8 +71,8 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 			server->serverChannelsMap.insert(std::pair<std::string, Channel *>(channelName, newChannel));
 
 			// add the client to the channels operator vector.
-			client->addOperatorToChannel(client, channelName, newChannel);
-			std::string response =  BOLDGREEN "Successfully joined channel: ["
+			newChannel->addOperatorToChannel(client);
+			std::string response = ":" RPL_YOUREOPER BOLDGREEN " Successfully joined channel: ["
 									+ channelName
 									+ "] as operator." + RESET "\r\n";
 			sendResponse(clientSocket, response);
@@ -84,7 +84,7 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 		/*-----------------------------------------------------------------------------------------*/
 		else {
 			Channel *existingChannel = server->serverChannelsMap[channelName];
-			client->addClientToChannel(client, channelName, existingChannel);
+			existingChannel->addMemberToChannel(client);
 			// send a response to the client.
 			std::string response = BOLDGREEN "Successfully joined channel: " + channelName + RESET "\r\n";
 			sendResponse(clientSocket, response);
