@@ -11,11 +11,12 @@ namespace IRC {
 			static bool isDuplicatedNick(const int& clientSocket, const std::string& nickName, Server* server);
 			static void generateNickName(int clientSocket, Server* server);
 			static bool validNickName(int clientSocket, std::string& clientNick, Server* server);
+			static bool noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, const std::string& command);
+			static void processNickCommand(const int& clientSocket, std::string& clientNick, Server* server);
 
 		public:
 			NickCommand();
 			~NickCommand();
-			static bool noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command);
 			void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command);
 	};
 }

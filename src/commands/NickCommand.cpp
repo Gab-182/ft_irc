@@ -55,9 +55,46 @@ bool NickCommand::validNickName(int clientSocket, std::string& clientNick, Serve
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-bool NickCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
-	(void) client;
+void NickCommand::processNickCommand(const int& clientSocket, std::string& clientNick, Server* server) {
+	// Nickname is too long
+	if (clientNick.length() > 9) {
+		std::string fixedNick = clientNick.substr(0, 9);
+		if (validNickName(clientSocket, fixedNick, server))
+			server->serverClientsMap[clientSocket]->setNickName(fixedNick);
+	}
 
+	else if (!validNickName(clientSocket, clientNick, server)) {
+		if (server->serverClientsMap[clientSocket]->getNickName().empty())
+			generateNickName(clientSocket, server);
+	}
+
+		//	Nickname accepted
+	else
+		server->serverClientsMap[clientSocket]->setNickName(clientNick);
+
+	std::string nickMsg = ": "
+						  BOLDGREEN "You're now known as "
+						  + server->serverClientsMap[clientSocket]->getNickName()
+						  + RESET + "\r\n";
+	sendResponse(clientSocket, nickMsg);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+bool NickCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, const std::string& command) {
+	// Check if client is authenticated
+	if (!Client::isClientAuthenticated(clientSocket, server)) {
+		DEBUG_MSG(BOLDRED << " client not authenticated yet!! ")
+
+		std::string authErrMsg = ": "
+								 ERR_PASSWDMISMATCH
+								 BOLDRED " Please make sure you entered: "
+								 BOLDWHITE "[PassWord] "
+								 BOLDRED "correctly!!" RESET "\r\n";
+		sendResponse(clientSocket, authErrMsg);
+		return (false);
+	}
+
+	// Check if parameters are empty
 	if (base->isParameterEmpty(command)) {
 		DEBUG_MSG(BOLDRED << " wrong parameters!! ")
 
@@ -71,49 +108,18 @@ bool NickCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 		return (false);
 	}
 
-	else if (!Client::isClientAuthenticated(clientSocket, server)) {
-		DEBUG_MSG(BOLDRED << " client not authenticated yet!! ")
-
-		std::string authErrMsg = ": "
-								 ERR_PASSWDMISMATCH
-								 BOLDRED " Please make sure you entered: "
-								 BOLDWHITE "[PassWord] "
-								 BOLDRED "correctly!!" RESET "\r\n";
-		sendResponse(clientSocket, authErrMsg);
-		return (false);
-	}
 	return (true);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void NickCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
+	(void) client;
 
-	if (!noErrorsExist(base, clientSocket, server, client, command))
+	if (!noErrorsExist(base, clientSocket, server, command))
 		return;
 
 	std::string clientNick = base->getParameters(command)[0];
-
-	// Nickname is too long
-	if (clientNick.length() > 9) {
-		std::string fixedNick = clientNick.substr(0, 9);
-		if (validNickName(clientSocket, fixedNick, server))
-			server->serverClientsMap[clientSocket]->setNickName(fixedNick);
-	}
-
-	else if (!validNickName(clientSocket, clientNick, server)) {
-		if (server->serverClientsMap[clientSocket]->getNickName().empty())
-			generateNickName(clientSocket, server);
-	}
-
-	//	Nickname accepted
-	else
-		server->serverClientsMap[clientSocket]->setNickName(clientNick);
-
-	std::string nickMsg = ": "
-							BOLDGREEN "You're now known as "
-							+ server->serverClientsMap[clientSocket]->getNickName()
-							+ RESET + "\r\n";
-	sendResponse(clientSocket, nickMsg);
+	processNickCommand(clientSocket, clientNick, server);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

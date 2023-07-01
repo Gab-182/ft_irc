@@ -26,8 +26,10 @@ bool UserCommand::validUserName(int clientSocket, std::string& userName, Server*
 
 	if (userName.empty() || !std::isalpha(userName[0])
 		|| userName.find_first_of(allowedChars) == std::string::npos) {
-		std::string errMsg = BOLDRED + server->serverClientsMap[clientSocket]->getUserName()
-							 + " Erroneous Username" + RESET + "\r\n";
+		std::string errMsg = ": ERROR: "
+							 BOLDRED + server->serverClientsMap[clientSocket]->getUserName()
+							 + BOLDWHITE " Erroneous Username"
+							 + RESET + "\r\n";
 		sendResponse(clientSocket, errMsg);
 		return (false);
 	}
@@ -58,23 +60,46 @@ void UserCommand::processUserName(const int& clientSocket ,std::string& userName
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+bool UserCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, const std::string& command) {
+	// Client is not authenticated yet
+	if (!Client::isClientAuthenticated(clientSocket, server)) {
+		DEBUG_MSG(BOLDRED << " client not authenticated yet!! ")
+
+		std::string authErrMsg = ": "
+								 ERR_PASSWDMISMATCH
+								 BOLDRED " Please make sure you entered: "
+								 BOLDWHITE "[PassWord] "
+								 BOLDRED "correctly!!" RESET "\r\n";
+		sendResponse(clientSocket, authErrMsg);
+		return (false);
+	}
+
+	// Check if parameters are empty
+	if (base->isParameterEmpty(command)) {
+		DEBUG_MSG(BOLDRED << " wrong parameters!! ")
+
+		std::string authErrMsg = ":"
+								 ERR_NEEDMOREPARAMS
+								 BOLDRED " Please make sure you entered: "
+								 BOLDYELLOW "/user "
+								 BOLDWHITE "<username> "
+								 BOLDRED "correctly!!" RESET "\r\n";
+		sendResponse(clientSocket, authErrMsg);
+		return (false);
+	}
+
+	return (true);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void UserCommand::executeCommand(ICommands* base,  const int& clientSocket, Server* server, Client* client, const std::string& command) {
 	(void) client;
 
-	if (!base->getParameters(command).empty()) {
-		std::string userName = base->getParameters(command)[0];
-		// Check if the client has already entered a correct password before.
-		if (Client::isClientAuthenticated(clientSocket, server))
-			processUserName(clientSocket, userName, server);
+	if (!noErrorsExist(base, clientSocket, server, command))
+		return;
 
-		// The client is not authenticated correctly.
-		else {
-			std::string authErrMsg = BOLDRED "Please make sure you entered: "
-									 BOLDWHITE "[PassWord] "
-									 BOLDRED "correctly!!" RESET "\r\n";
-			sendResponse(clientSocket, authErrMsg);
-		}
-	}
+	std::string userName = base->getParameters(command)[0];
+	processUserName(clientSocket, userName, server);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
