@@ -61,7 +61,7 @@ void Server::respondToClient(const int& clientSocket, std::string& clientMsg, IC
 	std::map<int, Client *>::iterator it;
 	it = this->serverClientsMap.find(clientSocket);
 
-	commands->executeCommand(commands, clientSocket, this, it->second, NULL);
+	commands->executeCommand(commands, clientSocket, this, it->second, "start");
 
 	// If the client registered to the server, and we did not send welcome message before to him:
 	if (Client::isClientRegistered(clientSocket, this) && !it->second->isWelcomed()) {

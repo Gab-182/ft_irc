@@ -36,7 +36,7 @@ void QuitCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 	 * TODO: If the client was the only user inside the channel, delete the channel from the server map.
 	 */
 
-	std::string quitMsg = ": 221" + client->getNickName() + " QUIT :Closing connection\r\n";
+	std::string quitMsg = ": " + client->getNickName() + " QUIT :Closing connection\r\n";
 	sendResponse(clientSocket, quitMsg);
 	client->removeClientFromServer(clientSocket, server, client);
 }
