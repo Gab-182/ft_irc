@@ -102,9 +102,15 @@ void UserCommand::executeCommand(ICommands* base,  const int& clientSocket, Serv
 	processUserName(clientSocket, userName, server);
 
 	// Welcome client
-	if (Client::isClientRegistered(clientSocket, server) && !client->isWelcomed()) {
-		ICommands::welcomeMessage(clientSocket, server);
-		client->welcomeClient(true);
+	if (client->isClientRegistered(clientSocket, server)) {
+		std::map<int, Client*>::iterator itClient;
+		itClient = server->serverClientsMap.find(clientSocket);
+		if (itClient != server->serverClientsMap.end()) {
+			if (!itClient->second->isClientWelcomed()) {
+				ICommands::welcomeMessage(clientSocket, server);
+				itClient->second->welcomeClient(true);
+			}
+		}
 	}
 }
 

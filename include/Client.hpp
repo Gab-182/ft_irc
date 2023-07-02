@@ -65,7 +65,7 @@ namespace IRC {
 			int getSocket() const;
 			std::string getUserName();
 			std::string getNickName();
-			bool isWelcomed() const;
+			bool isClientWelcomed() const;
 
 		/*------------------------------------------------------------------------------*/
 			void printClientChannelsMap();

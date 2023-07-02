@@ -53,7 +53,7 @@ void Client::welcomeClient(bool welcome) { _isWelcomed = welcome; }
 int Client::getSocket() const { return (this->_socket); }
 std::string Client::getUserName() { return (this->_userName); }
 std::string Client::getNickName() { return (this->_nickName); }
-bool Client::isWelcomed() const { return (this->_isWelcomed); }
+bool Client::isClientWelcomed() const { return (this->_isWelcomed); }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 bool Client::isMemberInChannel(Client* client, const std::string& channelName) {
