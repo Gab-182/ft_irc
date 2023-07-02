@@ -30,10 +30,8 @@ using namespace IRC;
 Channel::Channel() : _name(), _topic(), _key(), _modes(), _members(), _operators(), _banedUsers(), _invites(),
 					 _maxUsers(999) { }
 
-Channel::Channel(const std::string& name) : _topic(), _key(), _modes(), _members(), _operators(),
-															 _banedUsers(), _invites(), _maxUsers(999) {
-	_name = name;
-}
+Channel::Channel(const std::string& name) : _name(name), _topic(), _key(), _modes(), _members(), _operators(),
+															 _banedUsers(), _invites(), _maxUsers(999) { }
 
 Channel::~Channel() {
 	if (!_members.empty())

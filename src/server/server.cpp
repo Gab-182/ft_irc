@@ -6,7 +6,7 @@ using namespace IRC;
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 Server::Server() :
-	port(), servpass(), sockets(0), _clients(0), _channels(0), master_socket(), client_socket() { }
+	port(), servpass(), sockets(0), master_socket(), client_socket() { }
 
 Server::~Server(){}
 
@@ -54,19 +54,15 @@ void Server::create_socket(char *av)
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Server::respondToClient(const int& clientSocket, std::string& clientMsg, ICommands* commands) {
+void Server::respondToClient(const int& clientSocket, Client* client, std::string& clientMsg, ICommands* commands) {
 	DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
 	commands->getCommandInfo(clientMsg);
+	commands->executeCommand(commands, clientSocket, this, client, "start");
 
-	std::map<int, Client *>::iterator it;
-	it = this->serverClientsMap.find(clientSocket);
-
-	commands->executeCommand(commands, clientSocket, this, it->second, "start");
-
-	// If the client registered to the server, and we did not send welcome message before to him:
-	if (Client::isClientRegistered(clientSocket, this) && !it->second->isWelcomed()) {
-		ICommands::welcomeMessage(clientSocket, this);
-		it->second->welcomeClient(true);
+	// Debugging:
+	if (client != nullptr) {
+		this->printClients();
+		this->printChannels();
 	}
 }
 
@@ -117,10 +113,22 @@ void Server::multi_connection(ICommands* commands) {
 			clientMsg = ""; // Reset message for next response
  			int clientSocket = this->sockets[i];
 
+			/*-----------------------------------------------------------*/
+			// Find the client in the server's map
+			std::map<int, Client *>::iterator itClient;
+			itClient = this->serverClientsMap.find(clientSocket);
+			/*-----------------------------------------------------------*/
+
  			if (FD_ISSET(clientSocket, &fdset)) {
  				if ((res = recv(clientSocket, buffer, 1024, 0)) == 0) {
-//					Client::removeClient(clientSocket, this);
- 					close(clientSocket);
+
+					/*------------------------------------------------------------------------------------------------*/
+					// If the client is allocated and saved to the server, then remove it from the server.
+					if (itClient != this->serverClientsMap.end())
+						itClient->second->removeClientFromServer(clientSocket, this, itClient->second);
+					/*------------------------------------------------------------------------------------------------*/
+
+					close(clientSocket);
  					this->sockets.erase(this->sockets.begin() + i);
  					continue;
  				}
@@ -128,11 +136,9 @@ void Server::multi_connection(ICommands* commands) {
  				buffer[res] = '\0';
  				clientMsg += buffer;
  				std::memset(buffer, 0, 1024);
-				respondToClient(clientSocket, clientMsg, commands);
+				respondToClient(clientSocket, itClient->second, clientMsg, commands);
 			}
 		}
-		 this->printClients();
-		this->printChannels();
 	}
  	close(this->master_socket);
 }

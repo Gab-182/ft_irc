@@ -54,7 +54,6 @@ namespace IRC {
 			static void sendResponse(int clientSocket, const std::string& message);
 			static bool isClientAuthenticated(const int& clientSocket, Server* server);
 			static bool isClientRegistered(const int& clientSocket, Server* server);
-			static void removeClient(int clientSocket, IRC::Server* server);
 
 		/*------------------------------------------------------------------------------*/
 			void setSocket(const int& socket);

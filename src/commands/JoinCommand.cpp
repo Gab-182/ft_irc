@@ -40,7 +40,7 @@ bool JoinCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 		std::string authErrMsg = ":"
 								 ERR_NOTREGISTERED
 								 BOLDRED " Please make sure you entered: "
-								 BOLDWHITE "[NickName] "
+								 BOLDWHITE "<password> <nickname> <username> "
 								 BOLDRED "correctly!!" RESET "\r\n";
 		sendResponse(clientSocket, authErrMsg);
 		return (false);
@@ -65,6 +65,8 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 		/*-----------------------------------------------------------------------------------------*/
 		std::map<std::string, Channel *>::iterator itChannel;
 		itChannel = server->serverChannelsMap.find(channelName);
+
+		// If channel not exist in the server's channels map, create a new channel.
 		if (itChannel == server->serverChannelsMap.end()) {
 			Channel *newChannel;
 			newChannel = new Channel(channelName);

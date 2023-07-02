@@ -61,10 +61,6 @@ namespace IRC
 			int port;
 			int servpass;
 			std::vector <int> sockets;
-			// to be removed and replaced with the maps
-			std::vector<Client> _clients;
-			std::vector<Channel> _channels;
-
 			int master_socket;
 			int client_socket;
 			std::vector <std::string> msg;
@@ -95,7 +91,7 @@ namespace IRC
 
 		/*-----------------------------------------------------------------*/
 			void create_socket(char *av);
-			void respondToClient(const int& clientSocket, std::string& clientMsg, ICommands* commands);
+			void respondToClient(const int& clientSocket, Client* client, std::string& clientMsg, ICommands* commands);
 			void multi_connection(IRC::ICommands* commands);
 	};
 }

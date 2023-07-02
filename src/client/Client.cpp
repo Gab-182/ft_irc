@@ -9,7 +9,10 @@ Client::Client() : _socket(), _userName(), _nickName(), _isWelcomed(false) { }
 
 Client::Client(int socket) : _socket(socket), _userName(), _nickName(), _isWelcomed(false) { }
 
-Client::~Client() { }
+Client::~Client() {
+	if (!this->_clientChannelsMap.empty())
+		this->_clientChannelsMap.clear();
+}
 
 Client::Client(const Client& other) {
 	if (this != &other) {
@@ -17,6 +20,7 @@ Client::Client(const Client& other) {
 		this->_userName = other._userName;
 		this->_nickName = other._nickName;
 		this->_isWelcomed = other._isWelcomed;
+		this->_clientChannelsMap = other._clientChannelsMap;
 	}
 }
 
@@ -25,6 +29,8 @@ Client& Client::operator=(const Client& other) {
 		this->_socket = other._socket;
 		this->_userName = other._userName;
 		this->_nickName = other._nickName;
+		this->_isWelcomed = other._isWelcomed;
+		this->_clientChannelsMap = other._clientChannelsMap;
 	}
 	return (*this);
 }
@@ -129,7 +135,11 @@ void Client::removeChannelFromClientChannelsMap(const std::string& channelName) 
 void Client::removeClientFromServer(const int& clientSocket, Server* server, Client* client) {
 	std::map<std::string, Channel*>::iterator itChannelMap;
 	for (itChannelMap = _clientChannelsMap.begin(); itChannelMap != _clientChannelsMap.end(); ++itChannelMap) {
-		itChannelMap->second->removeClientFromChannel(client, server);
+			itChannelMap->second->removeClientFromChannel(client, server);
+			if (!this->_clientChannelsMap.empty())
+				itChannelMap = _clientChannelsMap.begin();
+			else
+				break;
 	}
 	_clientChannelsMap.clear();
 
@@ -137,7 +147,7 @@ void Client::removeClientFromServer(const int& clientSocket, Server* server, Cli
 	itServerMap = server->serverClientsMap.find(clientSocket);
 	if (itServerMap != server->serverClientsMap.end()) {
 		server->serverClientsMap.erase(itServerMap);
-		delete client;
+		delete (client);
 	}
 }
 
@@ -168,25 +178,6 @@ bool Client::isClientRegistered(const int& clientSocket, Server* server) {
 		&& !server->serverClientsMap[clientSocket]->getUserName().empty() )
 		return (true);
 	return (false);
-}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-/*
- * TODO: Work it around to be able to replace it with the removeClientFromServer() function.
- * */
-void Client::removeClient(int clientSocket, IRC::Server* server) {
-	if (Client::isClientAuthenticated(clientSocket, server)) {
-
-		// Delete the client from the serverClientsMap in the server
-		std::map<int, Client*>::iterator toDelete;
-		toDelete = server->serverClientsMap.find(clientSocket);
-		if (toDelete != server->serverClientsMap.end()) {
-			// First delete the client object
-			delete(toDelete->second);
-			// second erase the element from the map
-			server->serverClientsMap.erase(toDelete);
-		}
-	}
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

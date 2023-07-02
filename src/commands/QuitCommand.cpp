@@ -14,11 +14,13 @@ bool QuitCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 	(void) base;
 	(void) command;
 
-	if (!Client::isClientAuthenticated(clientSocket, server)) {
-		DEBUG_MSG(BOLDRED << " client not authenticated yet!! ")
+	if (!Client::isClientRegistered(clientSocket, server)) {
+		DEBUG_MSG(BOLDRED << " client not registered yet!! ")
 
-		std::string authErrMsg = BOLDRED "Please make sure you entered: "
-								 BOLDWHITE "[PassWord] "
+		std::string authErrMsg = ":"
+								 ERR_NOTREGISTERED
+								 BOLDRED " Please make sure you entered: "
+								 BOLDWHITE "<password> <nickname> <username> "
 								 BOLDRED "correctly!!" RESET "\r\n";
 		sendResponse(clientSocket, authErrMsg);
 		return (false);
