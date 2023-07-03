@@ -49,6 +49,32 @@ bool JoinCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Client* client, const std::string& channelName) {
+	Channel *newChannel;
+	newChannel = new Channel(channelName);
+	server->serverChannelsMap.insert(std::pair<std::string, Channel *>(channelName, newChannel));
+
+	// add the client to the channels operator vector.
+	newChannel->addOperatorToChannel(client);
+	std::string response = ":" RPL_YOUREOPER BOLDGREEN " Successfully joined channel: ["
+						   + channelName
+						   + "] as an operator." + RESET "\r\n";
+	sendResponse(clientSocket, response);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void JoinCommand::joinMemberClient(const int& clientSocket, Server* server, Client* client, const std::string& channelName) {
+	Channel *existingChannel = server->serverChannelsMap[channelName];
+	existingChannel->addMemberToChannel(client);
+	// send a response to the client.
+	std::string response =  BOLDGREEN " Successfully joined channel: ["
+							+ channelName
+							+ "] as a member."
+							+ RESET "\r\n";
+	sendResponse(clientSocket, response);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
 
 	if (!noErrorsExist(base, clientSocket, server, command))
@@ -57,40 +83,16 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 	std::string channelName = base->getParameters(command)[0];
 	if (channelName[0] == '#') {
 		channelName = channelName.substr(1); // Remove the '#' character from the channel name.
+
 		/*-----------------------------------------------------------------------------------------*/
-		// If the channel doesn't exist:
-		// 1. Create a new channel.
-		// 2. Add the client to the channel.
-		// 3. Send a response to the client.
-		/*-----------------------------------------------------------------------------------------*/
+		// If the channel name is valid: Check if the channel exists in the server channels map.
 		std::map<std::string, Channel *>::iterator itChannel;
 		itChannel = server->serverChannelsMap.find(channelName);
 
-		// If channel not exist in the server's channels map, create a new channel.
-		if (itChannel == server->serverChannelsMap.end()) {
-			Channel *newChannel;
-			newChannel = new Channel(channelName);
-			server->serverChannelsMap.insert(std::pair<std::string, Channel *>(channelName, newChannel));
-
-			// add the client to the channels operator vector.
-			newChannel->addOperatorToChannel(client);
-			std::string response = ":" RPL_YOUREOPER BOLDGREEN " Successfully joined channel: ["
-									+ channelName
-									+ "] as operator." + RESET "\r\n";
-			sendResponse(clientSocket, response);
-		}
-		/*-----------------------------------------------------------------------------------------*/
-		// If the channel already exists:
-		// 1. Add the client to the channel.
-		// 2. Send a response to the client.
-		/*-----------------------------------------------------------------------------------------*/
-		else {
-			Channel *existingChannel = server->serverChannelsMap[channelName];
-			existingChannel->addMemberToChannel(client);
-			// send a response to the client.
-			std::string response = BOLDGREEN "Successfully joined channel: " + channelName + RESET "\r\n";
-			sendResponse(clientSocket, response);
-		}
+		if (itChannel == server->serverChannelsMap.end())
+			joinOperatorClient(clientSocket, server, client, channelName);
+		else
+			this->joinMemberClient(clientSocket, server, client, channelName);
 	}
 	/*-----------------------------------------------------------------------------------------*/
 	// If the channel name is invalid: Send a response to the client.

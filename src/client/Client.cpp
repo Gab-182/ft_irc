@@ -136,7 +136,8 @@ void Client::removeClientFromAllChannels(const int& clientSocket, Server* server
 	// First: remove the client from all channels he is in.
 	std::map<std::string, Channel*>::iterator itChannelMap;
 	itChannelMap = _clientChannelsMap.begin();
-	itChannelMap->second->removeClientFromChannel(client, server);
+	if (itChannelMap != _clientChannelsMap.end())
+		itChannelMap->second->removeClientFromChannel(client, server);
 
 	// Call the function again, until the client is removed from all channels.
 	if (!_clientChannelsMap.empty())

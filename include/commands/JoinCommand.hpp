@@ -10,6 +10,8 @@ namespace IRC {
 		public:
 			JoinCommand();
 			~JoinCommand();
+			void joinOperatorClient(const int& clientSocket, Server* server, Client* client, const std::string& channelName);
+			static void joinMemberClient(const int& clientSocket, Server* server, Client* client, const std::string& channelName);
 			static bool noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, const std::string& command);
 			void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command);
 	};
