@@ -69,8 +69,10 @@ void ICommands::sendResponse(int clientSocket, const std::string& message) {
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::welcomeMessage(int clientSocket, Server* server) {
 	std::string welcomeMsg = ":"
-							 + server->serverClientsMap[clientSocket]->getNickName()
-							 + " 001 :Welcome to the Internet Relay Network\r\n";
+							 + server->serverClientsMap[clientSocket]->getNickName() + " "
+							 RPL_WELCOME " "
+							 BOLDGREEN ":Welcome to the Internet Relay Network, "
+							 RESET "\r\n";
 	sendResponse(clientSocket, welcomeMsg);
 }
 

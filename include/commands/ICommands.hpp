@@ -64,6 +64,8 @@
 #define RPL_ENDOFWHOIS "318" // End of whois reply.
 #define RPL_WHOISCHANNELS "319" // list of channels a user is in.
 
+// welcome message
+#define RPL_WELCOME "001" // Welcome message.
 
 #define ERR_UNKNOWNCOMMAND "421" // Unknown command.
 

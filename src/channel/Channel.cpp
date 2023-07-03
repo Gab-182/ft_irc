@@ -71,9 +71,6 @@ size_t Channel::getChannelUsersNumber() const {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-/*
- * TODO: Check if this function is working properly.
- * */
 void Channel::ifChannelIsEmptyThenDeleteIt(IRC::Server* server) {
 	// If the number of users inside the channel is 0, then delete the channel.
 	if (getChannelUsersNumber() == 0) {
@@ -227,6 +224,8 @@ void Channel::banMemberFromChannel(Client* client, IRC::Server* server) {
  * TODO: Split this function into easier to read && smaller functions.
  * */
 void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IRC::Server* server) {
+
+	// Check if the client who is banning is an operator of the channel.
 	if (operatorClient->isOperatorOfChannel(operatorClient, this->getChannelName())) {
 		if (clientToBan->isBannedFromChannel(clientToBan, this->getChannelName())) {
 			std::string errMsg = ": "
@@ -236,7 +235,7 @@ void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IR
 								 RESET "\r\n";
 			Client::sendResponse(clientToBan->getSocket(), errMsg);
 		}
-
+		// Can not ban operators from a channel.
 		else if (clientToBan->isOperatorOfChannel(clientToBan, this->getChannelName())) {
 			std::string errMsg = ": "
 								 ERR_CHANOPRIVSNEEDED
@@ -246,6 +245,7 @@ void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IR
 			Client::sendResponse(operatorClient->getSocket(), errMsg);
 		}
 
+		// If every thing went will, then ban the user from the channel.
 		else if (clientToBan->isMemberInChannel(clientToBan, this->getChannelName()))
 			this->banMemberFromChannel(clientToBan, server);
 

@@ -48,6 +48,7 @@ namespace IRC {
 			void removeChannelFromClientChannelsMap(const std::string& channelName);
 
 		/*------------------------------------------------------------------------------*/
+			void removeClientFromAllChannels(const int& clientSocket, Server* server, Client* client);
 			void removeClientFromServer(const int& clientSocket, Server* server, Client* client);
 
 		/*------------------------------------------------------------------------------*/

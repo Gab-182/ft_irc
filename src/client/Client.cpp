@@ -132,17 +132,27 @@ void Client::removeChannelFromClientChannelsMap(const std::string& channelName) 
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Client::removeClientFromServer(const int& clientSocket, Server* server, Client* client) {
+void Client::removeClientFromAllChannels(const int& clientSocket, Server* server, Client* client) {
+	// First: remove the client from all channels he is in.
 	std::map<std::string, Channel*>::iterator itChannelMap;
-	for (itChannelMap = _clientChannelsMap.begin(); itChannelMap != _clientChannelsMap.end(); ++itChannelMap) {
-			itChannelMap->second->removeClientFromChannel(client, server);
-			if (!this->_clientChannelsMap.empty())
-				itChannelMap = _clientChannelsMap.begin();
-			else
-				break;
-	}
-	_clientChannelsMap.clear();
+	itChannelMap = _clientChannelsMap.begin();
+	itChannelMap->second->removeClientFromChannel(client, server);
 
+	// Call the function again, until the client is removed from all channels.
+	if (!_clientChannelsMap.empty())
+		this->removeClientFromAllChannels(clientSocket, server, client);
+
+}
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Client::removeClientFromServer(const int& clientSocket, Server* server, Client* client) {
+	// First: remove the client from all channels he is in.
+	this->removeClientFromAllChannels(clientSocket, server, client);
+
+	// Second: Make sure that client map of channels are empty now.
+	if (!_clientChannelsMap.empty())
+		_clientChannelsMap.clear();
+
+	// Third: Remove the client from the server, and delete his object.
 	std::map<int, IRC::Client*>::iterator itServerMap;
 	itServerMap = server->serverClientsMap.find(clientSocket);
 	if (itServerMap != server->serverClientsMap.end()) {
