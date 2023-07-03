@@ -78,7 +78,7 @@ bool Client::isOperatorOfChannel(Client* client, const std::string& channelName)
 	itMap = this->_clientChannelsMap.find(channelName);
 	if (itMap != this->_clientChannelsMap.end()) {
 		for (itOper = itMap->second->getOperators().begin(); itOper != itMap->second->getOperators().end(); ++itOper) {
-			if (*itOper == client)
+			if (*itOper != NULL && client != NULL && *itOper == client)
 				return (true);
 		}
 	}
