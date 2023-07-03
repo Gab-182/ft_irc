@@ -20,10 +20,10 @@ int Server::getMasterSocket() const{return master_socket;}
 void Server::setMasterSocket(int socket){master_socket = socket;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void Server::setServPass(int pass){servpass = pass;}
+void Server::setServPass(std::string pass){servpass = pass;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-int Server::getServPass() const{return servpass;}
+std::string Server::getServPass() const {return servpass;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 // socket -> bind -> listen 
@@ -60,7 +60,7 @@ void Server::respondToClient(const int& clientSocket, Client* client, std::strin
 	commands->executeCommand(commands, clientSocket, this, client, "start");
 
 	// Debugging:
-	if (client != nullptr) {
+	if (client != NULL) {
 		this->printClients();
 		this->printChannels();
 	}

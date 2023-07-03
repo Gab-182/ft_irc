@@ -281,7 +281,7 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 	if (this->isChannelInviteOnly() && operatorClient->isOperatorOfChannel(operatorClient, this->getChannelName())) {
 
 		if (this->isChannelFull()) {
-			std::string errMsg = ERR_CHANNELISFULL;
+			std::string errMsg = ERR_CHANNELISFULL
 								 BOLDRED "ERROR: "
 								 BOLDWHITE "Can not invite user, channel is full."
 								 RESET "\r\n";

@@ -5,6 +5,8 @@ RUN apt-get update \
 	&& apt-get install -y \
 	irssi \
 	valgrind \
+	make \
+	g++ \
 	telnet \
 	zsh \
 	git \

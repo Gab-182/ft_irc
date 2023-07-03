@@ -28,7 +28,10 @@ bool NickCommand::isDuplicatedNick(const int& clientSocket, const std::string& n
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void NickCommand::generateNickName(int clientSocket, Server* server) {
-	std::string modifiedNickname = "Guest" + std::to_string(rand() % 1000);
+	std::stringstream ss;
+	int randomNumber = std::rand() % 1000;
+	ss << "Guest" << randomNumber;
+	std::string modifiedNickname = ss.str();
 
 	std::string setNickMsg = BOLDGREEN "Assigning a Guest nickname: " + modifiedNickname + RESET + "\r\n";
 	sendResponse(clientSocket, setNickMsg);

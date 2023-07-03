@@ -11,7 +11,10 @@ UserCommand::~UserCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void UserCommand::generateUserName(int clientSocket, Server* server) {
-	std::string modifiedUsername = "Guest" + std::to_string(rand() % 1000);
+	std::stringstream ss;
+	int randomNumber = std::rand() % 1000;
+	ss << "Guest" << randomNumber;
+	std::string modifiedUsername = ss.str();
 
 	std::string setUserMsg = BOLDGREEN "Assigning a Guest Username: " + modifiedUsername + RESET + "\r\n";
 	sendResponse(clientSocket, setUserMsg);

@@ -59,7 +59,7 @@ namespace IRC
 		/*-----------------------------------------------------------------*/
 		private:
 			int port;
-			int servpass;
+			std::string servpass;
 			std::vector <int> sockets;
 			int master_socket;
 			int client_socket;
@@ -80,9 +80,9 @@ namespace IRC
 			std::map<std::string, Channel*> serverChannelsMap;
 		/*-----------------------------------------------------------------*/
 			void setMasterSocket(int socket);
-			void setServPass(int pass);
+			void setServPass(std::string pass);
 			int getMasterSocket() const;
-			int getServPass() const;
+			std::string getServPass() const;
 			int getPort() const;
 
 		/*-----------------------------------------------------------------*/

@@ -36,7 +36,7 @@ bool PassCommand::noErrorsExist(ICommands* base, const int& clientSocket, Server
 		return (false);
 	}
 
-	if (std::stoi(getClientPass()) != server->getServPass()) {
+	if (getClientPass() != server->getServPass()) {
 		std::string errMsg = ":"
 							 ERR_PASSWDMISMATCH
 							 BOLDRED " ERROR :"
@@ -56,7 +56,7 @@ void PassCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 		return;
 
 	// Password accepted
-	if (server->serverClientsMap[clientSocket] == nullptr) {
+	if (server->serverClientsMap[clientSocket] == NULL) {
 		// Create new client object and setting the socket element.
 		server->serverClientsMap[clientSocket] = new Client(clientSocket);
 		server->serverClientsMap[clientSocket]->setSocket(clientSocket);

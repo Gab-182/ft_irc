@@ -15,7 +15,7 @@ int main(int ac,char **av) {
 
 	//TODO: check if the port is a number and if the password is a number
 	if(ac == 3) {
-		ircServer->setServPass(atoi(av[2]));
+		ircServer->setServPass(av[2]);
 		ircServer->create_socket(av[1]);
 		ircServer->multi_connection(commands);
 	}

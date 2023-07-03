@@ -172,7 +172,7 @@ bool Client::isClientAuthenticated(const int& clientSocket, Server* server) {
 	std::map<int, IRC::Client*>::iterator it;
 	for (it = server->serverClientsMap.begin(); it != server->serverClientsMap.end(); it++) {
 		// First check if the client exist and allocated correctly.
-		if (it->second != nullptr) {
+		if (it->second != NULL) {
 			// Second, compare the sockets.
 			if (it->second->getSocket() == clientSocket)
 				return (true);
@@ -183,7 +183,7 @@ bool Client::isClientAuthenticated(const int& clientSocket, Server* server) {
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 bool Client::isClientRegistered(const int& clientSocket, Server* server) {
-	if (server->serverClientsMap[clientSocket] != nullptr
+	if (server->serverClientsMap[clientSocket] != NULL
 		&& !server->serverClientsMap[clientSocket]->getNickName().empty()
 		&& !server->serverClientsMap[clientSocket]->getUserName().empty() )
 		return (true);
