@@ -21,6 +21,7 @@ void CapCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::S
 
 	if (base->isParameterEmpty(command))
 		sendResponse(clientSocket, "CAP * NAK :Missing CAP subcommand\r\n");
+
 	setCapType(base->getParameters(command)[0]);
 
 	if (toLowerCase(getCapType()) == "ls")

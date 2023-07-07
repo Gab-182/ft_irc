@@ -34,16 +34,15 @@
 
 #endif
 
-/*
- * Example of sending a response to the client:
- *
- * std::string errMsg = ":"
-						 (numeric response) " "
-						 :(message)
-						 RESET "\r\n";
-	sendResponse(clientSocket, errMsg);
-
- * */
+/**
+ ** Example of sending a response to the client:
+ **
+ **		std::string Msg = ":"
+ **							" " NUMERIC " "
+ **							+ :(MESSAGE)
+ **							+ RESET "\r\n";
+ **		sendResponse(clientSocket, Msg);
+ **/
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 // Pass command replies (see RFC).
 #define ERR_PASSWDMISMATCH "464" // Password incorrect.
