@@ -87,6 +87,7 @@ void Client::removeClientFromAllChannels(const int& clientSocket, Server* server
 		this->removeClientFromAllChannels(clientSocket, server, client);
 
 }
+
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Client::removeClientFromServer(const int& clientSocket, Server* server, Client* client) {
 	// First: remove the client from all channels he is in.
@@ -128,6 +129,7 @@ bool Client::isClientAuthenticated(const int& clientSocket, Server* server) {
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 bool Client::isClientRegistered(const int& clientSocket, Server* server) {
 	if (server->serverClientsMap[clientSocket] != NULL
+		&& Client::isClientAuthenticated(clientSocket, server)
 		&& !server->serverClientsMap[clientSocket]->getNickName().empty()
 		&& !server->serverClientsMap[clientSocket]->getUserName().empty() )
 		return (true);

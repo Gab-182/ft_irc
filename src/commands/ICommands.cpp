@@ -106,7 +106,7 @@ void ICommands::getCommandInfo(const std::string& clientMessage) {
 		_messages.push_back(std::make_pair(command, parameters));
 		parameters.clear();
 	}
-//	debugCommands();
+	debugCommands();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -146,12 +146,27 @@ void ICommands::unRegisterCommands() {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void ICommands::unknownCommand(int clientSocket, Server* server,  const std::string& command) {
+void ICommands::unknownCommand(int clientSocket,  const std::string& command) {
 	std::string response = ":"
-							+ server->serverClientsMap[clientSocket]->getNickName()
-							+ ERR_UNKNOWNCOMMAND
-							+ command
-							+ " :Unknown command\r\n";
+							ERR_UNKNOWNCOMMAND " "
+							BOLDYELLOW + command
+							+ BOLDRED " :Unknown command\n"
+							+ BOLDYELLOW "The server only accepts the following commands:\n"
+							+ BOLDWHITE "\t NICK <nickname>\n"
+							+ BOLDWHITE "\t USER <username>\n"
+							+ BOLDWHITE "\t PASS <password>\n"
+							+ BOLDWHITE "\t JOIN <#channel_name> <#channel_name> ...\n"
+							+ BOLDWHITE "\t PRIVMSG <nickname> <message>\n"
+							+ BOLDWHITE "\t TOPIC <channel_name> <topic>\n"
+							+ BOLDWHITE "\t PART <channel_name>\n"
+							+ BOLDWHITE "\t OPER <username> <password>\n"
+							+ BOLDWHITE "\t MODE <channel_name> <mode> <mode parameter>\n"
+							+ BOLDWHITE "\t WHOIS <nickname>\n"
+							+ BOLDWHITE "\t PING <unique token>\n"
+							+ BOLDWHITE "\t CAP LS\n"
+							+ BOLDWHITE "\t QUIT\n"
+							+ BOLDYELLOW "Please try again"
+							+ RESET "\r\n";
 	sendResponse(clientSocket, response);
 }
 
@@ -203,7 +218,7 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 //		else if (toLowerCase(it->first) == "kick")
 //			_commandsMap["kick"]->executeCommand(this, clientSocket, server, client, it->first);
 		else
-			unknownCommand(clientSocket, server, it->first);
+			unknownCommand(clientSocket, it->first);
 	}
 	_messages.clear();
 }
