@@ -24,13 +24,13 @@ bool JoinCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 	if (base->isParameterEmpty(command)) {
 		DEBUG_MSG(BOLDRED << " wrong parameters!! ")
 
-		std::string authErrMsg = ":"
-								 ERR_NEEDMOREPARAMS
-								 BOLDRED " Please make sure you entered: "
+		std::string paramErrMsg = ":"
+								 ERR_NEEDMOREPARAMS " "
+								 BOLDRED ":Please make sure you entered: "
 								 BOLDYELLOW "/join "
 								 BOLDWHITE "<channel_name> "
 								 BOLDRED "correctly!!" RESET "\r\n";
-		sendResponse(clientSocket, authErrMsg);
+		sendResponse(clientSocket, paramErrMsg);
 		return (false);
 	}
 
@@ -38,10 +38,11 @@ bool JoinCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 		DEBUG_MSG(BOLDRED << " client not registered yet!! ")
 
 		std::string regErrMsg = ":"
-								 ERR_NOTREGISTERED
-								 BOLDRED " Please make sure you entered: "
+								 ERR_NOTREGISTERED " "
+								 BOLDRED ":Please make sure you entered: "
 								 BOLDWHITE "<password> <nickname> <username> "
-								 BOLDRED "correctly!!" RESET "\r\n";
+								 BOLDRED "correctly!!"
+								 RESET "\r\n";
 		sendResponse(clientSocket, regErrMsg);
 		return (false);
 	}
@@ -54,24 +55,26 @@ void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Cl
 	newChannel = new Channel(channelName);
 	server->serverChannelsMap.insert(std::pair<std::string, Channel *>(channelName, newChannel));
 
-	// add the client to the channels operator vector.
 	newChannel->addOperatorToChannel(client);
-	std::string response = ":" RPL_YOUREOPER BOLDGREEN " Successfully joined channel: ["
-						   + channelName
-						   + "] as an operator." + RESET "\r\n";
-	sendResponse(clientSocket, response);
+	std::string operMsg = ":"
+							RPL_YOUREOPER " "
+							BOLDGREEN " Successfully joined channel: ["
+							+ channelName
+							+ "] as an operator."
+							+ RESET "\r\n";
+	sendResponse(clientSocket, operMsg);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void JoinCommand::joinMemberClient(const int& clientSocket, Server* server, Client* client, const std::string& channelName) {
 	Channel *existingChannel = server->serverChannelsMap[channelName];
 	existingChannel->addMemberToChannel(client);
-	// send a response to the client.
-	std::string response =  BOLDGREEN " Successfully joined channel: ["
+
+	std::string memberMsg = BOLDGREEN " Successfully joined channel: ["
 							+ channelName
 							+ "] as a member."
 							+ RESET "\r\n";
-	sendResponse(clientSocket, response);
+	sendResponse(clientSocket, memberMsg);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

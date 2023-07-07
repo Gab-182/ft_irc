@@ -69,10 +69,13 @@ void ICommands::sendResponse(int clientSocket, const std::string& message) {
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::welcomeMessage(int clientSocket, Server* server) {
 	std::string welcomeMsg = ":"
-							 + server->serverClientsMap[clientSocket]->getNickName() + " "
-							 RPL_WELCOME " "
-							 BOLDGREEN ":Welcome to the Internet Relay Network, "
-							 RESET "\r\n";
+							 " " RPL_WELCOME " "
+							 + server->serverClientsMap[clientSocket]->getNickName()
+							 + BOLDGREEN " :Welcome to the Internet Relay Network "
+							 BOLDGREEN + server->serverClientsMap[clientSocket]->getNickName()
+							 + BOLDGREEN "!"
+							 BOLDGREEN + server->serverClientsMap[clientSocket]->getUserName()
+							 + RESET "\r\n";
 	sendResponse(clientSocket, welcomeMsg);
 }
 
@@ -106,7 +109,7 @@ void ICommands::getCommandInfo(const std::string& clientMessage) {
 		_messages.push_back(std::make_pair(command, parameters));
 		parameters.clear();
 	}
-	debugCommands();
+//	debugCommands();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -164,6 +167,7 @@ void ICommands::unknownCommand(int clientSocket,  const std::string& command) {
 							+ BOLDWHITE "\t WHOIS <nickname>\n"
 							+ BOLDWHITE "\t PING <unique token>\n"
 							+ BOLDWHITE "\t CAP LS\n"
+							+ BOLDWHITE "\t CAP END\n"
 							+ BOLDWHITE "\t QUIT\n"
 							+ BOLDYELLOW "Please try again"
 							+ RESET "\r\n";
