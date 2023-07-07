@@ -18,21 +18,20 @@
 #include <vector>
 #include <algorithm>
 
-/*----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #include "./Channel.hpp"
-#include "./Client.hpp"
 
-/*----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #define BOLDWHITE		"\033[1m\033[37m"		/* Bold White */
 #define RESET			"\033[0m"				/* Reset the color */
 #define BOLDGREEN		"\033[1m\033[32m"		/* Bold Green */
 #define BOLDYELLOW		"\033[1m\033[33m"		/* Bold Yellow */
 #define BOLDRED			"\033[1m\033[31m"		/* Bold Red */
-#define BOLDBLUE			"\033[1m\033[34m"		/* Bold Blue */
+#define BOLDBLUE		"\033[1m\033[34m"		/* Bold Blue */
 #define BOLDMAGENTA		"\033[1m\033[35m"		/* Bold Magenta */
-#define BOLDCYAN			"\033[1m\033[36m"		/* Bold Cyan */
+#define BOLDCYAN		"\033[1m\033[36m"		/* Bold Cyan */
 
-/*----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #define DEBUG 1
 
 #if( DEBUG == 1 )
@@ -46,26 +45,22 @@
 #define DEBUG_MSG(msg)
 
 #endif
-/*----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 // Forward declaration of the HandShake class
 
 namespace IRC
 {
-	// Forward declaration of the HandShake class
+	// Forward declarations:
 	class HandShake;
-	// Forward declaration of the ICommands class
 	class ICommands;
+	class Client;
 
 	class Server {
 		/*-----------------------------------------------------------------*/
 		private:
 			int port;
-			int servpass;
+			std::string servpass;
 			std::vector <int> sockets;
-			// to be removed and replaced with the maps
-			std::vector<Client> _clients;
-			std::vector<Channel> _channels;
-
 			int master_socket;
 			int client_socket;
 			std::vector <std::string> msg;
@@ -85,17 +80,21 @@ namespace IRC
 			std::map<std::string, Channel*> serverChannelsMap;
 		/*-----------------------------------------------------------------*/
 			void setMasterSocket(int socket);
-			void setServPass(int pass);
-			int getMasterSocket();
-			int getServPass() const;
-			int getPort();
+			void setServPass(std::string pass);
+			int getMasterSocket() const;
+			std::string getServPass() const;
+			int getPort() const;
 
 		/*-----------------------------------------------------------------*/
 			void printClients();
+			void printChannels();
+
+		/*-----------------------------------------------------------------*/
 			void create_socket(char *av);
-			void multi_connection(IRC::HandShake* handShaker, IRC::ICommands* commands);
+			void respondToClient(const int& clientSocket, Client* client, std::string& clientMsg, ICommands* commands);
+			void multi_connection(IRC::ICommands* commands);
 	};
 }
-/*----------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 
 #endif

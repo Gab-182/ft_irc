@@ -1,25 +1,24 @@
-#ifndef NICKCOMMAND_HPP
-#define NICKCOMMAND_HPP
+#ifndef USERCOMMAND_HPP
+#define USERCOMMAND_HPP
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #include "ICommands.hpp"
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 namespace IRC {
-	class NickCommand : public ICommands {
+	class UserCommand : public ICommands {
 		private:
-			static bool isDuplicatedNick(const int& clientSocket, const std::string& nickName, Server* server);
-			static void generateNickName(int clientSocket, Server* server);
-			static bool validNickName(int clientSocket, std::string& clientNick, Server* server);
+			static void generateUserName(int clientSocket, Server* server);
+			static bool validUserName(int clientSocket, std::string& userName, Server* server);
 			static bool noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, const std::string& command);
-			static void processNickCommand(const int& clientSocket, std::string& clientNick, Server* server);
+			static void processUserName(const int& clientSocket ,std::string& userName, Server* server);
 
 		public:
-			NickCommand();
-			~NickCommand();
+			UserCommand();
+			~UserCommand();
 			void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command);
 	};
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-#endif //NICKCOMMAND_HPP
+#endif //USERCOMMAND_HPP

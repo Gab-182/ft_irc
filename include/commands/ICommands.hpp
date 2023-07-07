@@ -1,7 +1,7 @@
 #ifndef ICOMMANDS_HPP
 #define ICOMMANDS_HPP
 
-/*---------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #include <unistd.h>
 #include <cstring>
 #include <sstream>
@@ -9,11 +9,7 @@
 #include <vector>
 #include <map>
 
-/*---------------------------------------------------------------------------------------------------*/
-//#include "../Client.hpp"
-//#include "../Channel.hpp"
-
-/*---------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #define BOLDWHITE		"\033[1m\033[37m"		/* Bold White */
 #define RESET			"\033[0m"				/* Reset the color */
 #define BOLDGREEN		"\033[1m\033[32m"		/* Bold Green */
@@ -23,7 +19,7 @@
 #define BOLDMAGENTA		"\033[1m\033[35m"		/* Bold Magenta */
 #define BOLDCYAN		"\033[1m\033[36m"		/* Bold Cyan */
 
-/*---------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #define DEBUG 1
 
 #if( DEBUG == 1 )
@@ -38,7 +34,42 @@
 
 #endif
 
-/*---------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+// Pass command replies (see RFC).
+#define ERR_PASSWDMISMATCH "464" // Password incorrect.
+#define ERR_NEEDMOREPARAMS "461" // Not enough parameters.
+
+// Nick command replies (see RFC).
+#define ERR_NONICKNAMEGIVEN "431" // No nickname given.
+#define ERR_ERRONEUSNICKNAME "432" // Erroneous nickname.
+#define ERR_NICKNAMEINUSE "433" // Nickname in use.
+
+// User command replies (see RFC).
+#define ERR_NOTREGISTERED "451" // You have not registered.
+
+// Join command replies (see RFC).
+#define RPL_YOUREOPER "381" // You are now an IRC operator.
+
+// Mode command replies (see RFC).
+#define ERR_UNKNOWNMODE "472" // Unknown mode char.
+
+// Channel command replies (see RFC).
+#define ERR_NOTONCHANNEL "442" // You're not on that channel.
+#define ERR_NOSUCHCHANNEL "403" // No such channel.
+#define ERR_CHANOPRIVSNEEDED "482" // You're not channel operator.
+
+//WHOIS command replies (see RFC).
+#define RPL_WHOISUSER "311" // Whois user, <nick> <user> <host> * :<real name>.
+#define RPL_WHOISSERVER "312" // Whois server reply.
+#define RPL_ENDOFWHOIS "318" // End of whois reply.
+#define RPL_WHOISCHANNELS "319" // list of channels a user is in.
+
+// welcome message
+#define RPL_WELCOME "001" // Welcome message.
+
+#define ERR_UNKNOWNCOMMAND "421" // Unknown command.
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 namespace IRC {
 	// Forward declaration of the Server class.
 	class Server;
@@ -47,26 +78,50 @@ namespace IRC {
 
 	class ICommands {
 		/*-----------------------------------------------------------------------*/
-		protected:
-			std::string _command;
-			std::vector<std::string> _parameters;
-		/*-----------------------------------------------------------------------*/
 		public:
+			/**
+			 ** The reason to create it: irssi send one message that contain (3, 4 ...)
+			 ** commands in one time.
+			 *
+			 ** vector that contain pair of <command, parameters vector> _messages
+			 ** command		-> the command name.
+			 ** parameters	-> the parameter vector of that command
+			 **/
+			 // TODO: Change the _message vector to map.
+			std::vector<std::pair<std::string, std::vector<std::string> > > _messages;
+
+			/**
+			 ** <command, pointer to function in the commands interface> _commandsMap
+			 ** key -> the command name.
+			 ** value -> pointer to the execute function in the commands interface class.
+			 **/
 			std::map<std::string, IRC::ICommands*> _commandsMap;
 		/*-----------------------------------------------------------------------*/
 		public:
 			ICommands();
 			virtual ~ICommands();
-			std::string getCommand();
-			std::vector<std::string> getParameters();
-			void debugCommands();
-			void sendResponse(int clientSocket, const std::string& message);
-			void getCommandInfo(const int& clientSocket, const std::string& clientMessage);
-			void registerCommands();
-			virtual void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client& client);
 		/*-----------------------------------------------------------------------*/
+			void debugCommands();
+			std::vector<std::string> getParameters(std::string command);
+
+		/*-----------------------------------------------------------------------*/
+			void registerCommands();
+			void unRegisterCommands();
+
+		/*-----------------------------------------------------------------------*/
+			static void welcomeMessage(int clientSocket, Server* server);
+			static void sendResponse(int clientSocket, const std::string& message);
+
+		/*-----------------------------------------------------------------------*/
+			static std::string toLowerCase(const std::string& str);
+			bool isParameterEmpty(const std::string& command);
+
+		/*-----------------------------------------------------------------------*/
+			void getCommandInfo(const std::string& clientMessage);
+			static void unknownCommand(int clientSocket, Server* server,  const std::string& command);
+			virtual void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command);
 	};
 }
 
-/*---------------------------------------------------------------------------------------------------*/
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #endif //ICOMMANDS_HPP

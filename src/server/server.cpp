@@ -1,33 +1,33 @@
 #include "../../include/Server.hpp"
-#include "../../include/HandShake.hpp"
+#include "../../include/Client.hpp"
 #include "../../include/commands/ICommands.hpp"
 
 using namespace IRC;
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-IRC::Server::Server() :
-	port(), servpass(), sockets(0), _clients(0), _channels(0), master_socket(), client_socket() { }
+Server::Server() :
+	port(), servpass(), sockets(0), master_socket(), client_socket() { }
 
-IRC::Server::~Server(){}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-int IRC::Server::getPort(){return port;}
+Server::~Server(){}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-int IRC::Server::getMasterSocket(){return master_socket;}
+int Server::getPort() const{return port;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void IRC::Server::setMasterSocket(int socket){master_socket = socket;}
+int Server::getMasterSocket() const{return master_socket;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void IRC::Server::setServPass(int pass){servpass = pass;}
+void Server::setMasterSocket(int socket){master_socket = socket;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-int IRC::Server::getServPass() const{return servpass;}
+void Server::setServPass(std::string pass){servpass = pass;}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+std::string Server::getServPass() const {return servpass;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 // socket -> bind -> listen 
-void IRC::Server::create_socket(char *av)
+void Server::create_socket(char *av)
 {
 	struct sockaddr_in sockin = {};
 	this->port = atoi(av);
@@ -54,7 +54,20 @@ void IRC::Server::create_socket(char *av)
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
+void Server::respondToClient(const int& clientSocket, Client* client, std::string& clientMsg, ICommands* commands) {
+	DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
+	commands->getCommandInfo(clientMsg);
+	commands->executeCommand(commands, clientSocket, this, client, "start");
+
+//	// Debugging:
+//	if (client != NULL) {
+//		this->printClients();
+//		this->printChannels();
+//	}
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Server::multi_connection(ICommands* commands) {
  	int res;
  	int max_sd = 0;
  	char buffer[1024];
@@ -100,50 +113,32 @@ void IRC::Server::multi_connection(HandShake* handShaker, ICommands* commands) {
 			clientMsg = ""; // Reset message for next response
  			int clientSocket = this->sockets[i];
 
+			/*-----------------------------------------------------------*/
+			// Find the client in the server's map
+			std::map<int, Client *>::iterator itClient;
+			itClient = this->serverClientsMap.find(clientSocket);
+			/*-----------------------------------------------------------*/
+
  			if (FD_ISSET(clientSocket, &fdset)) {
  				if ((res = recv(clientSocket, buffer, 1024, 0)) == 0) {
-					DEBUG_MSG("Client disconnected from socket")
-					handShaker->removeClient(clientSocket, this);
- 					close(clientSocket);
+
+					/*------------------------------------------------------------------------------------------------*/
+					// If the client is allocated and saved to the server, then remove it from the server.
+					if (itClient != this->serverClientsMap.end())
+						itClient->second->removeClientFromServer(clientSocket, this, itClient->second);
+					/*------------------------------------------------------------------------------------------------*/
+
+					close(clientSocket);
  					this->sockets.erase(this->sockets.begin() + i);
- 					continue; // Continue to the next iteration
+ 					continue;
  				}
 
  				buffer[res] = '\0';
  				clientMsg += buffer;
  				std::memset(buffer, 0, 1024);
-
-				/*-------------------------------------------------------------------------------------*/
-				// Check if client is registered, if not, process handshake and register client
-				DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
-				/*-------------------------------------------------------------------------------------*/
-				// parse the client message, then check if username and nick and pass are correct,
-				// if so, that mean that the client is authenticated and can proceed to the next step.
-
-				if (!HandShake::isClientRegistered(clientSocket, this)) {
-					if (!handShaker->processHandShake(clientSocket, clientMsg, this))
-						continue;
-				}
-				/*-------------------------------------------------------------------------------------*/
-				// parse the message from the interface then, execute the requested command
-				//from the map of commands, then send the response to the client.
-
-				commands->getCommandInfo(clientSocket, clientMsg);
-
-
-//				commands->debugCommands();
-
-
-				// - from the socket that we have, we need to get the client that is associated with it:
-				// try to search for the client in the map of clients, if found, then pass the pointer
-				// to the executeCommand function.
-				std::map<int, Client*>::iterator it = this->serverClientsMap.find(clientSocket);
-				commands->executeCommand(commands, clientSocket, this, *(it->second));
-				/*-------------------------------------------------------------------------------------*/
-
+				respondToClient(clientSocket, itClient->second, clientMsg, commands);
 			}
 		}
-		 this->printClients();
 	}
  	close(this->master_socket);
 }
@@ -161,8 +156,23 @@ void Server::printClients() {
 					  << std::endl;
 			std::cout << BOLDBLUE << '\t' << "User: [" << BOLDWHITE << it->second->getUserName() << BOLDBLUE << "]"
 					  << std::endl;
+			std::cout << BOLDBLUE << '\t' << "isClientWelcomed: [" << BOLDWHITE << it->second->isClientWelcomed() << BOLDBLUE << "]"
+					  << std::endl;
 			std::cout << BOLDYELLOW << "-----------------------------------------------" << std::endl;
 		}
 		i++;
 	}
 }
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Server::printChannels() {
+	std::map<std::string, Channel*>::iterator it;
+	std::cout << BOLDGREEN << "Channels" << std::endl;
+	for (it = serverChannelsMap.begin(); it != serverChannelsMap.end() ;++it) {
+		if (!(it ->first.empty()))
+			std::cout << BOLDBLUE << "Channel: [" << BOLDGREEN << it->first << BOLDBLUE << "]" << std::endl;
+	}
+	std::cout << BOLDYELLOW << "-----------------------------------------------" << std::endl;
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/

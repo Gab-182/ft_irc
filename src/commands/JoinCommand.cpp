@@ -4,53 +4,108 @@
 
 using namespace IRC;
 
+/**
+ ** TODO: Handle the case when the user tries to join multiple channels at once
+ ** TODO: Handle the case when the user tries to join a channel that doesn't exist
+ ** TODO: Handle the case when the user tries to join a channel that they're already in
+ ** TODO: Handle the case when the user tries to join a channel that they're banned from
+ ** TODO: Handle the case when the user tries to join a channel that has a key and they don't provide the key
+ ** TODO: Handle the case when the user tries to join a channel that has a key and they provide the wrong key
+ ** TODO: Handle the case when the user tries to join a channel that has a key and they provide the right key
+ **
+ **/
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-JoinCommand::JoinCommand() : ICommands() {}
+JoinCommand::JoinCommand() : ICommands() { }
 
-JoinCommand::~JoinCommand() {}
+JoinCommand::~JoinCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client& client) {
-	// If the command 'join' has the correct parameters, then we can
-	// execute the command and join or create the desired channel.
-	if (base->getParameters().size() >= 1) {
-		std::string channelName = base->getParameters()[0];
-		if (channelName[0] == '#') {
-			channelName = channelName.substr(1); // Remove the '#' character from the channel name.
-		/*-----------------------------------------------------------------------------------------*/
-			// If the channel doesn't exist, then we create it.
-			if (server->serverChannelsMap.find(channelName) == server->serverChannelsMap.end()) {
-				Channel* newChannel = new Channel(channelName, client);
+bool JoinCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, const std::string& command) {
+	if (base->isParameterEmpty(command)) {
+		DEBUG_MSG(BOLDRED << " wrong parameters!! ")
 
-				DEBUG_MSG("Channel: [" << channelName << "] has been created."
-							<< std::endl << "Adding user: [" << client.getNickName() << "] to the channel.")
-
-				// save the channel in the server's channels map.
-				server->serverChannelsMap.insert(std::pair<std::string, Channel*>(channelName, newChannel));
-				DEBUG_MSG("Channel " << channelName << " has been added to the server's channels map.")
-			}
-			// else if the channel is already created, then we add the user to the channel.
-			else {
-
-				DEBUG_MSG("Channel " << channelName << " already exists." << std::endl
-									 << "Adding user: [" << client.getNickName() << "] to the channel.")
-
-				server->serverChannelsMap[channelName]->addUser(client);
-			}
-		/*-----------------------------------------------------------------------------------------*/
-			// We send a response to the client.
-			std::string response = "Successfully joined channel: " + channelName;
-			sendResponse(clientSocket, response); // Assuming you have a function to send the response
-		} else {
-			std::string response = "Invalid channel name. Channel names should start with '#'.";
-			sendResponse(clientSocket, response); // Assuming you have a function to send the response
-		}
-	} else {
-		std::string response = "Invalid parameters. Usage: /join #channel";
-		sendResponse(clientSocket, response); // Assuming you have a function to send the response
+		std::string authErrMsg = ":"
+								 ERR_NEEDMOREPARAMS
+								 BOLDRED " Please make sure you entered: "
+								 BOLDYELLOW "/join "
+								 BOLDWHITE "<channel_name> "
+								 BOLDRED "correctly!!" RESET "\r\n";
+		sendResponse(clientSocket, authErrMsg);
+		return (false);
 	}
 
-	// Cleaning the parameters vector before adding new ones to it.
-	base->getParameters().clear();
+	if (!Client::isClientRegistered(clientSocket, server)) {
+		DEBUG_MSG(BOLDRED << " client not registered yet!! ")
+
+		std::string authErrMsg = ":"
+								 ERR_NOTREGISTERED
+								 BOLDRED " Please make sure you entered: "
+								 BOLDWHITE "<password> <nickname> <username> "
+								 BOLDRED "correctly!!" RESET "\r\n";
+		sendResponse(clientSocket, authErrMsg);
+		return (false);
+	}
+	return (true);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Client* client, const std::string& channelName) {
+	Channel *newChannel;
+	newChannel = new Channel(channelName);
+	server->serverChannelsMap.insert(std::pair<std::string, Channel *>(channelName, newChannel));
+
+	// add the client to the channels operator vector.
+	newChannel->addOperatorToChannel(client);
+	std::string response = ":" RPL_YOUREOPER BOLDGREEN " Successfully joined channel: ["
+						   + channelName
+						   + "] as an operator." + RESET "\r\n";
+	sendResponse(clientSocket, response);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void JoinCommand::joinMemberClient(const int& clientSocket, Server* server, Client* client, const std::string& channelName) {
+	Channel *existingChannel = server->serverChannelsMap[channelName];
+	existingChannel->addMemberToChannel(client);
+	// send a response to the client.
+	std::string response =  BOLDGREEN " Successfully joined channel: ["
+							+ channelName
+							+ "] as a member."
+							+ RESET "\r\n";
+	sendResponse(clientSocket, response);
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
+
+	if (!noErrorsExist(base, clientSocket, server, command))
+		return;
+
+	std::string channelName = base->getParameters(command)[0];
+	if (channelName[0] == '#') {
+		channelName = channelName.substr(1); // Remove the '#' character from the channel name.
+
+		/*-----------------------------------------------------------------------------------------*/
+		// If the channel name is valid: Check if the channel exists in the server channels map.
+		std::map<std::string, Channel *>::iterator itChannel;
+		itChannel = server->serverChannelsMap.find(channelName);
+
+		if (itChannel == server->serverChannelsMap.end())
+			joinOperatorClient(clientSocket, server, client, channelName);
+		else
+			this->joinMemberClient(clientSocket, server, client, channelName);
+	}
+	/*-----------------------------------------------------------------------------------------*/
+	// If the channel name is invalid: Send a response to the client.
+	/*-----------------------------------------------------------------------------------------*/
+	else {
+		std::string response =  BOLDRED"Invalid channel name."
+								BOLDWHITE "Channel names should start with '#'."
+								RESET "\r\n";
+		sendResponse(clientSocket, response);
+	}
+
+	/*-----------------------------------------------------------------------------------------*/
+	// print the client channel map info for debugging.
+	client->printClientChannelsMap();
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
