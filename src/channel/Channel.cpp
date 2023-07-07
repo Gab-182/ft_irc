@@ -126,21 +126,21 @@ bool Channel::isValidToAddToChannel(Client* client) {
 						 RESET "\r\n";
 		return (false);
 	}
-	if (client->isOperatorOfChannel(client, this->getChannelName())) {
+	if (this->isClientOperator(client)) {
 		numericReply = ERR_USERONCHANNEL;
 		clientAddError = BOLDRED "ERROR: "
 						 BOLDWHITE "User is already an operator of the channel."
 						 RESET "\r\n";
 		return (false);
 	}
-	if (client->isBannedFromChannel(client, this->getChannelName())) {
+	if (this->isClientBaned(client)) {
 		numericReply = ERR_BANNEDFROMCHAN;
 		clientAddError = BOLDRED "ERROR: "
 						 BOLDWHITE "User is banned from the channel."
 						 RESET "\r\n";
 		return (false);
 	}
-	if (this->isChannelInviteOnly() && !client->isInvitedToChannel(client, this->getChannelName())) {
+	if (this->isChannelInviteOnly() && !this->isClientInvited(client)) {
 		numericReply = ERR_INVITEONLYCHAN;
 		clientAddError = BOLDRED "ERROR: "
 						 BOLDWHITE "User is not invited to the channel."
@@ -156,7 +156,7 @@ bool Channel::isValidToAddToChannel(Client* client) {
 //						 RESET "\r\n";
 //		return (false);
 //	}
-	if (client->isMemberInChannel(client, this->getChannelName())) {
+	if (this->isClientMember(client)) {
 		numericReply = ERR_USERONCHANNEL;
 		clientAddError = BOLDRED "ERROR: "
 						 BOLDWHITE "User is already a member of the channel."
@@ -213,7 +213,7 @@ void Channel::removeOperatorFromChannel(Client* client, IRC::Server* server) {
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::banMemberFromChannel(Client* client, IRC::Server* server) {
-	if (client->isMemberInChannel(client, this->getChannelName())) {
+	if (this->isClientMember(client)) {
 		this->removeMemberFromChannel(client, server);
 		_banedUsers.push_back(client->getNickName());
 	}
@@ -226,8 +226,8 @@ void Channel::banMemberFromChannel(Client* client, IRC::Server* server) {
 void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IRC::Server* server) {
 
 	// Check if the client who is banning is an operator of the channel.
-	if (operatorClient->isOperatorOfChannel(operatorClient, this->getChannelName())) {
-		if (clientToBan->isBannedFromChannel(clientToBan, this->getChannelName())) {
+	if (this->isClientOperator(operatorClient)) {
+		if (this->isClientBaned(clientToBan)) {
 			std::string errMsg = ": "
 								 ERR_USERONCHANNEL
 								 BOLDWHITE " " + clientToBan->getNickName() + " " + this->getChannelName()
@@ -236,7 +236,7 @@ void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IR
 			Client::sendResponse(clientToBan->getSocket(), errMsg);
 		}
 		// Can not ban operators from a channel.
-		else if (clientToBan->isOperatorOfChannel(clientToBan, this->getChannelName())) {
+		else if (this->isClientOperator(clientToBan)) {
 			std::string errMsg = ": "
 								 ERR_CHANOPRIVSNEEDED
 								 BOLDWHITE " " + operatorClient->getNickName() + " " + this->getChannelName()
@@ -246,7 +246,7 @@ void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IR
 		}
 
 		// If every thing went will, then ban the user from the channel.
-		else if (clientToBan->isMemberInChannel(clientToBan, this->getChannelName()))
+		else if (this->isClientMember(clientToBan))
 			this->banMemberFromChannel(clientToBan, server);
 
 
@@ -278,7 +278,7 @@ void Channel::unbanUserFromChannel(Client* client) {
  * TODO: Split this function into easier to read && smaller functions.
  * */
 void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite) {
-	if (this->isChannelInviteOnly() && operatorClient->isOperatorOfChannel(operatorClient, this->getChannelName())) {
+	if (this->isChannelInviteOnly() && this->isClientOperator(operatorClient)) {
 
 		if (this->isChannelFull()) {
 			std::string errMsg = ERR_CHANNELISFULL
@@ -288,7 +288,7 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 			Client::sendResponse(operatorClient->getSocket(), errMsg);
 		}
 
-		if (clientToInvite->isMemberInChannel(clientToInvite, this->getChannelName())) {
+		if (this->isClientMember(clientToInvite)) {
 			std::string errMsg = ": "
 								 ERR_USERONCHANNEL
 								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
@@ -297,7 +297,7 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 			Client::sendResponse(clientToInvite->getSocket(), errMsg);
 		}
 
-		else if (clientToInvite->isOperatorOfChannel(clientToInvite, this->getChannelName())) {
+		else if (this->isClientOperator(clientToInvite)) {
 			std::string errMsg = ": "
 								 ERR_USERONCHANNEL
 								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
@@ -305,7 +305,7 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 								  RESET "\r\n";
 			Client::sendResponse(clientToInvite->getSocket(), errMsg);
 		}
-		else if (clientToInvite->isBannedFromChannel(clientToInvite, this->getChannelName())) {
+		else if (this->isClientBaned(clientToInvite)) {
 			std::string errMsg = ": "
 								 ERR_BANNEDFROMCHAN
 								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
@@ -313,7 +313,7 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 								   RESET "\r\n";
 			Client::sendResponse(clientToInvite->getSocket(), errMsg);
 		}
-		else if (clientToInvite->isInvitedToChannel(clientToInvite, this->getChannelName())) {
+		else if (this->isClientInvited(clientToInvite)) {
 			std::string errMsg = ": "
 								 ERR_USERONCHANNEL
 								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
@@ -344,7 +344,7 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::removeInviteeFromChannel(Client* client, IRC::Server* server) {
-	if (client->isOperatorOfChannel(client, this->getChannelName())) {
+	if (this->isClientOperator(client)) {
 		std::vector<std::string>::iterator itInvitee;
 		for (itInvitee = _invites.begin(); itInvitee != _invites.end(); ++itInvitee) {
 			if (*itInvitee == client->getNickName()) {
@@ -357,12 +357,54 @@ void Channel::removeInviteeFromChannel(Client* client, IRC::Server* server) {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+bool Channel::isClientMember(Client* client) {
+	std::vector<Client*>::iterator itMember;
+	for (itMember = _members.begin(); itMember != _members.end(); ++itMember) {
+		if ((*itMember)->getSocket() == client->getSocket() && (*itMember)->getNickName() == client->getNickName())
+			return true;
+	}
+	return false;
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+bool Channel::isClientOperator(Client* client) {
+	std::vector<Client*>::iterator itOperator;
+	for (itOperator = _operators.begin(); itOperator != _operators.end(); ++itOperator) {
+		if ((*itOperator)->getSocket() == client->getSocket() && (*itOperator)->getNickName() == client->getNickName())
+			return true;
+	}
+	return false;
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+bool Channel::isClientInvited(Client* client) {
+	std::vector<std::string>::iterator itInvited;
+	for (itInvited = _invites.begin(); itInvited != _invites.end(); ++itInvited) {
+		if ((*itInvited) == client->getNickName())
+			return true;
+	}
+	return false;
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+bool Channel::isClientBaned(Client* client) {
+	std::vector<std::string>::iterator itBaned;
+	for (itBaned = _banedUsers.begin(); itBaned != _banedUsers.end(); ++itBaned) {
+		if ((*itBaned) == client->getNickName())
+			return true;
+	}
+	return false;
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::removeClientFromChannel(Client* client, IRC::Server* server) {
-	if (client->isMemberInChannel(client, this->getChannelName()))
+	if (this->isClientMember(client))
 		this->removeMemberFromChannel(client, server);
-	else if (client->isOperatorOfChannel(client, this->getChannelName()))
+
+	else if (this->isClientOperator(client))
 		this->removeOperatorFromChannel(client, server);
-	else if (client->isInvitedToChannel(client, this->getChannelName()))
+
+	else if (this->isClientInvited(client))
 		this->removeInviteeFromChannel(client, server);
 }
 

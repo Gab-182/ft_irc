@@ -185,11 +185,17 @@ namespace IRC {
 			size_t getMaxUsers() const;
 			size_t getChannelUsersNumber() const;
 
+			bool isClientMember(Client* client);
+			bool isClientOperator(Client* client);
+			bool isClientInvited(Client* client);
+			bool isClientBaned(Client* client);
+
 			/*----------------------------------------------*/
 			std::vector<Client*> getNormalClients();
 			std::vector<Client*> getOperators();
 			std::vector<std::string> getBanedUsers();
 			std::vector<std::string> getInvites();
+
 			/*----------------------------------------------*/
 			void printChannelInfo();
 	};

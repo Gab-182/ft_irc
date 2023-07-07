@@ -156,18 +156,6 @@ void ICommands::unknownCommand(int clientSocket, Server* server,  const std::str
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-// Commands that can be executed without Authentication or Registration
-// cap
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-// Commands that require Authentication to be executed
-// pass, nick, user, quit
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-// Commands that require Registration to be executed
-// join, mode, whois, ping
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
 	(void)base;
 	(void)command;
