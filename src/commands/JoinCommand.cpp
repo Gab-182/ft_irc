@@ -37,12 +37,12 @@ bool JoinCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 	if (!Client::isClientRegistered(clientSocket, server)) {
 		DEBUG_MSG(BOLDRED << " client not registered yet!! ")
 
-		std::string authErrMsg = ":"
+		std::string regErrMsg = ":"
 								 ERR_NOTREGISTERED
 								 BOLDRED " Please make sure you entered: "
 								 BOLDWHITE "<password> <nickname> <username> "
 								 BOLDRED "correctly!!" RESET "\r\n";
-		sendResponse(clientSocket, authErrMsg);
+		sendResponse(clientSocket, regErrMsg);
 		return (false);
 	}
 	return (true);
