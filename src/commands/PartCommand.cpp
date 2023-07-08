@@ -50,21 +50,25 @@ bool PartCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void PartCommand::partOperatorClient(const int& clientSocket, Server* server, Client* client, const std::string& channelName) {
+
     Channel* channel = server->serverChannelsMap[channelName];
     
     // Remove the client from the channel's operator vector.
     channel->removeOperatorFromChannel(client,server);
     
     // Check if the client is also a member of the channel.
+
     if (1 == 1) {
+
         // If the client is a member, remove them from the channel's member vector.
         channel->removeMemberFromChannel(client,server);
         
         // Send a PART message to the client indicating their departure from the channel.
         std::string response = ":" + client->getNickName() + " PART #" + channelName + "\r\n";
         sendResponse(clientSocket, response);
+
     }
-    
+
     // Send a response to the client confirming their departure from the channel.
     std::string response2 = "You have left the channel #" + channelName + "\r\n";
     sendResponse(clientSocket, response2);
@@ -84,6 +88,8 @@ void PartCommand::partMemberClient(const int& clientSocket, Server* server, Clie
     // Send a response to the client confirming their departure from the channel.
     std::string response2 = "You have left the channel #" + channelName + "\r\n";
     sendResponse(clientSocket, response2);
+
+    client->printClientChannelsMap();
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void PartCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
@@ -121,6 +127,7 @@ void PartCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
     } else {
         // Invalid channel name
         std::string response = BOLDRED "Invalid channel name. Channel names should start with '#'.\r\n";
+    
         sendResponse(clientSocket, response);
     }
 }
