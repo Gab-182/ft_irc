@@ -18,6 +18,7 @@ SRC =	main.cpp \
 		src/commands/PingCommand.cpp \
 		src/commands/CapCommand.cpp \
 		src/commands/QuitCommand.cpp \
+		src/commands/PartCommand.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 

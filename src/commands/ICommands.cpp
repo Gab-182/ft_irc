@@ -14,6 +14,7 @@
 #include "../../include/commands/PingCommand.hpp"
 #include "../../include/commands/CapCommand.hpp"
 #include "../../include/commands/QuitCommand.hpp"
+#include "../../include/commands/PartCommand.hpp"
 
 using namespace IRC;
 
@@ -130,6 +131,7 @@ void ICommands::registerCommands() {
 	_commandsMap["ping"] = new IRC::PingCommand();
 	_commandsMap["cap"] = new IRC::CapCommand();
 	_commandsMap["quit"] = new IRC::QuitCommand();
+	_commandsMap["part"] = new IRC::PartCommand();
 }
 
 void ICommands::unRegisterCommands() {
@@ -139,6 +141,7 @@ void ICommands::unRegisterCommands() {
 	delete (_commandsMap["whois"]);
 	delete (_commandsMap["mode"]);
 	delete (_commandsMap["pass"]);
+	delete (_commandsMap["part"]);
 	delete (_commandsMap["ping"]);
 	delete (_commandsMap["cap"]);
 	delete (_commandsMap["quit"]);
@@ -195,7 +198,15 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 			_commandsMap["cap"]->executeCommand(this, clientSocket, server, client, it->first);
 		else if (toLowerCase(it->first) == "quit")
 			_commandsMap["quit"]->executeCommand(this, clientSocket, server, client, it->first);
+		else if (toLowerCase(it->first) == "part"){
+			//debugCommands();
+			_commandsMap["part"]->executeCommand(this, clientSocket, server, client, it->first);
+						std::cout << BOLDYELLOW << "Command: " << "im here 33"<< RESET << std::endl;
 
+		}
+			//_commandsMap["part"]->executeCommand(this, clientSocket, server, client, it->first);
+
+			
 // TODO: implement these commands:
 // ====================================================================================================
 //		else if (toLowerCase(it->first) == "privmsg")
