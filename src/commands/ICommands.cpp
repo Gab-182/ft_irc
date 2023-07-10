@@ -199,12 +199,10 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 		else if (toLowerCase(it->first) == "quit")
 			_commandsMap["quit"]->executeCommand(this, clientSocket, server, client, it->first);
 		else if (toLowerCase(it->first) == "part"){
-			//debugCommands();
+			std::cout <<  "IM HERE99"  << std::endl;
 			_commandsMap["part"]->executeCommand(this, clientSocket, server, client, it->first);
-						std::cout << BOLDYELLOW << "Command: " << "im here 33"<< RESET << std::endl;
-
 		}
-			//_commandsMap["part"]->executeCommand(this, clientSocket, server, client, it->first);
+			
 
 			
 // TODO: implement these commands:

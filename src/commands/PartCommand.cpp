@@ -72,24 +72,41 @@ void PartCommand::partOperatorClient(const int& clientSocket, Server* server, Cl
     // Send a response to the client confirming their departure from the channel.
     std::string response2 = "You have left the channel #" + channelName + "\r\n";
     sendResponse(clientSocket, response2);
+	client->printClientChannelsMap();
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void PartCommand::partMemberClient(const int& clientSocket, Server* server, Client* client, const std::string& channelName) {
     Channel* channel = server->serverChannelsMap[channelName];
-    
+
     // Remove the client from the channel's member vector.
-    channel->removeMemberFromChannel(client,server);
-    
+    channel->removeMemberFromChannel(client, server);
+
     // Send a PART message to the client indicating their departure from the channel.
     std::string response = ":" + client->getNickName() + " PART #" + channelName + "\r\n";
     sendResponse(clientSocket, response);
-    
+std::stringstream ss;
+ss << client->getSocket();
+std::string socketStr = ss.str();
+	    // Send a MODE message to update the client's status in irssi.
+    std::string modeMessage = "MODE " +  socketStr + " -# " + channelName + "\r\n";
+	sendResponse(clientSocket, modeMessage);
+
+    // Send a NAMES message to update the member list in irssi.
+    std::string namesMessage = "NAMES #" + channelName + "\r\n";
+    sendResponse(clientSocket, namesMessage);
+
+
+
     // Send a response to the client confirming their departure from the channel.
     std::string response2 = "You have left the channel #" + channelName + "\r\n";
     sendResponse(clientSocket, response2);
 
-    client->printClientChannelsMap();
+	std::cout <<  "IM HERE581"  << std::endl;
+
+    // Return the client to the main menu.
+    std::string mainMenuMessage = "[status]";
+    sendResponse(clientSocket, mainMenuMessage);
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void PartCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
@@ -100,7 +117,7 @@ void PartCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
     
     if (channelName[0] == '#') {
         channelName = channelName.substr(1); // Remove the '#' character from the channel name.
-        
+        std::cout <<  "IM HERE2:" << channelName << std::endl;
         // If the channel name is valid, check if the channel exists in the server channels map.
         std::map<std::string, Channel*>::iterator itChannel = server->serverChannelsMap.find(channelName);
         
@@ -110,12 +127,15 @@ void PartCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
             sendResponse(clientSocket, response);
         } else {
             // Channel exists
-            //Channel* channel = itChannel->second;
-            
-            if (1 == 1) {
+            std::cout <<  "IM HERE1"  << std::endl;
+            if (client->isOperatorOfChannel(client,channelName)) {
+				        std::cout <<  "IM HERE3:" << channelName << std::endl;
+
                 // Client is an operator of the channel
                 partOperatorClient(clientSocket, server, client, channelName);
-            } else if (2 == 2) {
+            } else if (1 == 1) {
+				        std::cout <<  "IM HERE4:" << channelName << std::endl;
+
                 // Client is a member of the channel
                 partMemberClient(clientSocket, server, client, channelName);
             } else {
