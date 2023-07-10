@@ -69,12 +69,21 @@ void ICommands::sendResponse(int clientSocket, const std::string& message) {
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::welcomeMessage(int clientSocket, Server* server) {
-	std::string welcomeMsg = ":"
-							 + server->serverClientsMap[clientSocket]->getNickName() + " "
-							 RPL_WELCOME " "
-							 BOLDGREEN ":Welcome to the Internet Relay Network, "
-							 RESET "\r\n";
+	// std::string welcomeMsg = ":irc 001 "
+	// 						 + server->serverClientsMap[clientSocket]->getNickName() + " "
+	// 						 RPL_WELCOME " "
+	// 						 BOLDGREEN ":Welcome to the Internet Relay Network, "
+	// 						 RESET "\r\n";
+	// std::cout <<  "IM HERE58221"  << std::endl;
+	std::string welcomeMsg = ":irc 001 " + server->serverClientsMap[clientSocket]->getNickName() + " :Welcome to the chat system " 
+							+ server->serverClientsMap[clientSocket]->getNickName() + "\n";
 	sendResponse(clientSocket, welcomeMsg);
+	std::string welcomeMsg2 = ":irc 002 " + server->serverClientsMap[clientSocket]->getNickName() + " :Host are Hammam and Gaith\n";
+	sendResponse(clientSocket, welcomeMsg2);
+	std::string welcomeMsg3 = ":irc 003 " + server->serverClientsMap[clientSocket]->getNickName() + " :Created on july->2023\n";
+	sendResponse(clientSocket, welcomeMsg3);
+	std::string welcomeMsg4 = ":irc 004 " + server->serverClientsMap[clientSocket]->getNickName() + " :Enjoy your stay!\n";
+	//sendResponse(clientSocket, welcomeMsg4);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

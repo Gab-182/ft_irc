@@ -80,10 +80,13 @@ void PartCommand::partMemberClient(const int& clientSocket, Server* server, Clie
     Channel* channel = server->serverChannelsMap[channelName];
 
     // Remove the client from the channel's member vector.
-    channel->removeMemberFromChannel(client, server);
+	 channel->removeOperatorFromChannel(client,server);
+    //channel->removeMemberFromChannel(client, server);
 
     // Send a PART message to the client indicating their departure from the channel.
-    std::string response = ":" + client->getNickName() + " PART #" + channelName + "\r\n";
+        std::string response = ":" + client->getNickName() + " PART #" + channelName + "\r\n";
+	//irc::Server::serverInstance->sendMsg(user->getUserFd()  , ":" + user->getNickName() + " PART " + this->getName() + " :leaving " +"\r\n");
+
     sendResponse(clientSocket, response);
 std::stringstream ss;
 ss << client->getSocket();
@@ -132,7 +135,7 @@ void PartCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 				        std::cout <<  "IM HERE3:" << channelName << std::endl;
 
                 // Client is an operator of the channel
-                partOperatorClient(clientSocket, server, client, channelName);
+                partMemberClient(clientSocket, server, client, channelName);
             } else if (1 == 1) {
 				        std::cout <<  "IM HERE4:" << channelName << std::endl;
 
