@@ -184,13 +184,12 @@ void Channel::addMemberToChannel(Client* client) {
 void Channel::removeMemberFromChannel(Client* client, IRC::Server* server) {
 	std::vector<Client *>::iterator it;
 	it = std::find(_members.begin(), _members.end(), client);
+
 	if (it != _members.end()) {
 		client->removeChannelFromClientChannelsMap(this->getChannelName());
 		_members.erase(it);
 	}
-	(void)server;
-	std::cout <<  "IM HERE58"  << std::endl;
-	//this->ifChannelIsEmptyThenDeleteIt(server);
+	this->ifChannelIsEmptyThenDeleteIt(server);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

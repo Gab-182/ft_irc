@@ -56,9 +56,12 @@ void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Cl
 
 	// add the client to the channels operator vector.
 	newChannel->addOperatorToChannel(client);
-	std::string response = ":" RPL_YOUREOPER BOLDGREEN " Successfully joined channel: ["
-						   + channelName
-						   + "] as an operator." + RESET "\r\n";
+	// std::string response = ":" RPL_YOUREOPER BOLDGREEN " Successfully joined channel: ["
+	// 					   + channelName
+	// 					   + "] as an operator." + RESET "\r\n";
+	std::string response = ":irc 332 " +  server->serverClientsMap[clientSocket]->getNickName() + " " + server->serverClientsMap[clientSocket]->getUserName() +
+	 " hello" + "\r\n";
+	sendMessageToUsers(clientSocket,server,client,channelName);
 	sendResponse(clientSocket, response);
 }
 
@@ -67,11 +70,45 @@ void JoinCommand::joinMemberClient(const int& clientSocket, Server* server, Clie
 	Channel *existingChannel = server->serverChannelsMap[channelName];
 	existingChannel->addMemberToChannel(client);
 	// send a response to the client.
-	std::string response =  BOLDGREEN " Successfully joined channel: ["
-							+ channelName
-							+ "] as a member."
-							+ RESET "\r\n";
+	(void)channelName;
+	// std::string response =  BOLDGREEN " Successfully joined channel: ["
+	// 						+ channelName
+	// 						+ "] as a member."
+	// 						+ RESET "\r\n";
+	std::string response = ":irc 332 " +  server->serverClientsMap[clientSocket]->getNickName() + " " + server->serverClientsMap[clientSocket]->getUserName() +
+	 " hello" + "\r\n";
 	sendResponse(clientSocket, response);
+	sendMessageToUsers(clientSocket,server,client,channelName);
+}
+
+void JoinCommand::sendMessageToUsers(const int& clientSocket, Server* server, Client* client, const std::string& channelName)
+{
+	std::vector<Client *>::iterator itOperator;
+	//std::vector<Client *>::iterator itNormal;
+	//Channel *existingChannel = server->serverChannelsMap[channelName];
+	(void)channelName;
+	(void)clientSocket;
+	(void)client;
+	(void)server;
+	std::cout << BOLDWHITE << server->serverClientsMap[clientSocket]->getSocket() << BOLDYELLOW << " - ";
+	// for (itNormal = existingChannel->getNormalClients(); itNormal != existingChannel->getNormalClients(); ++itNormal)
+	// {
+	// 	std::cout << BOLDWHITE << (*itNormal)->getNickName() << BOLDYELLOW << " - ";
+	// 	std::cout << BOLDWHITE << (*itNormal)->getSocket() << BOLDYELLOW << " - ";
+
+	// }
+	
+	// for (itOperator = existingChannel->getOperators(); itOperator != existingChannel->getOperators(); ++itOperator)
+	// {
+	// 	std::cout << BOLDWHITE << (*itOperator)->getNickName() << BOLDYELLOW << " - ";
+	// 	std::cout << BOLDWHITE << (*itOperator)->getSocket() << BOLDYELLOW << " - ";
+	// }
+	// for (size_t i = 0; i < users ; i++)
+	// // {
+	// // 	std::string msg2 = ":" + server->serverClientsMap[clientSocket]->getNickName() + " JOIN " + channelName + " \r\n";
+	// // 	irc::Server::serverInstance->sendMsg(existingChannel->users.at(i)->getUserFd(), msg2);
+	// // 	sendResponse(clientSocket, msg2);
+	// // }
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

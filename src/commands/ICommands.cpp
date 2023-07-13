@@ -78,7 +78,7 @@ void ICommands::welcomeMessage(int clientSocket, Server* server) {
 	std::string welcomeMsg = ":irc 001 " + server->serverClientsMap[clientSocket]->getNickName() + " :Welcome to the chat system " 
 							+ server->serverClientsMap[clientSocket]->getNickName() + "\n";
 	sendResponse(clientSocket, welcomeMsg);
-	std::string welcomeMsg2 = ":irc 002 " + server->serverClientsMap[clientSocket]->getNickName() + " :Host are Hammam and Gaith\n";
+	std::string welcomeMsg2 = ":irc 002 " + server->serverClientsMap[clientSocket]->getNickName() + " :Host are Hammam and\n";
 	sendResponse(clientSocket, welcomeMsg2);
 	std::string welcomeMsg3 = ":irc 003 " + server->serverClientsMap[clientSocket]->getNickName() + " :Created on july->2023\n";
 	sendResponse(clientSocket, welcomeMsg3);
