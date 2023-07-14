@@ -202,6 +202,8 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 			_commandsMap["cap"]->executeCommand(this, clientSocket, server, client, it->first);
 		else if (toLowerCase(it->first) == "quit")
 			_commandsMap["quit"]->executeCommand(this, clientSocket, server, client, it->first);
+		else if (toLowerCase(it->first) == "privmsg")
+			_commandsMap["privmsg"]->executeCommand(this, clientSocket, server, client, it->first);
 
 // TODO: implement these commands:
 // ====================================================================================================

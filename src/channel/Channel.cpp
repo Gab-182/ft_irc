@@ -409,6 +409,19 @@ void Channel::removeClientFromChannel(Client* client, IRC::Server* server) {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Channel::sendToAllClients(std::string msg) {
+	std::vector<Client*>::iterator itMember;
+	for (itMember = _members.begin(); itMember != _members.end(); ++itMember) {
+		Client::sendResponse((*itMember)->getSocket(), msg);
+	}
+
+	std::vector<Client*>::iterator itOperator;
+	for (itOperator = _operators.begin(); itOperator != _operators.end(); ++itOperator) {
+		Client::sendResponse((*itOperator)->getSocket(), msg);
+	}
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::printChannelInfo() {
 	std::cout << BOLDMAGENTA << std::endl << "—————————————————————————————————————————————————" << std::endl;
 	std::cout << BOLDYELLOW << "Channel name: " << BOLDWHITE << _name << std::endl;

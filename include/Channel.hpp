@@ -70,6 +70,12 @@ namespace IRC {
 			~Channel();
 		public:
 			/**-----------------------------------------------------------------------------------------
+			 * * @brief ➤ send messages to all clients on the channel.
+			 * @param msg
+			 */
+			void sendToAllClients(std::string msg);
+
+			/**-----------------------------------------------------------------------------------------
 			 * @brief ➤  Check if the joining the channel required a key.
 			 * @return true ➤ if the channel required a key.
 			 * @return false ➤ if the channel did not require a key.

@@ -63,6 +63,13 @@ void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Cl
 							+ "] as an operator."
 							+ RESET "\r\n";
 	sendResponse(clientSocket, operMsg);
+
+	std::string msgToAll = ":"
+							+ server->serverClientsMap[clientSocket]->getNickName()
+							+ " JOIN "
+							+ channelName +
+							" \r\n";
+	newChannel->sendToAllClients(msgToAll);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -75,6 +82,13 @@ void JoinCommand::joinMemberClient(const int& clientSocket, Server* server, Clie
 							+ "] as a member."
 							+ RESET "\r\n";
 	sendResponse(clientSocket, memberMsg);
+
+	std::string msgToAll = ":"
+							+ server->serverClientsMap[clientSocket]->getNickName()
+							+ " JOIN "
+							+ channelName +
+							" \r\n";
+	existingChannel->sendToAllClients(msgToAll);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -106,7 +120,6 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 								RESET "\r\n";
 		sendResponse(clientSocket, response);
 	}
-
 	/*-----------------------------------------------------------------------------------------*/
 	// print the client channel map info for debugging.
 	client->printClientChannelsMap();
