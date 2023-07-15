@@ -56,64 +56,6 @@ std::string Client::getNickName() { return (this->_nickName); }
 bool Client::isClientWelcomed() const { return (this->_isWelcomed); }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-bool Client::isMemberInChannel(Client* client, const std::string& channelName) {
-	std::map<std::string, Channel*>::iterator itMap;
-	std::vector<Client*>::iterator itMember;
-
-	itMap = this->_clientChannelsMap.find(channelName);
-	if (itMap != this->_clientChannelsMap.end()) {
-		for (itMember = itMap->second->getNormalClients().begin(); itMember != itMap->second->getNormalClients().end(); ++itMember) {
-			if (*itMember == client)
-				return (true);
-		}
-	}
-	return (false);
-}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-bool Client::isOperatorOfChannel(Client* client, const std::string& channelName) {
-	std::map<std::string, Channel*>::iterator itMap;
-	std::vector<Client*>::iterator itOper;
-
-	itMap = this->_clientChannelsMap.find(channelName);
-	if (itMap != this->_clientChannelsMap.end()) {
-		for (itOper = itMap->second->getOperators().begin(); itOper != itMap->second->getOperators().end(); ++itOper) {
-			if (*itOper != NULL && client != NULL && *itOper == client)
-				return (true);
-		}
-	}
-	return (false);
-}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-bool Client::isInvitedToChannel(Client* client, const std::string& channelName) {
-	std::map<std::string, Channel*>::iterator itMap;
-	std::vector<std::string>::iterator itInv;
-	itMap = this->_clientChannelsMap.find(channelName);
-	if (itMap != this->_clientChannelsMap.end()) {
-		for (itInv = itMap->second->getInvites().begin(); itInv != itMap->second->getInvites().end(); ++itInv) {
-			if (*itInv == client->getNickName())
-				return (true);
-		}
-	}
-	return (false);
-}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-bool Client::isBannedFromChannel(Client* client, const std::string& channelName) {
-	std::map<std::string, Channel*>::iterator itMap;
-	std::vector<std::string>::iterator itBan;
-	itMap = this->_clientChannelsMap.find(channelName);
-	if (itMap != this->_clientChannelsMap.end()) {
-		for (itBan = itMap->second->getBanedUsers().begin(); itBan != itMap->second->getBanedUsers().end(); ++itBan) {
-			if (*itBan == client->getNickName())
-				return (true);
-		}
-	}
-	return (false);
-}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Client::addChannelToClientChannelsMap(IRC::Channel *channel) {
 	std::map<std::string, Channel*>::iterator itMap;
 	itMap = this->_clientChannelsMap.find(channel->getChannelName());
@@ -136,6 +78,7 @@ void Client::removeClientFromAllChannels(const int& clientSocket, Server* server
 	// First: remove the client from all channels he is in.
 	std::map<std::string, Channel*>::iterator itChannelMap;
 	itChannelMap = _clientChannelsMap.begin();
+
 	if (itChannelMap != _clientChannelsMap.end())
 		itChannelMap->second->removeClientFromChannel(client, server);
 
@@ -144,6 +87,7 @@ void Client::removeClientFromAllChannels(const int& clientSocket, Server* server
 		this->removeClientFromAllChannels(clientSocket, server, client);
 
 }
+
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Client::removeClientFromServer(const int& clientSocket, Server* server, Client* client) {
 	// First: remove the client from all channels he is in.
@@ -185,6 +129,7 @@ bool Client::isClientAuthenticated(const int& clientSocket, Server* server) {
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 bool Client::isClientRegistered(const int& clientSocket, Server* server) {
 	if (server->serverClientsMap[clientSocket] != NULL
+		&& Client::isClientAuthenticated(clientSocket, server)
 		&& !server->serverClientsMap[clientSocket]->getNickName().empty()
 		&& !server->serverClientsMap[clientSocket]->getUserName().empty() )
 		return (true);

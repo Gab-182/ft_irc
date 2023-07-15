@@ -24,25 +24,26 @@ bool JoinCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 	if (base->isParameterEmpty(command)) {
 		DEBUG_MSG(BOLDRED << " wrong parameters!! ")
 
-		std::string authErrMsg = ":"
-								 ERR_NEEDMOREPARAMS
-								 BOLDRED " Please make sure you entered: "
+		std::string paramErrMsg = ":"
+								 ERR_NEEDMOREPARAMS " "
+								 BOLDRED ":Please make sure you entered: "
 								 BOLDYELLOW "/join "
 								 BOLDWHITE "<channel_name> "
 								 BOLDRED "correctly!!" RESET "\r\n";
-		sendResponse(clientSocket, authErrMsg);
+		sendResponse(clientSocket, paramErrMsg);
 		return (false);
 	}
 
 	if (!Client::isClientRegistered(clientSocket, server)) {
 		DEBUG_MSG(BOLDRED << " client not registered yet!! ")
 
-		std::string authErrMsg = ":"
-								 ERR_NOTREGISTERED
-								 BOLDRED " Please make sure you entered: "
+		std::string regErrMsg = ":"
+								 ERR_NOTREGISTERED " "
+								 BOLDRED ":Please make sure you entered: "
 								 BOLDWHITE "<password> <nickname> <username> "
-								 BOLDRED "correctly!!" RESET "\r\n";
-		sendResponse(clientSocket, authErrMsg);
+								 BOLDRED "correctly!!"
+								 RESET "\r\n";
+		sendResponse(clientSocket, regErrMsg);
 		return (false);
 	}
 	return (true);
@@ -54,61 +55,40 @@ void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Cl
 	newChannel = new Channel(channelName);
 	server->serverChannelsMap.insert(std::pair<std::string, Channel *>(channelName, newChannel));
 
-	// add the client to the channels operator vector.
 	newChannel->addOperatorToChannel(client);
-	// std::string response = ":" RPL_YOUREOPER BOLDGREEN " Successfully joined channel: ["
-	// 					   + channelName
-	// 					   + "] as an operator." + RESET "\r\n";
-	std::string response = ":irc 332 " +  server->serverClientsMap[clientSocket]->getNickName() + " " + server->serverClientsMap[clientSocket]->getUserName() +
-	 " hello" + "\r\n";
-	sendMessageToUsers(clientSocket,server,client,channelName);
-	sendResponse(clientSocket, response);
+	std::string operMsg = ":"
+							RPL_YOUREOPER " "
+							BOLDGREEN " Successfully joined channel: ["
+							+ channelName
+							+ "] as an operator."
+							+ RESET "\r\n";
+	sendResponse(clientSocket, operMsg);
+
+	std::string msgToAll = ":"
+							+ server->serverClientsMap[clientSocket]->getNickName()
+							+ " JOIN "
+							+ channelName +
+							" \r\n";
+	newChannel->sendToAllClients(msgToAll);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void JoinCommand::joinMemberClient(const int& clientSocket, Server* server, Client* client, const std::string& channelName) {
 	Channel *existingChannel = server->serverChannelsMap[channelName];
 	existingChannel->addMemberToChannel(client);
-	// send a response to the client.
-	(void)channelName;
-	// std::string response =  BOLDGREEN " Successfully joined channel: ["
-	// 						+ channelName
-	// 						+ "] as a member."
-	// 						+ RESET "\r\n";
-	std::string response = ":irc 332 " +  server->serverClientsMap[clientSocket]->getNickName() + " " + server->serverClientsMap[clientSocket]->getUserName() +
-	 " hello" + "\r\n";
-	sendResponse(clientSocket, response);
-	sendMessageToUsers(clientSocket,server,client,channelName);
-}
 
-void JoinCommand::sendMessageToUsers(const int& clientSocket, Server* server, Client* client, const std::string& channelName)
-{
-	std::vector<Client *>::iterator itOperator;
-	//std::vector<Client *>::iterator itNormal;
-	//Channel *existingChannel = server->serverChannelsMap[channelName];
-	(void)channelName;
-	(void)clientSocket;
-	(void)client;
-	(void)server;
-	std::cout << BOLDWHITE << server->serverClientsMap[clientSocket]->getSocket() << BOLDYELLOW << " - ";
-	// for (itNormal = existingChannel->getNormalClients(); itNormal != existingChannel->getNormalClients(); ++itNormal)
-	// {
-	// 	std::cout << BOLDWHITE << (*itNormal)->getNickName() << BOLDYELLOW << " - ";
-	// 	std::cout << BOLDWHITE << (*itNormal)->getSocket() << BOLDYELLOW << " - ";
+	std::string memberMsg = BOLDGREEN " Successfully joined channel: ["
+							+ channelName
+							+ "] as a member."
+							+ RESET "\r\n";
+	sendResponse(clientSocket, memberMsg);
 
-	// }
-	
-	// for (itOperator = existingChannel->getOperators(); itOperator != existingChannel->getOperators(); ++itOperator)
-	// {
-	// 	std::cout << BOLDWHITE << (*itOperator)->getNickName() << BOLDYELLOW << " - ";
-	// 	std::cout << BOLDWHITE << (*itOperator)->getSocket() << BOLDYELLOW << " - ";
-	// }
-	// for (size_t i = 0; i < users ; i++)
-	// // {
-	// // 	std::string msg2 = ":" + server->serverClientsMap[clientSocket]->getNickName() + " JOIN " + channelName + " \r\n";
-	// // 	irc::Server::serverInstance->sendMsg(existingChannel->users.at(i)->getUserFd(), msg2);
-	// // 	sendResponse(clientSocket, msg2);
-	// // }
+	std::string msgToAll = ":"
+							+ server->serverClientsMap[clientSocket]->getNickName()
+							+ " JOIN "
+							+ channelName +
+							" \r\n";
+	existingChannel->sendToAllClients(msgToAll);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -140,7 +120,6 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 								RESET "\r\n";
 		sendResponse(clientSocket, response);
 	}
-
 	/*-----------------------------------------------------------------------------------------*/
 	// print the client channel map info for debugging.
 	client->printClientChannelsMap();

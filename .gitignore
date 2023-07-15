@@ -3,6 +3,7 @@ cmake-build-debug
 build.ninja
 .ninja_log
 workspace.xml
+valgrind_output.txt
 # Compiled object files
 *.o
 *.ko

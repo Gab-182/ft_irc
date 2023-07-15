@@ -70,6 +70,12 @@ namespace IRC {
 			~Channel();
 		public:
 			/**-----------------------------------------------------------------------------------------
+			 * * @brief ➤ send messages to all clients on the channel.
+			 * @param msg
+			 */
+			void sendToAllClients(std::string msg);
+
+			/**-----------------------------------------------------------------------------------------
 			 * @brief ➤  Check if the joining the channel required a key.
 			 * @return true ➤ if the channel required a key.
 			 * @return false ➤ if the channel did not require a key.
@@ -185,11 +191,17 @@ namespace IRC {
 			size_t getMaxUsers() const;
 			size_t getChannelUsersNumber() const;
 
+			bool isClientMember(Client* client);
+			bool isClientOperator(Client* client);
+			bool isClientInvited(Client* client);
+			bool isClientBaned(Client* client);
+
 			/*----------------------------------------------*/
 			std::vector<Client*> getNormalClients();
 			std::vector<Client*> getOperators();
 			std::vector<std::string> getBanedUsers();
 			std::vector<std::string> getInvites();
+
 			/*----------------------------------------------*/
 			void printChannelInfo();
 	};

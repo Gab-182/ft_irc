@@ -34,6 +34,15 @@
 
 #endif
 
+/**
+ ** Example of sending a response to the client:
+ **
+ **		std::string Msg = ":"
+ **							" " NUMERIC " "
+ **							+ :(MESSAGE)
+ **							+ RESET "\r\n";
+ **		sendResponse(clientSocket, Msg);
+ **/
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 // Pass command replies (see RFC).
 #define ERR_PASSWDMISMATCH "464" // Password incorrect.
@@ -60,6 +69,7 @@
 
 //WHOIS command replies (see RFC).
 #define RPL_WHOISUSER "311" // Whois user, <nick> <user> <host> * :<real name>.
+#define ERR_NOSUCHNICK "401" // No such nick/channel.
 #define RPL_WHOISSERVER "312" // Whois server reply.
 #define RPL_ENDOFWHOIS "318" // End of whois reply.
 #define RPL_WHOISCHANNELS "319" // list of channels a user is in.
@@ -118,7 +128,7 @@ namespace IRC {
 
 		/*-----------------------------------------------------------------------*/
 			void getCommandInfo(const std::string& clientMessage);
-			static void unknownCommand(int clientSocket, Server* server,  const std::string& command);
+			static void unknownCommand(int clientSocket, const std::string& command);
 			virtual void executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command);
 	};
 }

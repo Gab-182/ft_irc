@@ -1,3 +1,12 @@
+# Color variables
+RESET = \033[0m
+BOLD = \033[1m
+GREEN = \033[1;32m
+CYAN = \033[1;36m
+YELLOW = \033[33m
+BLUE = \033[94m
+
+
 NAME = ircserv
 
 INCLUDE_DIR := ./include
@@ -18,7 +27,7 @@ SRC =	main.cpp \
 		src/commands/PingCommand.cpp \
 		src/commands/CapCommand.cpp \
 		src/commands/QuitCommand.cpp \
-		src/commands/PartCommand.cpp \
+		src/commands/PrivMsgCommand.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 
@@ -26,10 +35,6 @@ CXX = c++
 CXXFLAGS = -Wall -Werror -Wextra -g3 -std=c++98 -I$(INCLUDE_DIR)
 
 RM = rm -rf
-
-.DEFAULT_GOAL := help
-
-.PHONY: all clean fclean re help
 
 all: $(NAME) irssi
 
@@ -45,12 +50,29 @@ fclean: clean
 
 re: fclean all
 
+leaks:
+	valgrind --log-file=valgrind_output.txt ./ircserv 1212 1
 
+# Target rules
+.PHONY: all clean fclean re leaks
+
+# Help message
 help:
-	@echo "\n\033[1;32mAvailable rules:\033[0m"
-	@echo "  \033[1;36mall\033[0m       : Compile and build IRC server"
-	@echo "  \033[1;36mclean\033[0m     : Remove object files"
-	@echo "  \033[1;36mfclean\033[0m    : Remove object files and executable"
-	@echo "  \033[1;36mre\033[0m        : Clean and rebuild the executable"
+	@echo ""
+	@echo "$(BOLD)Available rules:$(RESET)"
+	@echo "  $(CYAN)all$(RESET)\t\t: Compile and build IRC server"
+	@echo "  $(CYAN)clean$(RESET)\t\t: Remove object files"
+	@echo "  $(CYAN)fclean$(RESET)\t: Remove object files and executable"
+	@echo "  $(CYAN)re$(RESET)\t\t: Clean and rebuild the executable"
+	@echo "  $(CYAN)leaks$(RESET)\t\t: Run valgrind to check for leaks"
+	@echo ""
+	@echo "$(YELLOW)Note:$(RESET)"
+	@echo "$(BLUE)\tThe 'make leaks' rule will create a valgrind_output.txt file and"
+	@echo "\trun the server on port 1212 with the password 1."
+	@echo "\tIf you want to run the server on another port or with another password,"
+	@echo "\tyou will need to modify the Makefile."
+	@echo ""
 
+# Default rule
+.DEFAULT_GOAL := help
 #❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄❄︎❄

@@ -38,12 +38,6 @@ namespace IRC {
 			bool operator==(const Client& other) const;
 
 		/*------------------------------------------------------------------------------*/
-			bool isMemberInChannel(Client* client, const std::string& channelName);
-			bool isOperatorOfChannel(Client* client, const std::string& channelName);
-			bool isInvitedToChannel(Client* client, const std::string& channelName);
-			bool isBannedFromChannel(Client* client, const std::string& channelName);
-
-		/*------------------------------------------------------------------------------*/
 			void addChannelToClientChannelsMap(Channel* channel);
 			void removeChannelFromClientChannelsMap(const std::string& channelName);
 
