@@ -71,9 +71,11 @@ namespace IRC {
 		public:
 			/**-----------------------------------------------------------------------------------------
 			 * * @brief ➤ send messages to all clients on the channel.
-			 * @param msg
+			 * @commandName = the name type of command you want to send
+			 * @nickName = the client nickname
+			 * @param msg = msg to be sent to all clients
 			 */
-			void sendToAllClients(std::string msg);
+			void sendToAllClients(std::string commandName, std::string nickName,std::string msg);
 
 			/**-----------------------------------------------------------------------------------------
 			 * @brief ➤  Check if the joining the channel required a key.

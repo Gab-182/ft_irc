@@ -69,7 +69,7 @@ void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Cl
 							+ " JOIN "
 							+ channelName +
 							" \r\n";
-	newChannel->sendToAllClients(msgToAll);
+	newChannel->sendToAllClients("JOIN", server->serverClientsMap[clientSocket]->getNickName(), msgToAll);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -88,7 +88,7 @@ void JoinCommand::joinMemberClient(const int& clientSocket, Server* server, Clie
 							+ " JOIN "
 							+ channelName +
 							" \r\n";
-	existingChannel->sendToAllClients(msgToAll);
+	existingChannel->sendToAllClients("JOIN", server->serverClientsMap[clientSocket]->getNickName(), msgToAll);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

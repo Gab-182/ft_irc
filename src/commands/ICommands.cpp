@@ -14,6 +14,7 @@
 #include "../../include/commands/PingCommand.hpp"
 #include "../../include/commands/CapCommand.hpp"
 #include "../../include/commands/QuitCommand.hpp"
+#include "../../include/commands/PrivMsgCommand.hpp"
 #include "../../include/commands/PartCommand.hpp"
 
 using namespace IRC;
@@ -77,7 +78,8 @@ void ICommands::welcomeMessage(int clientSocket, Server* server) {
 							 + BOLDGREEN "!"
 							 BOLDGREEN + server->serverClientsMap[clientSocket]->getUserName()
 							 + RESET "\r\n";
-	sendResponse(clientSocket, welcomeMsg);
+	std::string welcomeMsg1 = ":irc 001 " + server->serverClientsMap[clientSocket]->getNickName() + " :Welcome to the perfect Chat system " + server->serverClientsMap[clientSocket]->getNickName() + "\n";
+	sendResponse(clientSocket, welcomeMsg1);
 	std::string welcomeMsg2 = ":irc 002 " + server->serverClientsMap[clientSocket]->getNickName() + " :Host are Hammam and\n";
 	sendResponse(clientSocket, welcomeMsg2);
 	std::string welcomeMsg3 = ":irc 003 " + server->serverClientsMap[clientSocket]->getNickName() + " :Created on july->2023\n";
@@ -141,6 +143,7 @@ void ICommands::registerCommands() {
 	_commandsMap["cap"] = new IRC::CapCommand();
 	_commandsMap["quit"] = new IRC::QuitCommand();
 	_commandsMap["part"] = new IRC::PartCommand();
+	_commandsMap["privmsg"] = new IRC::PrivMsgCommand();
 }
 
 void ICommands::unRegisterCommands() {
@@ -154,6 +157,7 @@ void ICommands::unRegisterCommands() {
 	delete (_commandsMap["ping"]);
 	delete (_commandsMap["cap"]);
 	delete (_commandsMap["quit"]);
+	delete (_commandsMap["privmsg"]);
 	_commandsMap.clear();
 }
 
@@ -211,16 +215,8 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 			_commandsMap["cap"]->executeCommand(this, clientSocket, server, client, it->first);
 		else if (toLowerCase(it->first) == "quit")
 			_commandsMap["quit"]->executeCommand(this, clientSocket, server, client, it->first);
-<<<<<<< HEAD
-		else if (toLowerCase(it->first) == "part"){
-			std::cout <<  "IM HERE99"  << std::endl;
-			_commandsMap["part"]->executeCommand(this, clientSocket, server, client, it->first);
-		}
-			
-=======
 		else if (toLowerCase(it->first) == "privmsg")
 			_commandsMap["privmsg"]->executeCommand(this, clientSocket, server, client, it->first);
->>>>>>> 66c59c89d028930c7a21dc8926ce6a8fbc97a590
 
 			
 // TODO: implement these commands:
