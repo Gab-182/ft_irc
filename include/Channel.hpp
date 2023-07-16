@@ -69,6 +69,13 @@ namespace IRC {
 			Channel(const std::string& name);
 			~Channel();
 		public:
+
+			/**-----------------------------------------------------------------------------------------
+			 * * @brief ➤ returns/gets all the client nicknames in the channel.
+			 * 
+			 */
+			std::string getAllClients(std::string nickName);
+
 			/**-----------------------------------------------------------------------------------------
 			 * * @brief ➤ send messages to all clients on the channel.
 			 * @commandName = the name type of command you want to send
