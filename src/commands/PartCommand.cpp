@@ -52,36 +52,45 @@ bool PartCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 void PartCommand::partOperatorClient(const int& clientSocket, Server* server, Client* client, const std::string& channelName) {
 
 	(void)client;
+	Channel *existingChannel = server->serverChannelsMap[channelName];
 	std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PART :" + channelName + "\r\n";
 	sendResponse(clientSocket, response);
-	//
-
+	std::string response2 = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PART " + channelName + " :leaving";
+	existingChannel->sendToAllClients("PART", server->serverClientsMap[clientSocket]->getNickName(), response2);
+	//channel->sendMessage(":" + user->getNickName() + " PART " + channel->getName() + " :leaving", user->getNickName());
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void PartCommand::partMemberClient(const int& clientSocket, Server* server, Client* client, const std::string& channelName) {
+
 	(void)client;
-	std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PART " + channelName + "\r\n";
+	Channel *existingChannel = server->serverChannelsMap[channelName];
+	std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PART :" + channelName + "\r\n";
 	sendResponse(clientSocket, response);
+	std::string response2 = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PART " + channelName + " :leaving";
+	existingChannel->sendToAllClients("PART", server->serverClientsMap[clientSocket]->getNickName(), response2);
+	//channel->sendMessage(":" + user->getNickName() + " PART " + channel->getName() + " :leaving", user->getNickName());
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void PartCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
     //1. check the client is it normal member or operator
 	//2. then we send the command to either part operator client or partMemberClient
 	std::string channelName = base->getParameters(command)[0];
+	Channel *existingChannel = server->serverChannelsMap[channelName];
 
-std::cout <<  "CLient is Operator of channel"  << std::endl;
+	std::cout <<  "CLient is Operator of channel"  << std::endl;
 		partOperatorClient(clientSocket, server, client, channelName);
-	// if (client->isOperatorOfChannel(client, channelName))
-	// {
-	// 	std::cout <<  "CLient is Operator of channel"  << std::endl;
-	// 	partOperatorClient(clientSocket, server, client, channelName);
-	// }
-	// else if (client->isMemberInChannel(client, channelName))
-	// {
-	// 	std::cout <<  "CLient is Member of channel"  << std::endl;
-	// 	partMemberClient(clientSocket, server, client, channelName);
-	// }
+	if (existingChannel->isClientOperator(client))
+	{
+		std::cout <<  "CLient is Operator of channel"  << std::endl;
+
+		partOperatorClient(clientSocket, server, client, channelName);
+	}
+	else if (existingChannel->isClientMember(client))
+	{
+		std::cout <<  "CLient is Member of channel"  << std::endl;
+		partMemberClient(clientSocket, server, client, channelName);
+	}
 	
 
 }

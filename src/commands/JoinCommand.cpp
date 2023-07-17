@@ -70,10 +70,10 @@ void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Cl
 							" \r\n";
 	newChannel->sendToAllClients("JOIN", server->serverClientsMap[clientSocket]->getNickName(), msgToAll);
 	std::string allClients = newChannel->getAllClients(server->serverClientsMap[clientSocket]->getNickName());
-	std::string userListResponse = ":10.11.5.1 353 " + client->getNickName() + " = " + channelName + " :" + allClients + "\r\n";
+	std::string userListResponse = ": 353 " + client->getNickName() + " = " + channelName + " :" + allClients + "\r\n";
     sendResponse(clientSocket, userListResponse);
 
-	std::string totalNicksResponse = ":10.11.5.1 366 " + client->getNickName() + " " + channelName + " :End of /NAMES list.\r\n";
+	std::string totalNicksResponse = ": 366 " + client->getNickName() + " " + channelName + " :End of /NAMES list.\r\n";
 	sendResponse(clientSocket, totalNicksResponse);
 	//after this need to add [Users ChannelName]
 	//the users 
@@ -99,10 +99,10 @@ void JoinCommand::joinMemberClient(const int& clientSocket, Server* server, Clie
 							" \r\n";
 	existingChannel->sendToAllClients("JOIN", server->serverClientsMap[clientSocket]->getNickName(), msgToAll);
 		std::string allClients = existingChannel->getAllClients(server->serverClientsMap[clientSocket]->getNickName());
-	std::string userListResponse = ":10.11.5.1 353 " + client->getNickName() + " = " + channelName + " :" + allClients + "\r\n";
+	std::string userListResponse = ": 353 " + client->getNickName() + " = " + channelName + " :" + allClients + "\r\n";
     sendResponse(clientSocket, userListResponse);
 
-	std::string totalNicksResponse = ":10.11.5.1 366 " + client->getNickName() + " " + channelName + " :End of /NAMES list.\r\n";
+	std::string totalNicksResponse = ": 366 " + client->getNickName() + " " + channelName + " :End of /NAMES list.\r\n";
 	sendResponse(clientSocket, totalNicksResponse);
 }
 

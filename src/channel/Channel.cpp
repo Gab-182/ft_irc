@@ -413,7 +413,7 @@ void Channel::removeClientFromChannel(Client* client, IRC::Server* server) {
 void Channel::sendToAllClients(std::string commandName, std::string nickName,std::string msg) {
 	std::vector<Client*>::iterator itMember;
 	for (itMember = _members.begin(); itMember != _members.end(); ++itMember) {
-		if (commandName == "PRIVMSG")
+		if (commandName == "PRIVMSG" || commandName == "PART")
 		{
 			if ((*itMember)->getNickName() != nickName)
 				Client::sendResponse((*itMember)->getSocket(), msg);
@@ -425,7 +425,7 @@ void Channel::sendToAllClients(std::string commandName, std::string nickName,std
 
 	std::vector<Client*>::iterator itOperator;
 	for (itOperator = _operators.begin(); itOperator != _operators.end(); ++itOperator) {
-		if (commandName == "PRIVMSG")
+		if (commandName == "PRIVMSG" || commandName == "PART")
 		{
 			if ((*itOperator)->getNickName() != nickName)
 				Client::sendResponse((*itOperator)->getSocket(), msg);
@@ -439,10 +439,10 @@ void Channel::sendToAllClients(std::string commandName, std::string nickName,std
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 std::string Channel::getAllClients(std::string nickName) {
 	std::vector<Client*>::iterator itMember;
-	std::string allClients = "";
+	std::string allClients;
 	for (itMember = _members.begin(); itMember != _members.end(); ++itMember) {
 		if ((*itMember)->getNickName() != nickName){
-				allClients += allClients + " " + (*itMember)->getNickName();
+				allClients += (*itMember)->getNickName() + " " ;
 		}	
 			DEBUG_MSG(allClients);
 	}
@@ -450,7 +450,7 @@ std::string Channel::getAllClients(std::string nickName) {
 	std::vector<Client*>::iterator itOperator;
 	for (itOperator = _operators.begin(); itOperator != _operators.end(); ++itOperator) {
 		if ((*itOperator)->getNickName() != nickName){
-				allClients += allClients + " " + (*itOperator)->getNickName();
+				allClients += (*itOperator)->getNickName() + " " ;
 		}
 			DEBUG_MSG(allClients);
 	}
