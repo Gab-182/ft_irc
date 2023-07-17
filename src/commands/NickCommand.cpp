@@ -10,15 +10,16 @@ NickCommand::NickCommand() : ICommands() { }
 NickCommand::~NickCommand() { }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+// "<nick> :Nickname is already in use"
 bool NickCommand::isDuplicatedNick(const int& clientSocket, const std::string& nickName, Server* server) {
 	std::map<int, Client*>::const_iterator it;
 	for (it = server->serverClientsMap.begin(); it != server->serverClientsMap.end() ;++it) {
 		if (toLowerCase(it->second->getNickName()) == toLowerCase(nickName) && it->first != clientSocket) {
-			std::string nickErrMsg = ": "
-									 ERR_NICKNAMEINUSE
-									 BOLDRED" ERROR: "
-									 BOLDWHITE + server->serverClientsMap[clientSocket]->getNickName()
-									 + " Nickname is already in use" + RESET + "\r\n";
+			std::string nickErrMsg = server->serverClientsMap[clientSocket]->getNickName()
+									 + " :"
+									 + " " ERR_NICKNAMEINUSE " "
+									 + "Nickname is already in use"
+									 + "\r\n";
 			sendResponse(clientSocket, nickErrMsg);
 			return (true);
 		}
@@ -29,6 +30,7 @@ bool NickCommand::isDuplicatedNick(const int& clientSocket, const std::string& n
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void NickCommand::generateNickName(int clientSocket, Server* server) {
 	std::stringstream ss;
+
 	int randomNumber = std::rand() % 1000;
 	ss << "Guest" << randomNumber;
 	std::string modifiedNickname = ss.str();
@@ -46,11 +48,11 @@ bool NickCommand::validNickName(int clientSocket, std::string& clientNick, Serve
 
 	if (isDuplicatedNick(clientSocket, clientNick, server) || clientNick.empty() || !std::isalpha(clientNick[0])
 		|| clientNick.find_first_of(allowedChars) == std::string::npos) {
-		std::string nickErrMsg = ": "
-								 ERR_ERRONEUSNICKNAME
-								 BOLDRED " ERROR: "
-								 BOLDWHITE + server->serverClientsMap[clientSocket]->getNickName()
-								 + " Erroneous Nickname" + RESET + "\r\n";
+		std::string nickErrMsg = server->serverClientsMap[clientSocket]->getNickName()
+								 + " :"
+								 " " ERR_ERRONEUSNICKNAME " "
+								+ "Erroneous Nickname"
+								+ "\r\n";
 		sendResponse(clientSocket, nickErrMsg);
 		return (false);
 	}
@@ -59,26 +61,22 @@ bool NickCommand::validNickName(int clientSocket, std::string& clientNick, Serve
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void NickCommand::processNickCommand(const int& clientSocket, std::string& clientNick, Server* server) {
-	// Nickname is too long
-	if (clientNick.length() > 9) {
-		std::string fixedNick = clientNick.substr(0, 9);
-		if (validNickName(clientSocket, fixedNick, server))
-			server->serverClientsMap[clientSocket]->setNickName(fixedNick);
-	}
+	std::string fixedNick = clientNick.substr(0, 9);
 
-	else if (!validNickName(clientSocket, clientNick, server)) {
+	if (!validNickName(clientSocket, fixedNick, server)) {
 		if (server->serverClientsMap[clientSocket]->getNickName().empty())
 			generateNickName(clientSocket, server);
 	}
 
-		//	Nickname accepted
+	//	Nickname accepted
 	else
-		server->serverClientsMap[clientSocket]->setNickName(clientNick);
+		server->serverClientsMap[clientSocket]->setNickName(fixedNick);
 
 	std::string nickMsg = ": "
 						  BOLDGREEN "You're now known as "
 						  + server->serverClientsMap[clientSocket]->getNickName()
 						  + RESET + "\r\n";
+
 	sendResponse(clientSocket, nickMsg);
 }
 

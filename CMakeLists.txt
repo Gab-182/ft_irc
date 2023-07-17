@@ -16,14 +16,14 @@ set(HEADERS
 		include/IRC.hpp
 		include/Server.hpp
 		include/Client.hpp
-		src/channel/Channel.cpp main.cpp src/commands/ICommands.cpp include/commands/NickCommand.hpp src/commands/NickCommand.cpp src/commands/UserCommand.cpp src/commands/WhoisCommand.cpp include/commands/WhoisCommand.hpp include/commands/ModeCommand.hpp src/commands/ModeCommand.cpp src/commands/PassCommand.cpp src/commands/PingCommand.cpp src/commands/CapCommand.cpp src/commands/QuitCommand.cpp include/commands/PrivMsgCommand.hpp src/commands/PrivMsgCommand.cpp)
+		src/channel/Channel.cpp main.cpp src/commands/ICommands.cpp include/commands/NickCommand.hpp src/commands/NickCommand.cpp src/commands/UserCommand.cpp src/commands/WhoisCommand.cpp include/commands/WhoisCommand.hpp include/commands/ModeCommand.hpp src/commands/ModeCommand.cpp src/commands/PassCommand.cpp src/commands/PingCommand.cpp src/commands/CapCommand.cpp src/commands/QuitCommand.cpp include/commands/PrivMsgCommand.hpp src/commands/PrivMsgCommand.cpp src/commands/PartCommand.cpp)
 
 # Create an executable target and link the source and header files
 add_executable(${SOURCES} ${HEADERS})
 
 # Define custom target for running the executable with arguments
 add_custom_target(run
-		COMMAND ircserv 1212 12345
+		COMMAND ircserv 1212 1
 		DEPENDS ircserv
 		WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
 		)

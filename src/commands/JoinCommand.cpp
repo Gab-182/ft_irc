@@ -71,7 +71,7 @@ void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Cl
 	newChannel->sendToAllClients("JOIN", server->serverClientsMap[clientSocket]->getNickName(), msgToAll);
 	std::string allClients = newChannel->getAllClients(server->serverClientsMap[clientSocket]->getNickName());
 	std::string userListResponse = ":10.11.5.1 353 " + client->getNickName() + " = " + channelName + " :" + allClients + "\r\n";
-    sendResponse(clientSocket, userListResponse);
+	sendResponse(clientSocket, userListResponse);
 
 	std::string totalNicksResponse = ":10.11.5.1 366 " + client->getNickName() + " " + channelName + " :End of /NAMES list.\r\n";
 	sendResponse(clientSocket, totalNicksResponse);
@@ -98,7 +98,8 @@ void JoinCommand::joinMemberClient(const int& clientSocket, Server* server, Clie
 							+ channelName +
 							" \r\n";
 	existingChannel->sendToAllClients("JOIN", server->serverClientsMap[clientSocket]->getNickName(), msgToAll);
-		std::string allClients = existingChannel->getAllClients(server->serverClientsMap[clientSocket]->getNickName());
+
+    std::string allClients = existingChannel->getAllClients(server->serverClientsMap[clientSocket]->getNickName());
 	std::string userListResponse = ":10.11.5.1 353 " + client->getNickName() + " = " + channelName + " :" + allClients + "\r\n";
     sendResponse(clientSocket, userListResponse);
 

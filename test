@@ -1,0 +1,69 @@
+<< CAP LS
+<< PASS 1
+<< NICK gab
+<< USER gabdoush gabdoush localhost :Ghaiath Abdoush
+>> CAP * ACK :302 CAP LS
+<< CAP END
+>> [1m[32mPassword accepted[0m
+>> : 433[1m[31m ERROR: [1m[37m Nickname is already in use[0m
+>> : 432[1m[31m ERROR: [1m[37m Erroneous Nickname[0m
+>> [1m[32mAssigning a Guest nickname: Guest383[0m
+>> : [1m[32mYou're now known as Guest383[0m
+>> [1m[32mYou're username now is gabdoush[0m
+>> :irc 001 Guest383 :Welcome to the perfect Chat system Guest383
+<< MODE Guest383 +i
+<< WHOIS gab
+>> :irc 002 Guest383 :Host are Hammam and
+>> :irc 003 Guest383 :Created on july->2023
+>> CAP * ACK :CAP END
+>> :311 gab * :gabdoush
+<< PING irc
+>> PONG :irc
+--> lag pong
+<< NICK Ham
+>> : [1m[32mYou're now known as Ham[0m
+<< PING irc
+>> PONG :irc
+--> FAILED whois
+--> lag pong
+<< JOIN #cha1
+>> :  Ham cha1[1m[32m Successfully joined channel: [cha1] as a member.[0m
+>> :Ham JOIN cha1 
+>> :10.11.5.1 353 Ham = cha1 : gab
+>> :10.11.5.1 366 Ham cha1 :End of /NAMES list.
+<< MODE #cha1
+>> [1m[31mPlease make sure you entered: [1m[33mMODE [1m[37m<channel_name> <mode> [1m[31mcorrectly!![0m
+<< PING irc
+>> PONG :irc
+--> lag pong
+<< PING irc
+>> PONG :irc
+--> FAILED mode channel: chanquery abort
+<< MODE #cha1
+--> lag pong
+>> [1m[31mPlease make sure you entered: [1m[33mMODE [1m[37m<channel_name> <mode> [1m[31mcorrectly!![0m
+<< PING irc
+>> PONG :irc
+--> lag pong
+<< PING irc
+>> PONG :irc
+--> FAILED mode channel: chanquery abort
+<< WHO #cha1
+--> lag pong
+>> :421 [1m[33mWHO[1m[31m :Unknown command
+>> [1m[33mThe server only accepts the following commands:
+>> [1m[37m	 NICK <nickname>
+>> [1m[37m	 USER <username>
+>> [1m[37m	 PASS <password>
+>> [1m[37m	 JOIN <#channel_name> <#channel_name> ...
+>> [1m[37m	 PRIVMSG <nickname> <message>
+>> [1m[37m	 TOPIC <channel_name> <topic>
+>> [1m[37m	 PART <channel_name>
+>> [1m[37m	 OPER <username> <password>
+>> [1m[37m	 MODE <channel_name> <mode> <mode parameter>
+>> [1m[37m	 WHOIS <nickname>
+>> [1m[37m	 PING <unique token>
+>> [1m[37m	 CAP LS
+>> [1m[37m	 CAP END
+>> [1m[37m	 QUIT
+>> [1m[33mPlease try again[0m

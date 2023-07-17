@@ -44,7 +44,7 @@ bool ModeCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 
 	// MODE <channel name> <mode>
 	if (base->getParameters(command).size() < 2) {
-		DEBUG_MSG(BOLDRED << " wrong parameters!! ")
+		DEBUG_MSG(BOLDRED << " wrong parameters......!! ")
 
 		std::string authErrMsg = BOLDRED "Please make sure you entered: "
 								 BOLDYELLOW "MODE "
