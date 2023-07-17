@@ -442,18 +442,19 @@ std::string Channel::getAllClients(std::string nickName) {
 	std::string allClients;
 	for (itMember = _members.begin(); itMember != _members.end(); ++itMember) {
 		if ((*itMember)->getNickName() != nickName){
-				allClients += (*itMember)->getNickName() + " " ;
+				allClients += (*itMember)->getNickName() + " ";
 		}	
-			DEBUG_MSG(allClients);
 	}
+	DEBUG_MSG(allClients)
 
 	std::vector<Client*>::iterator itOperator;
 	for (itOperator = _operators.begin(); itOperator != _operators.end(); ++itOperator) {
 		if ((*itOperator)->getNickName() != nickName){
-				allClients += (*itOperator)->getNickName() + " " ;
+				allClients += (*itOperator)->getNickName() + " ";
 		}
-			DEBUG_MSG(allClients);
 	}
+	DEBUG_MSG(allClients)
+
 	return allClients;
 }
 
