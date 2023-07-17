@@ -70,14 +70,7 @@ void ICommands::sendResponse(int clientSocket, const std::string& message) {
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::welcomeMessage(int clientSocket, Server* server) {
-	std::string welcomeMsg = ":"
-							 " " RPL_WELCOME " "
-							 + server->serverClientsMap[clientSocket]->getNickName()
-							 + BOLDGREEN " :Welcome to the Internet Relay Network "
-							 BOLDGREEN + server->serverClientsMap[clientSocket]->getNickName()
-							 + BOLDGREEN "!"
-							 BOLDGREEN + server->serverClientsMap[clientSocket]->getUserName()
-							 + RESET "\r\n";
+
 	std::string welcomeMsg1 = ":irc 001 " + server->serverClientsMap[clientSocket]->getNickName() + " :Welcome to the perfect Chat system " + server->serverClientsMap[clientSocket]->getNickName() + "\n";
 	sendResponse(clientSocket, welcomeMsg1);
 	std::string welcomeMsg2 = ":irc 002 " + server->serverClientsMap[clientSocket]->getNickName() + " :Host are Hammam and\n";

@@ -450,7 +450,7 @@ std::string Channel::getAllClients(std::string nickName) {
 	std::vector<Client*>::iterator itOperator;
 	for (itOperator = _operators.begin(); itOperator != _operators.end(); ++itOperator) {
 		if ((*itOperator)->getNickName() != nickName){
-				allClients += (*itOperator)->getNickName() + " ";
+				allClients += "@" + (*itOperator)->getNickName() + " ";
 		}
 	}
 	DEBUG_MSG(allClients)
