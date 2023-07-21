@@ -108,7 +108,7 @@ void PartCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 			else {
 				// Returns a response to the client that there's that the client is not in channel.
 				std::cout << "IM HERE" << std::endl;
-				std::string response = ": 442 " + nicknameToSearch + " " + channelName + " :You're not on that channel" + "\r\n";
+				std::string response = ": 442 " + channelName + " :You're not on that channel" + "\r\n";
 				sendResponse(clientSocket,response);
 			}
 
