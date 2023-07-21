@@ -445,7 +445,6 @@ std::string Channel::getAllClients(std::string nickName) {
 				allClients += (*itMember)->getNickName() + " ";
 		}	
 	}
-	DEBUG_MSG(allClients)
 
 	std::vector<Client*>::iterator itOperator;
 	for (itOperator = _operators.begin(); itOperator != _operators.end(); ++itOperator) {
@@ -453,9 +452,31 @@ std::string Channel::getAllClients(std::string nickName) {
 				allClients += "@" + (*itOperator)->getNickName() + " ";
 		}
 	}
-	DEBUG_MSG(allClients)
 
 	return allClients;
+}
+
+std::vector<std::string> Channel::getAllClients2(std::string nickName) {
+    std::vector<std::string> allClients;
+	std::vector<Client*>::iterator itMember;
+	std::vector<Client*>::iterator itOperator;
+	(void)nickName;
+
+    // Iterate through regular members
+    for (itMember = _members.begin(); itMember != _members.end(); ++itMember) {
+        
+            allClients.push_back((*itMember)->getNickName());
+        
+    }
+
+    // Iterate through operators
+   for (itOperator = _operators.begin(); itOperator != _operators.end(); ++itOperator) {
+        
+            allClients.push_back((*itOperator)->getNickName());
+        
+    }
+
+    return allClients;
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

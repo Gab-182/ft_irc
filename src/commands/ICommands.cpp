@@ -217,18 +217,12 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 			
 // TODO: implement these commands:
 // ====================================================================================================
-//		else if (toLowerCase(it->first) == "privmsg")
-//			_commandsMap["privmsg"]->executeCommand(this, clientSocket, server, client, it->first);
 //		else if (toLowerCase(it->first) == "topic")
 //			_commandsMap["topic"]->executeCommand(this, clientSocket, server, client, it->first);
 //		else if (toLowerCase(it->first) == "oper")
 //			_commandsMap["oper"]->executeCommand(this, clientSocket, server, client, it->first);
-//		else if (toLowerCase(it->first) == "kill")
-//			_commandsMap["kill"]->executeCommand(this, clientSocket, server, client, it->first);
 //		else if (toLowerCase(it->first) == "invite")
 //			_commandsMap["invite"]->executeCommand(this, clientSocket, server, client, it->first);
-//		else if (toLowerCase(it->first) == "part")
-//			_commandsMap["part"]->executeCommand(this, clientSocket, server, client, it->first);
 //		else if (toLowerCase(it->first) == "mode")
 //			_commandsMap["mode"]->executeCommand(this, clientSocket, server, client, it->first);
 //		else if (toLowerCase(it->first) == "kick")

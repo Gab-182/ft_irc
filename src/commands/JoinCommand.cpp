@@ -98,7 +98,7 @@ void JoinCommand::joinMemberClient(const int& clientSocket, Server* server, Clie
 							+ channelName +
 							" \r\n";
 	existingChannel->sendToAllClients("JOIN", server->serverClientsMap[clientSocket]->getNickName(), msgToAll);
-		std::string allClients = existingChannel->getAllClients(server->serverClientsMap[clientSocket]->getNickName());
+	std::string allClients = existingChannel->getAllClients(server->serverClientsMap[clientSocket]->getNickName());
 	std::string userListResponse = ": 353 " + client->getNickName() + " = " + channelName + " :" + allClients + "\r\n";
     sendResponse(clientSocket, userListResponse);
 
