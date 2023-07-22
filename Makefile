@@ -29,6 +29,7 @@ SRC =	main.cpp \
 		src/commands/QuitCommand.cpp \
 		src/commands/PrivMsgCommand.cpp \
 		src/commands/PartCommand.cpp \
+		src/commands/KickCommand.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 

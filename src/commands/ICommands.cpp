@@ -16,6 +16,7 @@
 #include "../../include/commands/QuitCommand.hpp"
 #include "../../include/commands/PrivMsgCommand.hpp"
 #include "../../include/commands/PartCommand.hpp"
+#include "../../include/commands/KickCommand.hpp"
 
 using namespace IRC;
 
@@ -106,8 +107,10 @@ void ICommands::getCommandInfo(const std::string& clientMessage) {
 		std::istringstream lineStream(messageLine);
 		lineStream >> command;
 
-		while (lineStream >> para)
+		while (lineStream >> para){
 			parameters.push_back(para);
+		}
+			
 		_messages.push_back(std::make_pair(command, parameters));
 		parameters.clear();
 	}
@@ -137,6 +140,7 @@ void ICommands::registerCommands() {
 	_commandsMap["quit"] = new IRC::QuitCommand();
 	_commandsMap["part"] = new IRC::PartCommand();
 	_commandsMap["privmsg"] = new IRC::PrivMsgCommand();
+	_commandsMap["kick"] = new IRC::KickCommand();
 }
 
 void ICommands::unRegisterCommands() {
@@ -151,6 +155,7 @@ void ICommands::unRegisterCommands() {
 	delete (_commandsMap["cap"]);
 	delete (_commandsMap["quit"]);
 	delete (_commandsMap["privmsg"]);
+	delete (_commandsMap["kick"]);
 	_commandsMap.clear();
 }
 
@@ -187,9 +192,15 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 
 
 	// loop through all the commands in the vector, and pass the command to the execute function.
-	std::vector<std::pair<std::string, std::vector<std::string> > >::iterator it;
+	// if and else if statements can be changed to the map instead
+	//_commandsMap.find(command.toLowercase()).second->excuteCOmmand(this, c,serv, cl, it->first)
 
+	
+	std::vector<std::pair<std::string, std::vector<std::string> > >::iterator it;
+	
 	for (it = _messages.begin(); it != _messages.end(); ++it) {
+			std::cout << "COMMAND NAME:" << it->first << std::endl;
+
 		if (toLowerCase(it->first) == "join")
 			_commandsMap["join"]->executeCommand(this, clientSocket, server, client, it->first);
 		else if (toLowerCase(it->first) == "nick")
@@ -212,7 +223,11 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 			_commandsMap["privmsg"]->executeCommand(this, clientSocket, server, client, it->first);
 		else if (toLowerCase(it->first) == "part")
 			_commandsMap["part"]->executeCommand(this, clientSocket, server, client, it->first);
-
+		else if (toLowerCase(it->first) == "kick"){
+			std::cout << "TEST TEST:" << std::endl;
+			_commandsMap["kick"]->executeCommand(this, clientSocket, server, client, it->first);
+		}
+			
 
 			
 // TODO: implement these commands:
@@ -225,8 +240,6 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 //			_commandsMap["invite"]->executeCommand(this, clientSocket, server, client, it->first);
 //		else if (toLowerCase(it->first) == "mode")
 //			_commandsMap["mode"]->executeCommand(this, clientSocket, server, client, it->first);
-//		else if (toLowerCase(it->first) == "kick")
-//			_commandsMap["kick"]->executeCommand(this, clientSocket, server, client, it->first);
 		else
 			unknownCommand(clientSocket, it->first);
 	}
