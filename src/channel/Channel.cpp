@@ -461,6 +461,7 @@ int Channel::getTargetClientFD(std::string nickName) {
 	std::vector<Client*>::iterator itMember;
 	for (itMember = _members.begin(); itMember != _members.end(); ++itMember) {
 		if ((*itMember)->getNickName() == nickName){
+			std::cout << "socket: " << (*itMember)->getSocket() << std::endl;
 			return (*itMember)->getSocket();
 		}
 	}

@@ -41,20 +41,22 @@ ModeCommand::~ModeCommand() { }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 bool ModeCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	(void) client;
+	(void) command;
+	(void) base;
 
-	// MODE <channel name> <mode>
-	if (base->getParameters(command).size() < 2) {
-		DEBUG_MSG(BOLDRED << " wrong parameters......!! ")
+	// // MODE <channel name> <mode>
+	// if (base->getParameters(command).size() < 2) {
+	// 	DEBUG_MSG(BOLDRED << " wrong parameters......!! ")
 
-		std::string authErrMsg = BOLDRED "Please make sure you entered: "
-								 BOLDYELLOW "MODE "
-								 BOLDWHITE "<channel_name> <mode> "
-								 BOLDRED "correctly!!" RESET "\r\n";
-		sendResponse(clientSocket, authErrMsg);
-		return (false);
-	}
+	// 	std::string authErrMsg = BOLDRED "Please make sure you entered: "
+	// 							 BOLDYELLOW "MODE "
+	// 							 BOLDWHITE "<channel_name> <mode> "
+	// 							 BOLDRED "correctly!!" RESET "\r\n";
+	// 	sendResponse(clientSocket, authErrMsg);
+	// 	return (false);
+	// }
 
-	else if (!Client::isClientAuthenticated(clientSocket, server)) {
+	 if (!Client::isClientAuthenticated(clientSocket, server)) {
 		DEBUG_MSG(BOLDRED << " client not authenticated yet!! ")
 
 		std::string authErrMsg = BOLDRED "Please make sure you entered: "
