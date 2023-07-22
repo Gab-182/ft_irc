@@ -456,6 +456,19 @@ std::string Channel::getAllClients(std::string nickName) {
 	return allClients;
 }
 
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+int Channel::getTargetClientFD(std::string nickName) {
+	std::vector<Client*>::iterator itMember;
+	for (itMember = _members.begin(); itMember != _members.end(); ++itMember) {
+		if ((*itMember)->getNickName() == nickName){
+			return (*itMember)->getSocket();
+		}
+	}
+	return -1;
+}
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+
+
 std::vector<std::string> Channel::getAllClients2(std::string nickName) {
     std::vector<std::string> allClients;
 	std::vector<Client*>::iterator itMember;

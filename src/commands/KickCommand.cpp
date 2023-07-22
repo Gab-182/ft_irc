@@ -48,22 +48,33 @@ bool KickCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 	return (true);
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void KickCommand::KickMemberClient(const int& clientSocket, Server* server, Client* client, const std::string& channelName) {
+void KickCommand::KickMemberClient(const int& clientSocket, Server* server, const std::string& channelName, const std::string& targetUser, const std::string& reason) {
 
-	(void)client;
-	Channel *existingChannel = server->serverChannelsMap[channelName];
-	std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PART :" + channelName + "\r\n";
-	sendResponse(clientSocket, response);
-	std::string response2 = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PART " + channelName + " :leaving " + "\r\n";
-	existingChannel->sendToAllClients("PART", server->serverClientsMap[clientSocket]->getNickName(), response2);
-	existingChannel->removeClientFromChannel(client, server);
+	Channel* existingChannel = server->serverChannelsMap[channelName];
+        // Build the KICK command with the target user and optional reason.
+       std::string kickCommand = "KICK " + channelName + " " + targetUser + " :" + reason + "\r\n";
+        // if (!reason.empty()) {
+        //     kickCommand += " :" + reason;
+        // }
+        // kickCommand += "\r\n";
+
+        // Send the KICK command to the IRC server.
+        sendResponse(clientSocket, kickCommand);
+		//channelname and user for kicked user
+
+
+        // Optionally, you can also remove the client from the channel in your implementation.
+		int soso = existingChannel->getTargetClientFD(targetUser);
+		Client* soso1 = server->serverClientsMap[soso];
+
+        existingChannel->removeClientFromChannel(soso1, server);
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void KickCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
-    //1. check the client is it normal member or operator
+   //1. check the client is it normal member or operator
 	//2. then we send the command to either part operator client or partMemberClient
 	std::string channelName = base->getParameters(command)[0];
-	std::string userName = base->getParameters(command)[1];
+	std::string targetUser = base->getParameters(command)[1];
 
 	if (channelName[0] == '#') {
 		channelName = channelName.substr(1);
@@ -71,26 +82,37 @@ void KickCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 
 			//checks if the client is in channel or not.
 
-			Channel *existingChannel = server->serverChannelsMap[channelName];
-			std::cout << "CHANNEL NAME: " << channelName << std::endl;
-			std::cout << "USER NAME: " << userName << std::endl;
-			std::vector<std::string> allClients = existingChannel->getAllClients2(server->serverClientsMap[clientSocket]->getNickName());
-			//std::string nicknameToSearch = server->serverClientsMap[clientSocket]->getNickName();
-			bool found = std::find(allClients.begin(), allClients.end(), userName) != allClients.end();
+			std::map<std::string, Channel*>::iterator channelIterator = server->serverChannelsMap.find(channelName);
+			if (channelIterator != server->serverChannelsMap.end()) {
 
-	if (existingChannel->isClientOperator(client)) {
-		
-		if (found) {
-			std::cout << "test" << std::endl;
-		} else {
-			std::cout << "NOT FOUND" << std::endl;
-		}
+						Channel *existingChannel = server->serverChannelsMap[channelName];
+						std::cout << "CHANNEL NAME: " << channelName << std::endl;
+						std::cout << "USER NAME: " << targetUser << std::endl;
+						std::vector<std::string> allClients = existingChannel->getAllClients2(server->serverClientsMap[clientSocket]->getNickName());
+						std::cout << "3sdasd: " << "h" << std::endl;
+						bool found = std::find(allClients.begin(), allClients.end(), targetUser) != allClients.end();
+						std::cout << "SEG2 " <<  std::endl;
 
-		} else {
+				if (existingChannel->isClientOperator(client)) {
+					
+					if (found) {
+						KickMemberClient(clientSocket, server, channelName, targetUser, "h");
+						std::cout << "test" << std::endl;
+					} else {
+						std::cout << "NOT FOUND" << std::endl;
+					}
 
-			std::cout << "SORRY YOU ARE NOT AN OPERATOR" << std::endl;
+					} else {
 
-		}
+					// The client doesn't have permission to use /kick.
+					std::string response = ": 482 " + server->serverClientsMap[clientSocket]->getNickName() + " " + channelName + " :You're not a channel operator\r\n";
+					sendResponse(clientSocket, response);
+
+					}
+
+			}
+
+	
 
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

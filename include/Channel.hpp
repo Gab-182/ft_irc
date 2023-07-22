@@ -83,6 +83,12 @@ namespace IRC {
 			std::vector<std::string> getAllClients2(std::string nickName);
 
 			/**-----------------------------------------------------------------------------------------
+			 * * @brief ➤ returns/gets the target client FD.
+			 * 
+			 */
+			int getTargetClientFD(std::string nickName);
+
+			/**-----------------------------------------------------------------------------------------
 			 * * @brief ➤ send messages to all clients on the channel.
 			 * @commandName = the name type of command you want to send
 			 * @nickName = the client nickname
