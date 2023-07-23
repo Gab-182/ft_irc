@@ -1,6 +1,6 @@
-# include "../../include/commands/KickCommand.hpp"
+#include "../../include/commands/KickCommand.hpp"
 #include "../../include/Client.hpp"
-# include "../../include/Server.hpp"
+#include "../../include/Server.hpp"
 
 using namespace IRC;
 
@@ -15,111 +15,135 @@ using namespace IRC;
  **
  **/
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-KickCommand::KickCommand() : ICommands() { }
+KickCommand::KickCommand() : ICommands() {}
 
-KickCommand::~KickCommand() { }
+KickCommand::~KickCommand() {}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-bool KickCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, const std::string& command) {
-	if (base->isParameterEmpty(command)) {
+bool KickCommand::noErrorsExist(ICommands *base, const int &clientSocket, IRC::Server *server, const std::string &command)
+{
+	if (base->isParameterEmpty(command))
+	{
 		DEBUG_MSG(BOLDRED << " wrong parameters!! ")
 
-		std::string authErrMsg = ":"
-								 ERR_NEEDMOREPARAMS
-								 BOLDRED " Please make sure you entered: "
-								 BOLDYELLOW "/join "
-								 BOLDWHITE "<channel_name> "
-								 BOLDRED "correctly!!" RESET "\r\n";
+		std::string authErrMsg = ":" ERR_NEEDMOREPARAMS
+			BOLDRED " Please make sure you entered: " BOLDYELLOW "/join " BOLDWHITE "<channel_name> " BOLDRED "correctly!!" RESET "\r\n";
 		sendResponse(clientSocket, authErrMsg);
 		return (false);
 	}
 
-	if (!Client::isClientRegistered(clientSocket, server)) {
+	if (!Client::isClientRegistered(clientSocket, server))
+	{
 		DEBUG_MSG(BOLDRED << " client not registered yet!! ")
 
-		std::string authErrMsg = ":"
-								 ERR_NOTREGISTERED
-								 BOLDRED " Please make sure you entered: "
-								 BOLDWHITE "<password> <nickname> <username> "
-								 BOLDRED "correctly!!" RESET "\r\n";
+		std::string authErrMsg = ":" ERR_NOTREGISTERED
+			BOLDRED " Please make sure you entered: " BOLDWHITE "<password> <nickname> <username> " BOLDRED "correctly!!" RESET "\r\n";
 		sendResponse(clientSocket, authErrMsg);
 		return (false);
 	}
 	return (true);
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void KickCommand::KickMemberClient(const int& clientSocket, Server* server, const std::string& channelName, const std::string& targetUser, const std::string& reason) {
+void KickCommand::KickMemberClient(const int &clientSocket, Server *server, const std::string &channelName, const std::string &targetUser, const std::string &reason)
+{
 
-	   Channel* existingChannel = server->serverChannelsMap[channelName];
-	   std::string oprName = server->serverClientsMap[clientSocket]->getNickName();
+	Channel *existingChannel = server->serverChannelsMap[channelName];
+	std::string oprName = server->serverClientsMap[clientSocket]->getNickName();
 
-		 // Check if existingChannel is a valid pointer
-		if (existingChannel) {
-			if (!targetUser.empty()) {
-				int soso = existingChannel->getTargetClientFD(targetUser);					
-				if (soso != -1){
-					Client* soso1 = server->serverClientsMap[soso];
-        			existingChannel->removeClientFromChannel(soso1, server);
-				if (!reason.empty()){
+	// Check if existingChannel is a valid pointer
+	if (existingChannel)
+	{
+		if (!targetUser.empty())
+		{
+			int soso = existingChannel->getTargetClientFD(targetUser);
+			if (soso != -1)
+			{
+				Client *soso1 = server->serverClientsMap[soso];
+				existingChannel->removeClientFromChannel(soso1, server);
+				if (!reason.empty())
+				{
 					std::string kickCommand = ":" + oprName + " KICK #" + channelName + " " + targetUser + " " + reason + "\r\n";
 					sendResponse(soso, kickCommand);
-				} else {
-						std::string kickCommand = ": KICK #" + channelName + " " + targetUser + " " + oprName + "\r\n";
-						sendResponse(soso, kickCommand);
-						}
-						//std::string kickCommand = ": KICK #" + channelName + " " + targetUser + " :" + oprName + "\r\n";
-						}
-				} else {
-					std::cout << "Error: targetUser is empty!" << std::endl;
 				}
-			} else {
-				std::cout << "Error: existingChannel is null!" << std::endl;
+				else
+				{
+					std::string kickCommand = ": KICK #" + channelName + " " + targetUser + " " + oprName + "\r\n";
+					sendResponse(soso, kickCommand);
+				}
+				//std::string kickCommand = ": KICK #" + channelName + " " + targetUser + " :" + oprName + "\r\n";
+			}
 		}
+		else
+		{
+			std::cout << "Error: targetUser is empty!" << std::endl;
+		}
+	}
+	else
+	{
+		std::cout << "Error: existingChannel is null!" << std::endl;
+	}
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-void KickCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
-   //1. check the client is it normal member or operator
+void KickCommand::executeCommand(ICommands *base, const int &clientSocket, Server *server, Client *client, const std::string &command)
+{
+	//1. check the client is it normal member or operator
 	//2. then we send the command to either part operator client or partMemberClient
 	std::string channelName = base->getParameters(command)[0];
 	std::string targetUser = base->getParameters(command)[1];
 
-	if (channelName[0] == '#') {
+	if (channelName[0] == '#')
+	{
 		channelName = channelName.substr(1);
 	}
 
-			//checks if the client is in channel or not.
+	//checks if the client is in channel or not.
+	std::map<std::string, Channel *>::iterator channelIterator = server->serverChannelsMap.find(channelName);
+	if (channelIterator != server->serverChannelsMap.end())
+	{
 
-			std::map<std::string, Channel*>::iterator channelIterator = server->serverChannelsMap.find(channelName);
-			if (channelIterator != server->serverChannelsMap.end()) {
+		Channel *existingChannel = server->serverChannelsMap[channelName];
+		std::vector<std::string> allClients = existingChannel->getAllClients2(server->serverClientsMap[clientSocket]->getNickName());
+		bool found = std::find(allClients.begin(), allClients.end(), targetUser) != allClients.end();
 
-						Channel *existingChannel = server->serverChannelsMap[channelName];
-						std::vector<std::string> allClients = existingChannel->getAllClients2(server->serverClientsMap[clientSocket]->getNickName());
-						bool found = std::find(allClients.begin(), allClients.end(), targetUser) != allClients.end();
+		//checks if client is operator
+		if (existingChannel->isClientOperator(client))
+		{
 
-				if (existingChannel->isClientOperator(client)) {
-					
-					if (found) {
-						if (!base->getParameters(command)[2].empty()){
-								std::string reason = base->getParameters(command)[2];
-								KickMemberClient(clientSocket, server, channelName, targetUser, reason);
-						}else{
-							KickMemberClient(clientSocket, server, channelName, targetUser, "");
-						}
-					} else {
-						std::cout << "NOT FOUND" << std::endl;
-					}
-
-					} else {
-
-					// The client doesn't have permission to use /kick.
-					std::string response = ": 482 " + server->serverClientsMap[clientSocket]->getNickName() + " " + channelName + " :You're not a channel operator\r\n";
-					sendResponse(clientSocket, response);
-
-					}
-
+			//check if client is in channel or not
+			if (found)
+			{
+				if (!base->getParameters(command)[2].empty())
+				{
+					std::string reason = base->getParameters(command)[2];
+					KickMemberClient(clientSocket, server, channelName, targetUser, reason);
+				}
+				else
+				{
+					KickMemberClient(clientSocket, server, channelName, targetUser, "");
+				}
 			}
+			else
+			{
 
-	
+				// Send error response for user not found in the channel
+				std::string response = ": 441 * <" + targetUser + "> isn't on #" + channelName + "\n\r";
+				sendResponse(clientSocket, response);
+			}
+		}
+		else
+		{
 
+			// Send error response for insufficient operator permissions
+			std::string response = ": 482 " + server->serverClientsMap[clientSocket]->getNickName() + " #" + channelName + " :You're not a channel operator\r\n";
+			sendResponse(clientSocket, response);
+		}
+	}
+	else
+	{
+
+		// Send error response for non-existent channel
+		std::string response = ": 403 " + server->serverClientsMap[clientSocket]->getNickName() + " #" + channelName + " :No such channel\r\n";
+		sendResponse(clientSocket, response);
+	}
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

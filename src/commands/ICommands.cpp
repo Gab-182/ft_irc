@@ -202,7 +202,6 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 	
 	std::vector<std::pair<std::string, std::vector<std::string> > >::iterator it;
 
-	std::cout << "I ETNER WALLAH" << std::endl;
 	
 	for (it = _messages.begin(); it != _messages.end(); ++it) {
 		if (toLowerCase(it->first) == "join")
@@ -227,10 +226,8 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 			_commandsMap["privmsg"]->executeCommand(this, clientSocket, server, client, it->first);
 		else if (toLowerCase(it->first) == "part")
 			_commandsMap["part"]->executeCommand(this, clientSocket, server, client, it->first);
-		else if (toLowerCase(it->first) == "kick"){
-			std::cout << "TEST TEST:" << std::endl;
+		else if (toLowerCase(it->first) == "kick")
 			_commandsMap["kick"]->executeCommand(this, clientSocket, server, client, it->first);
-		}
 			
 
 			
