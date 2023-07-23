@@ -17,6 +17,7 @@ namespace IRC {
 			int _socket;
 			std::string _userName;
 			std::string _nickName;
+			std::string _hostName;
 
 			// true if the server sent welcome message to the client.
 			// false by default.

@@ -5,9 +5,9 @@
 using namespace IRC;
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-Client::Client() : _socket(), _userName(), _nickName(), _isWelcomed(false) { }
+Client::Client() : _socket(), _userName(), _nickName(),_hostName("IRC"), _isWelcomed(false) { }
 
-Client::Client(int socket) : _socket(socket), _userName(), _nickName(), _isWelcomed(false) { }
+Client::Client(int socket) : _socket(socket), _userName(), _nickName(), _hostName("IRC"), _isWelcomed(false) { }
 
 Client::~Client() {
 	if (!this->_clientChannelsMap.empty())

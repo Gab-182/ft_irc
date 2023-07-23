@@ -52,44 +52,29 @@ void KickCommand::KickMemberClient(const int& clientSocket, Server* server, cons
 
 	   Channel* existingChannel = server->serverChannelsMap[channelName];
 	   std::string oprName = server->serverClientsMap[clientSocket]->getNickName();
-	    std::string kickCommand = "";
-
-       
-
-
 
 		 // Check if existingChannel is a valid pointer
 		if (existingChannel) {
 			if (!targetUser.empty()) {
-				int soso = existingChannel->getTargetClientFD(targetUser);
-					
-				// Your remaining code that uses soso...
+				int soso = existingChannel->getTargetClientFD(targetUser);					
 				if (soso != -1){
 					Client* soso1 = server->serverClientsMap[soso];
         			existingChannel->removeClientFromChannel(soso1, server);
-
-	   if (!reason.empty()){
-		   std::string kickCommand = ": KICK #" + channelName + " " + targetUser + " :" + reason + "\r\n";
-		   					sendResponse(soso, kickCommand);
-
-		
-	   }else {
-		   std::string kickCommand = ": KICK #" + channelName + " " + targetUser + " :" + oprName + "\r\n";
-		   					sendResponse(soso, kickCommand);
-
-	   }
-       
-					//std::string kickCommand = ": KICK #" + channelName + " " + targetUser + " :" + oprName + "\r\n";
+				if (!reason.empty()){
+					std::string kickCommand = ":" + oprName + " KICK #" + channelName + " " + targetUser + " " + reason + "\r\n";
+					sendResponse(soso, kickCommand);
+				} else {
+						std::string kickCommand = ": KICK #" + channelName + " " + targetUser + " " + oprName + "\r\n";
+						sendResponse(soso, kickCommand);
+						}
+						//std::string kickCommand = ": KICK #" + channelName + " " + targetUser + " :" + oprName + "\r\n";
+						}
+				} else {
+					std::cout << "Error: targetUser is empty!" << std::endl;
 				}
 			} else {
-				std::cout << "Error: targetUser is empty!" << std::endl;
-			}
-		} else {
-			std::cout << "Error: existingChannel is null!" << std::endl;
+				std::cout << "Error: existingChannel is null!" << std::endl;
 		}
-		
-		// }
-		
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void KickCommand::executeCommand(ICommands* base, const int& clientSocket, Server* server, Client* client, const std::string& command) {
@@ -97,13 +82,6 @@ void KickCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 	//2. then we send the command to either part operator client or partMemberClient
 	std::string channelName = base->getParameters(command)[0];
 	std::string targetUser = base->getParameters(command)[1];
-	std::string reason = "";
-	if (!base->getParameters(command)[2].empty()){
-		std::string reason = base->getParameters(command)[2];
-	}else {
-		std::string reason = "";
-	}
-	
 
 	if (channelName[0] == '#') {
 		channelName = channelName.substr(1);
@@ -121,8 +99,12 @@ void KickCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 				if (existingChannel->isClientOperator(client)) {
 					
 					if (found) {
-						KickMemberClient(clientSocket, server, channelName, targetUser, reason);
-						std::cout << "test" << std::endl;
+						if (!base->getParameters(command)[2].empty()){
+								std::string reason = base->getParameters(command)[2];
+								KickMemberClient(clientSocket, server, channelName, targetUser, reason);
+						}else{
+							KickMemberClient(clientSocket, server, channelName, targetUser, "");
+						}
 					} else {
 						std::cout << "NOT FOUND" << std::endl;
 					}

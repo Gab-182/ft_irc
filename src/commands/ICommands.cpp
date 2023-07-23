@@ -72,14 +72,18 @@ void ICommands::sendResponse(int clientSocket, const std::string& message) {
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::welcomeMessage(int clientSocket, Server* server) {
 
-	std::string welcomeMsg1 = ":irc 001 " + server->serverClientsMap[clientSocket]->getNickName() + " :Welcome to the perfect Chat system " + server->serverClientsMap[clientSocket]->getNickName() + "\n";
+	// "<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]"
+	std::string welcomeMsg1 = ":irc 001 " + server->serverClientsMap[clientSocket]->getNickName() + " :Welcome to the perfect Chat system " + server->serverClientsMap[clientSocket]->getNickName() + "!" +  server->serverClientsMap[clientSocket]->getUserName() + "@soso\n";
 	sendResponse(clientSocket, welcomeMsg1);
-	std::string welcomeMsg2 = ":irc 002 " + server->serverClientsMap[clientSocket]->getNickName() + " :Host are Hammam and\n";
+	//":" + servername + " 002 " + nick + " :Your host is " + servername + ", running version " + version + "\n"
+
+	std::string welcomeMsg2 = ":irc 002 " + server->serverClientsMap[clientSocket]->getNickName() + ":Your host is soso\n";
 	sendResponse(clientSocket, welcomeMsg2);
 	std::string welcomeMsg3 = ":irc 003 " + server->serverClientsMap[clientSocket]->getNickName() + " :Created on july->2023\n";
 	sendResponse(clientSocket, welcomeMsg3);
-	std::string welcomeMsg4 = ":irc 004 " + server->serverClientsMap[clientSocket]->getNickName() + " :Enjoy your stay!\n";
-	//sendResponse(clientSocket, welcomeMsg4);
+ //":" + servername + " 004 " + nick + " " + servername + " " + version + " " + usermodes + " " + chanmodes + " :" + servername + " server\n"
+	std::string welcomeMsg4 = ":irc 004 " + server->serverClientsMap[clientSocket]->getNickName() + " irc 333 i x :irc server\n";
+	sendResponse(clientSocket, welcomeMsg4);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -197,6 +201,8 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 
 	
 	std::vector<std::pair<std::string, std::vector<std::string> > >::iterator it;
+
+	std::cout << "I ETNER WALLAH" << std::endl;
 	
 	for (it = _messages.begin(); it != _messages.end(); ++it) {
 		if (toLowerCase(it->first) == "join")

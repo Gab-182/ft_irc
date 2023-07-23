@@ -35,10 +35,9 @@ void NickCommand::generateNickName(int clientSocket, Server* server) {
 	ss << "Guest" << randomNumber;
 	std::string modifiedNickname = ss.str();
 
-	std::string setNickMsg = BOLDGREEN "Assigning a Guest nickname: " + modifiedNickname + RESET + "\r\n";
-	sendResponse(clientSocket, setNickMsg);
-
 	// Generate new nickname
+	std::string setNickMsg = ":" + server->serverClientsMap[clientSocket]->getNickName()
+				+ " NICK :" + modifiedNickname + "\r\n";
 	server->serverClientsMap[clientSocket]->setNickName(modifiedNickname);
 }
 
@@ -62,6 +61,7 @@ bool NickCommand::validNickName(int clientSocket, std::string& clientNick, Serve
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void NickCommand::processNickCommand(const int& clientSocket, std::string& clientNick, Server* server) {
 	std::string fixedNick = clientNick.substr(0, 9);
+	std::string nickMsg;
 
 	if (!validNickName(clientSocket, fixedNick, server)) {
 		if (server->serverClientsMap[clientSocket]->getNickName().empty())
@@ -69,14 +69,11 @@ void NickCommand::processNickCommand(const int& clientSocket, std::string& clien
 	}
 
 	//	Nickname accepted
-	else
+	else {
+		nickMsg = ":" + server->serverClientsMap[clientSocket]->getNickName()
+					+ " NICK :" + fixedNick + "\r\n";
 		server->serverClientsMap[clientSocket]->setNickName(fixedNick);
-
-	std::string nickMsg = ": "
-						  BOLDGREEN "You're now known as "
-						  + server->serverClientsMap[clientSocket]->getNickName()
-						  + RESET + "\r\n";
-
+	}
 	sendResponse(clientSocket, nickMsg);
 }
 
