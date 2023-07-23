@@ -56,6 +56,7 @@ namespace IRC {
 			void setUserName(const std::string& userName);
 			void setNickName(const std::string& nickName);
 			void welcomeClient(bool welcome);
+			std::string getChannelName1();
 
 		/*------------------------------------------------------------------------------*/
 			int getSocket() const;

@@ -146,3 +146,14 @@ void Client::printClientChannelsMap() {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+std::string Client::getChannelName1() {
+	std::map<std::string, Channel*>::iterator it;
+	for (it = this->_clientChannelsMap.begin(); it != this->_clientChannelsMap.end(); ++it) {
+		std::cout << BOLDYELLOW << "Channel" << std::endl;
+		it->second->printChannelInfo();
+		return it->second->getChannelName();
+	}
+	return "test";
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
