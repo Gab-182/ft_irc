@@ -17,6 +17,7 @@ set(HEADERS
 		include/Server.hpp
 		include/Client.hpp
 		src/channel/Channel.cpp main.cpp src/commands/ICommands.cpp include/commands/NickCommand.hpp src/commands/NickCommand.cpp src/commands/UserCommand.cpp src/commands/WhoisCommand.cpp include/commands/WhoisCommand.hpp include/commands/ModeCommand.hpp src/commands/ModeCommand.cpp src/commands/PassCommand.cpp src/commands/PingCommand.cpp src/commands/CapCommand.cpp src/commands/QuitCommand.cpp include/commands/PrivMsgCommand.hpp src/commands/PrivMsgCommand.cpp src/commands/PartCommand.cpp)
+		
 
 # Create an executable target and link the source and header files
 add_executable(${SOURCES} ${HEADERS})

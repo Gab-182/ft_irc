@@ -17,6 +17,7 @@
 #include "../../include/commands/PrivMsgCommand.hpp"
 #include "../../include/commands/PartCommand.hpp"
 #include "../../include/commands/KickCommand.hpp"
+#include "../../include/commands/TopicCommand.hpp"
 
 using namespace IRC;
 
@@ -141,6 +142,7 @@ void ICommands::registerCommands() {
 	_commandsMap["part"] = new IRC::PartCommand();
 	_commandsMap["privmsg"] = new IRC::PrivMsgCommand();
 	_commandsMap["kick"] = new IRC::KickCommand();
+	_commandsMap["topic"] = new IRC::TopicCommand();
 }
 
 void ICommands::unRegisterCommands() {
@@ -223,7 +225,10 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 			_commandsMap["privmsg"]->executeCommand(this, clientSocket, server, client, it->first);
 		else if (toLowerCase(it->first) == "part")
 			_commandsMap["part"]->executeCommand(this, clientSocket, server, client, it->first);
-		else if (toLowerCase(it->first) == "kick"){
+		else if (toLowerCase(it->first) == "topic")
+			_commandsMap["topic"]->executeCommand(this, clientSocket, server, client, it->first);
+		else if (toLowerCase(it->first) == "kick")
+		{
 			std::cout << "TEST TEST:" << std::endl;
 			_commandsMap["kick"]->executeCommand(this, clientSocket, server, client, it->first);
 		}
@@ -232,8 +237,6 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 			
 // TODO: implement these commands:
 // ====================================================================================================
-//		else if (toLowerCase(it->first) == "topic")
-//			_commandsMap["topic"]->executeCommand(this, clientSocket, server, client, it->first);
 //		else if (toLowerCase(it->first) == "oper")
 //			_commandsMap["oper"]->executeCommand(this, clientSocket, server, client, it->first);
 //		else if (toLowerCase(it->first) == "invite")
