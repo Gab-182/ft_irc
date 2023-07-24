@@ -67,6 +67,10 @@
 #define ERR_NOSUCHCHANNEL "403" // No such channel.
 #define ERR_CHANOPRIVSNEEDED "482" // You're not channel operator.
 
+//Topic Command
+#define RPL_NOTOPIC "331" // No topic is set.
+#define RPL_TOPIC "332" // Topic is set.
+
 //WHOIS command replies (see RFC).
 #define RPL_WHOISUSER "311" // Whois user, <nick> <user> <host> * :<real name>.
 #define ERR_NOSUCHNICK "401" // No such nick/channel.
