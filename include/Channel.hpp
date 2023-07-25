@@ -198,6 +198,13 @@ namespace IRC {
 			 **/
 			void removeClientFromChannel(Client* client, IRC::Server* server);
 
+			/**-----------------------------------------------------------------------------------------
+			 ** @brief ➤ checks if client is in channel
+			 ** @param nickName ➤ nickname of the client.
+			 ** @returns int.
+			 **/
+			int isClientinChannel(std::string nickName);
+
 			/*------------  SETTERS && GETTERS  ----------------*/
 			void setName(const std::string& name);
 			void setTopic(const std::string& topic);

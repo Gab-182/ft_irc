@@ -493,6 +493,30 @@ std::vector<std::string> Channel::getAllClients2(std::string nickName) {
     return allClients;
 }
 
+int Channel::isClientinChannel(std::string nickName) {
+	int	found = 0;
+	std::vector<Client*>::iterator itMember;
+	std::vector<Client*>::iterator itOperator;
+
+    // Iterate through regular members
+    for (itMember = _members.begin(); itMember != _members.end(); ++itMember) {
+
+			if ((*itMember)->getNickName() == nickName)
+				found = 1;
+                
+    }
+
+    // Iterate through operators
+   for (itOperator = _operators.begin(); itOperator != _operators.end(); ++itOperator) {
+        
+           if ((*itOperator)->getNickName() == nickName)
+				found = 1;
+        
+    }
+
+    return found;
+}
+
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::printChannelInfo() {
 	std::cout << BOLDMAGENTA << std::endl << "—————————————————————————————————————————————————" << std::endl;

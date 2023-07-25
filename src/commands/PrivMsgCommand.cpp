@@ -45,11 +45,18 @@ void PrivMsgCommand::executeCommand(ICommands* base, const int& clientSocket, Se
 	std::string channelName = base->getParameters(command)[0];
 
 		// TODO: Check if the channel existed in the server's channels map
+		// TODO: send response incase of the 2 error's below
 		std::map<std::string, Channel *>::iterator itChannel;
 		itChannel = server->serverChannelsMap.find(channelName);
 		Channel *existingChannel = server->serverChannelsMap[channelName];
+		std::string nickName = server->serverClientsMap[clientSocket]->getNickName();
+		int found = existingChannel->isClientinChannel(nickName);
 
-		if (itChannel == server->serverChannelsMap.end()){
+		if (found == 0)
+		{
+			DEBUG_MSG("ERROR USER IS NOT IN CHANNEL");
+		}
+		else if (itChannel == server->serverChannelsMap.end()){
 			DEBUG_MSG("ERROR");
 		}
 		else
