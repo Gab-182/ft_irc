@@ -55,7 +55,7 @@ void Server::create_socket(char *av)
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Server::respondToClient(const int& clientSocket, Client* client, std::string& clientMsg, ICommands* commands) {
-	DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
+	// DEBUG_MSG("Message: " << std::endl << "=========" << std::endl << BOLDBLUE << clientMsg)
 	commands->getCommandInfo(clientMsg);
 	commands->executeCommand(commands, clientSocket, this, client, "start");
 

@@ -73,8 +73,12 @@ void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Cl
 	std::string userListResponse = ": 353 " + client->getNickName() + " = " + channelName + " :" + allClients + "\r\n";
     sendResponse(clientSocket, userListResponse);
 
+	std::string topicResponse = ": 332 " + client->getNickName() + " " + channelName + " :" + newChannel->getTopic() + "\r\n";
+	sendResponse(clientSocket, topicResponse);
+
 	std::string totalNicksResponse = ": 366 " + client->getNickName() + " " + channelName + " :End of /NAMES list.\r\n";
 	sendResponse(clientSocket, totalNicksResponse);
+
 	//after this need to add [Users ChannelName]
 	//the users 
 	//Irssi: #cha1: Total of 2 nicks [1 ops, 0 halfops, 0 voices, 1  normal]
@@ -102,8 +106,12 @@ void JoinCommand::joinMemberClient(const int& clientSocket, Server* server, Clie
 	std::string userListResponse = ": 353 " + client->getNickName() + " = " + channelName + " :" + allClients + "\r\n";
     sendResponse(clientSocket, userListResponse);
 
+	std::string topicResponse = ": 332 " + client->getNickName() + " " + channelName + " :" + existingChannel->getTopic() + "\r\n";
+	sendResponse(clientSocket, topicResponse);
+	
 	std::string totalNicksResponse = ": 366 " + client->getNickName() + " " + channelName + " :End of /NAMES list.\r\n";
 	sendResponse(clientSocket, totalNicksResponse);
+
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
