@@ -29,10 +29,16 @@ void TopicCommand::executeCommand(ICommands *base, const int &clientSocket, IRC:
 	//if the number of parameters is 2
 	std::string channelname = base->getParameters(command)[0];
 	std::string topicname = base->getParameters(command)[1];
-	Channel *existingChannel = server->serverChannelsMap[channelname];
-	if(base->getParameters(command).size() == 2)
+	std::map<std::string, Channel *>::iterator itChannel;
+	Channel *existingChannel = NULL;
+		itChannel = server->serverChannelsMap.find(channelname);
+		if (itChannel == server->serverChannelsMap.end()){
+			DEBUG_MSG("ERROR");
+		}
+	if (base->getParameters(command).size() == 2)
 	{	
-		std::map<std::string, Channel*>::iterator it = server->serverChannelsMap.find(channelname);
+		 existingChannel = server->serverChannelsMap[channelname];
+	
 		//if the channel doesn't exist
 		if (!server->serverChannelsMap.count(channelname)) {
 			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + ERR_NOSUCHCHANNEL + " " +
@@ -41,7 +47,7 @@ void TopicCommand::executeCommand(ICommands *base, const int &clientSocket, IRC:
  
 		}
 		// if the client is not in the channel
-		else if(it == server->serverChannelsMap.end())
+		else if(itChannel == server->serverChannelsMap.end())
 		{
 			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + ERR_NOTONCHANNEL + " " +
 			 client->getNickName() + " " + channelname + " :You're not on that channel\r\n";
@@ -55,36 +61,41 @@ void TopicCommand::executeCommand(ICommands *base, const int &clientSocket, IRC:
  		}
 		else
 		{
-			if (existingChannel->getModes().size() > 0)
+			if (!existingChannel->isClientOperator(client))
 			{
-				for (size_t i = 0; i < it->second->getModes().size(); i++)
-				{
-					if (existingChannel->getModes()[i] == 't' && !existingChannel->isClientOperator(client))
-					{
-						std::cout << "client is not operator" << std::endl;
-						std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + ERR_CHANOPRIVSNEEDED + " " +
-						 client->getNickName() + " " + channelname + BOLDRED + " :You're not channel operator\r\n" +RESET ;
-						sendResponse(clientSocket, response);
- 					}
-					else
-					{
-						if (!existingChannel->getTopic().empty())
-							{existingChannel->getTopic().clear();}
-
-						std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " TOPIC " + channelname + " :" + topicname + "\r\n";
-						existingChannel->setTopic(topicname);
-						// sendResponse(clientSocket, response);
-						existingChannel->sendToAllClients("TOPIC", server->serverClientsMap[clientSocket]->getNickName(), response);
-					}
-				}
+				std::cout << "ERROR CLIENT NOT OPERATOR" << std::endl;
 			}
+			
+			// if (existingChannel->getModes().size() > 0)
+			// {
+			// 	std::cout << "TEST" << std::endl;
+			// 	for (size_t i = 0; i < it->second->getModes().size(); i++)
+			// 	{
+			// 		if (!existingChannel->isClientOperator(client))
+			// 		{
+			// 			std::cout << "client is not operator" << std::endl;
+			// 			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + ERR_CHANOPRIVSNEEDED + " " +
+			// 			 client->getNickName() + " " + channelname + BOLDRED + " :You're not channel operator\r\n" +RESET ;
+			// 			sendResponse(clientSocket, response);
+ 			// 		}
+			// 		else
+			// 		{
+			// 			if (!existingChannel->getTopic().empty())
+			// 				{existingChannel->getTopic().clear();}
+
+			// 			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " TOPIC " + channelname + " :" + topicname + "\r\n";
+			// 			existingChannel->setTopic(topicname);
+			// 			// sendResponse(clientSocket, response);
+			// 			existingChannel->sendToAllClients("TOPIC", server->serverClientsMap[clientSocket]->getNickName(), response);
+			// 		}
+			// 	}
+			// }
 			else{
-					if (!existingChannel->getTopic().empty())
-						{existingChannel->getTopic().clear();}
+					// if (!existingChannel->getTopic().empty())
+					// 	{existingChannel->getTopic().clear();}
 
 				std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " TOPIC " + channelname + " :" + topicname + "\r\n";
 				existingChannel->setTopic(topicname);
-				// sendResponse(clientSocket, response);
 				existingChannel->sendToAllClients("TOPIC", server->serverClientsMap[clientSocket]->getNickName(), response);
 			}
 		}

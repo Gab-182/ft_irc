@@ -127,7 +127,6 @@ void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 			if(modeSign == '-')
 			{
 				//remove the restriction and delete the mode from the channel
-
 				existingChannel->removeMode(modeChar);
 				//send response to all clients in the channel
 				existingChannel->sendToAllClients("MODE", channelName, mode);

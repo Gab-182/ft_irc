@@ -177,7 +177,7 @@ namespace IRC {
 			 ** @param operatorClient ➤ pointer to the operator client who invited the client.
 			 ** @param clientToInvite ➤ pointer to the client to invite to the channel.
 			 **/
-			void inviteUserToChannel(Client* operatorClient, Client* clientToInvite);
+			void inviteUserToChannel(Client* operatorClient, Client* clientToInvite); // nick name of the client to invite
 
 			/**-----------------------------------------------------------------------------------------
 			 ** @brief ➤ Remove the client from the invites vector if it's in it.
