@@ -198,7 +198,7 @@ namespace IRC {
 			void setKey(const std::string& key);
 			void setMaxUsers(const size_t& maxUsers);
 			void addMode(const char& mode);
-
+			void removeMode(const char& mode);
 			std::string getChannelName();
 			std::string getTopic();
 			std::vector<char> getModes();

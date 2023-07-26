@@ -522,3 +522,10 @@ void Channel::printChannelInfo() {
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Channel::removeMode(const char& mode)
+{
+	std::vector<char>::iterator it;
+	it = std::find(_modes.begin(), _modes.end(), mode);
+	if (it != _modes.end())
+		_modes.erase(it);
+}

@@ -61,6 +61,7 @@
 
 // Mode command replies (see RFC).
 #define ERR_UNKNOWNMODE "472" // Unknown mode char.
+#define RPL_CHANNELMODEIS "324" // Channel mode is.
 
 // Channel command replies (see RFC).
 #define ERR_NOTONCHANNEL "442" // You're not on that channel.
@@ -70,6 +71,8 @@
 //Topic Command
 #define RPL_NOTOPIC "331" // No topic is set.
 #define RPL_TOPIC "332" // Topic is set.
+
+
 
 //WHOIS command replies (see RFC).
 #define RPL_WHOISUSER "311" // Whois user, <nick> <user> <host> * :<real name>.

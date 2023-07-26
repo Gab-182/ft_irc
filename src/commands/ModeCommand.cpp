@@ -53,7 +53,7 @@ bool ModeCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 		sendResponse(clientSocket, authErrMsg);
 		return (false);
 	}
-
+	// client not 
 	else if (!Client::isClientAuthenticated(clientSocket, server)) {
 		DEBUG_MSG(BOLDRED << " client not authenticated yet!! ")
 
@@ -63,7 +63,7 @@ bool ModeCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 		sendResponse(clientSocket, authErrMsg);
 		return (false);
 	}
-
+	
 //	// check if client is in channel and is channel operator
 //	else if (!server->isClientInChannel(client.getNickname(), base->getParameters(command)[0])) {
 //		DEBUG_MSG(BOLDRED << " client not in channel!! ")
@@ -88,13 +88,71 @@ bool ModeCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 	return (true);
 }
 
+
+
+
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	if (!noErrorsExist(base, clientSocket, server, client, command))
 		return ;
-
+	Channel *existingChannel = server->serverChannelsMap[base->getParameters(command)[0]];
 	std::string channelName = base->getParameters(command)[0];
 	std::string mode = base->getParameters(command)[1];
+	const char modeChar = mode[1];
+	char modeSign = mode[0];
+	// std::map<std::string, Channel*>::iterator it = server->serverChannelsMap.find(channelName);
+	// t set/remove the ristriction of the topic command to channel operators only
+	// if +t set risriction
+	// if -t remove restriction
+	/*
+		+t
+			1) if the client in the channel
+			2) if the client is operator
+			3) if the channel is not already +t
+			4) set the channel to +t
+			5) send response to all clients in the channel
+		-t
+			1) if the client in the channel
+			2) if the client is operator
+			3) if the channel is already +t
+			4) set the channel to -t
+			5) send response to all clients in the channel
+
+	*/
+	if (mode == "+t" || mode == "-t")
+	{
+		//if the client is operator .. isClientOperator
+		if(existingChannel->isClientOperator(client))
+		{
+			if(modeSign == '-')
+			{
+				//remove the restriction and delete the mode from the channel
+
+				existingChannel->removeMode(modeChar);
+				//send response to all clients in the channel
+				existingChannel->sendToAllClients("MODE", channelName, mode);
+			}
+			else if(modeSign == '+')
+			{
+				std::cout << "client is operator" << std::endl;
+				existingChannel->addMode(modeChar);
+				std::cout << "channel mode is" << std::endl;
+				//print all modes n this channel 
+				for (size_t i = 0 ; i < existingChannel->getModes().size(); i++)
+					std::cout <<  existingChannel->getModes()[i] << std::endl;
+				std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " " + channelName + " " + mode + "\r\n"; 
+				existingChannel->sendToAllClients("MODE",  server->serverClientsMap[clientSocket]->getNickName() , response);
+			}
+		}
+		else
+		{
+			std::cout << "client is not operator MODE" << std::endl;
+			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + ERR_CHANOPRIVSNEEDED + " " +
+			 client->getNickName() + " " + channelName + " :You're not channel operator\r\n";
+			sendResponse(clientSocket, response);
+		}
+	}
 }
+
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
