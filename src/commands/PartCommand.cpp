@@ -84,7 +84,6 @@ void PartCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 		//checks if the map exists or not
 		std::map<std::string, Channel*>::iterator channelIterator = server->serverChannelsMap.find(channelName);
 		if (channelIterator != server->serverChannelsMap.end()) {
-			std::cout << "HELLO HELLO HELLO" << std::endl;
 			//checks if the client is in channel or not.
 			Channel *existingChannel = server->serverChannelsMap[channelName];
 			std::vector<std::string> allClients = existingChannel->getAllClients2(server->serverClientsMap[clientSocket]->getNickName());
@@ -93,21 +92,17 @@ void PartCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 
 			if (found){
 				//checks if the client is operator or member.
-					std::cout << "IM HERE4" << std::endl;
 				if (existingChannel->isClientOperator(client)) {
-					std::cout << "IM HERE2" << std::endl;
 					partOperatorClient(clientSocket, server, client, channelName);
 
 				}
 				else if (existingChannel->isClientMember(client)) {
-					std::cout << "IM HERE3" << std::endl;
 					partMemberClient(clientSocket, server, client, channelName);
 
 				}
 			}
 			else {
 				// Returns a response to the client that there's that the client is not in channel.
-				std::cout << "IM HERE" << std::endl;
 				std::string response = ": 442 " + channelName + " :You're not on that channel" + "\r\n";
 				sendResponse(clientSocket,response);
 			}

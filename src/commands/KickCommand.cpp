@@ -47,40 +47,55 @@ bool KickCommand::noErrorsExist(ICommands *base, const int &clientSocket, IRC::S
 void KickCommand::KickMemberClient(const int &clientSocket, Server *server, const std::string &channelName, const std::string &targetUser, const std::string &reason)
 {
 
-	Channel *existingChannel = server->serverChannelsMap[channelName];
-	std::string oprName = server->serverClientsMap[clientSocket]->getNickName();
+
+	 std::map<std::string, Channel *>::iterator itChannel;
+	 Channel *existingChannel = NULL;
+	 itChannel = server->serverChannelsMap.find(channelName);
+	 std::string oprName = server->serverClientsMap[clientSocket]->getNickName();
+	
 
 	// Check if existingChannel is a valid pointer
-	if (existingChannel)
+	if (itChannel != server->serverChannelsMap.end())
 	{
+		 existingChannel = server->serverChannelsMap[channelName];
 		if (!targetUser.empty())
 		{
-			int soso = existingChannel->getTargetClientFD(targetUser);
-			if (soso != -1)
+			if (existingChannel->isClientinChannel(targetUser) == 1)
 			{
-				Client *soso1 = server->serverClientsMap[soso];
-				existingChannel->removeClientFromChannel(soso1, server);
-				if (!reason.empty())
+				int soso = existingChannel->getTargetClientFD(targetUser);
+				if (soso != -1)
 				{
-					std::string kickCommand = ":" + oprName + " KICK #" + channelName + " " + targetUser + " " + reason + "\r\n";
-					sendResponse(soso, kickCommand);
+					Client *soso1 = server->serverClientsMap[soso];
+					existingChannel->removeClientFromChannel(soso1, server);
+					if (!reason.empty())
+					{
+						std::string kickCommand = ":" + oprName + " KICK #" + channelName + " " + targetUser + " " + reason + "\r\n";
+						sendResponse(soso, kickCommand);
+					}
+					else
+					{
+						std::string kickCommand = ": KICK #" + channelName + " " + targetUser + " " + oprName + "\r\n";
+						sendResponse(soso, kickCommand);
+					}
 				}
-				else
-				{
-					std::string kickCommand = ": KICK #" + channelName + " " + targetUser + " " + oprName + "\r\n";
-					sendResponse(soso, kickCommand);
-				}
-				//std::string kickCommand = ": KICK #" + channelName + " " + targetUser + " :" + oprName + "\r\n";
 			}
+			else
+			{
+				std::string response = ERR_USERNOTINCHANNEL(targetUser, channelName);
+				sendResponse(clientSocket, response);
+			}
+			
 		}
 		else
 		{
-			std::cout << "Error: targetUser is empty!" << std::endl;
+			std::string response = ERR_NOSUCHNICK(targetUser);
+			sendResponse(clientSocket, response);
 		}
 	}
 	else
 	{
-		std::cout << "Error: existingChannel is null!" << std::endl;
+		std::string response = ERR_NOSUCHCHANNEL(oprName, channelName);
+		sendResponse(clientSocket, response);
 	}
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

@@ -17,7 +17,6 @@
 #include "../../include/commands/PrivMsgCommand.hpp"
 #include "../../include/commands/PartCommand.hpp"
 #include "../../include/commands/KickCommand.hpp"
-#include "../../include/commands/OperCommand.hpp"
 
 using namespace IRC;
 
@@ -146,7 +145,6 @@ void ICommands::registerCommands() {
 	_commandsMap["part"] = new IRC::PartCommand();
 	_commandsMap["privmsg"] = new IRC::PrivMsgCommand();
 	_commandsMap["kick"] = new IRC::KickCommand();
-	_commandsMap["oper"] = new IRC::OperCommand();
 }
 
 void ICommands::unRegisterCommands() {
@@ -162,7 +160,6 @@ void ICommands::unRegisterCommands() {
 	delete (_commandsMap["quit"]);
 	delete (_commandsMap["privmsg"]);
 	delete (_commandsMap["kick"]);
-	delete (_commandsMap["oper"]);
 	_commandsMap.clear();
 }
 
@@ -231,8 +228,6 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 			_commandsMap["part"]->executeCommand(this, clientSocket, server, client, it->first);
 		else if (toLowerCase(it->first) == "kick")
 			_commandsMap["kick"]->executeCommand(this, clientSocket, server, client, it->first);
-		else if (toLowerCase(it->first) == "oper")
-			_commandsMap["oper"]->executeCommand(this, clientSocket, server, client, it->first);		
 
 			
 // TODO: implement these commands:

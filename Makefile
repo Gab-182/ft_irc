@@ -30,7 +30,6 @@ SRC =	main.cpp \
 		src/commands/PrivMsgCommand.cpp \
 		src/commands/PartCommand.cpp \
 		src/commands/KickCommand.cpp \
-		src/commands/OperCommand.cpp \
 
 OBJ = $(SRC:.cpp=.o)
 
