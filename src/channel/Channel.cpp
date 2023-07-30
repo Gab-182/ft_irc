@@ -127,7 +127,7 @@ bool Channel::isValidToAddToChannel(Client* client) {
 		return (false);
 	}
 	if (this->isClientOperator(client)) {
-		numericReply = ERR_USERONCHANNEL;
+		numericReply = ERR_USERONCHANNEL1;
 		clientAddError = BOLDRED "ERROR: "
 						 BOLDWHITE "User is already an operator of the channel."
 						 RESET "\r\n";
@@ -157,7 +157,7 @@ bool Channel::isValidToAddToChannel(Client* client) {
 //		return (false);
 //	}
 	if (this->isClientMember(client)) {
-		numericReply = ERR_USERONCHANNEL;
+		numericReply = ERR_USERONCHANNEL1;
 		clientAddError = BOLDRED "ERROR: "
 						 BOLDWHITE "User is already a member of the channel."
 						 RESET "\r\n";
@@ -230,7 +230,7 @@ void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IR
 	if (this->isClientOperator(operatorClient)) {
 		if (this->isClientBaned(clientToBan)) {
 			std::string errMsg = ": "
-								 ERR_USERONCHANNEL
+								 ERR_USERONCHANNEL1
 								 BOLDWHITE " " + clientToBan->getNickName() + " " + this->getChannelName()
 								 + BOLDRED " :User is already banned from the channel."
 								 RESET "\r\n";
@@ -291,7 +291,7 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 
 		if (this->isClientMember(clientToInvite)) {
 			std::string errMsg = ": "
-								 ERR_USERONCHANNEL
+								 ERR_USERONCHANNEL1
 								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
 								 + BOLDRED " :User is already a member of the channel."
 								   RESET "\r\n";
@@ -300,7 +300,7 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 
 		else if (this->isClientOperator(clientToInvite)) {
 			std::string errMsg = ": "
-								 ERR_USERONCHANNEL
+								 ERR_USERONCHANNEL1
 								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
 								 + BOLDRED " :User is already an operator of the channel."
 								  RESET "\r\n";
@@ -316,7 +316,7 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 		}
 		else if (this->isClientInvited(clientToInvite)) {
 			std::string errMsg = ": "
-								 ERR_USERONCHANNEL
+								 ERR_USERONCHANNEL1
 								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
 								 + BOLDRED " :User is already invited to the channel."
 								   RESET "\r\n";

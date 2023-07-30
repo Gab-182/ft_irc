@@ -20,6 +20,7 @@
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #define ERR_USERONCHANNEL(nick) \
 	": 443 * " + nick + " :You're already member of that channel\n\r"
+#define ERR_USERONCHANNEL1 "443"
 #define ERR_BANNEDFROMCHAN "474" // ERR_BANNEDFROMCHAN "<channel> :Cannot join channel (+b)", banned from channel
 #define ERR_BADCHANNELKEY "475" // ERR_BADCHANNELKEY "<channel> :Cannot join channel (+k)", bad channel key
 #define ERR_INVITEONLYCHAN "473" // ERR_INVITEONLYCHAN "<channel> :Cannot join channel (+i)", channel is invite only
