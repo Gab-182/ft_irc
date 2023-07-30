@@ -60,10 +60,10 @@ void Server::respondToClient(const int& clientSocket, Client* client, std::strin
 	commands->executeCommand(commands, clientSocket, this, client, "start");
 
 //	// Debugging:
-//	if (client != NULL) {
-//		this->printClients();
-//		this->printChannels();
-//	}
+	// if (client != NULL) {
+	// 	this->printClients();
+	// 	this->printChannels();
+	// }
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

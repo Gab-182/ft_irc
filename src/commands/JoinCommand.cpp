@@ -128,11 +128,30 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 		// If the channel name is valid: Check if the channel exists in the server channels map.
 		std::map<std::string, Channel *>::iterator itChannel;
 		itChannel = server->serverChannelsMap.find(channelName);
+		Channel *existingChannel = NULL;
 
 		if (itChannel == server->serverChannelsMap.end())
-			joinOperatorClient(clientSocket, server, client, channelName);
+		{
+			//check if user is banned or not.
+			//check if channel is invite only nad if it is if the user on the list or not.
+			existingChannel = server->serverChannelsMap[channelName];
+			std::string userName = server->serverClientsMap[clientSocket]->getNickName();
+			if (existingChannel->isClientinChannel(userName) == 1)
+				sendResponse(clientSocket, ERR_USERONCHANNEL(userName));
+			else
+				joinOperatorClient(clientSocket, server, client, channelName);
+		}
 		else
-			this->joinMemberClient(clientSocket, server, client, channelName);
+		{
+			//check if user is banned or not.
+			//check if channel is invite only nad if it is if the user on the list or not.
+			existingChannel = server->serverChannelsMap[channelName];
+			std::string userName = server->serverClientsMap[clientSocket]->getNickName();
+			if (existingChannel->isClientinChannel(userName) == 1)
+				sendResponse(clientSocket, ERR_USERONCHANNEL(userName));
+			else
+				this->joinMemberClient(clientSocket, server, client, channelName);
+		}
 	}
 	/*-----------------------------------------------------------------------------------------*/
 	// If the channel name is invalid: Send a response to the client.

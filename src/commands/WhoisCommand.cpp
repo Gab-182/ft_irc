@@ -62,11 +62,7 @@ void WhoisCommand::executeCommand(ICommands* base, const int& clientSocket, IRC:
 				return;
 			}
 			else {
-				std::string response = ":"
-										ERR_NOSUCHNICK
-										+ whoisIt->second->getNickName()
-										+ " :No such nick/channel"
-										+ "\r\n";
+				std::string response = ERR_NOSUCHNICK(whoisIt->second->getNickName());
 				sendResponse(clientSocket, response);
 				return;
 			}
