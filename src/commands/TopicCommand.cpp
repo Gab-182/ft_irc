@@ -28,15 +28,17 @@ void TopicCommand::executeCommand(ICommands *base, const int &clientSocket, IRC:
 	*/
 	//if the number of parameters is 2
 	std::string channelname = base->getParameters(command)[0];
-	std::string topicname = base->getParameters(command)[1];
 	std::map<std::string, Channel *>::iterator itChannel;
 	Channel *existingChannel = NULL;
-		itChannel = server->serverChannelsMap.find(channelname);
-		if (itChannel == server->serverChannelsMap.end()){
-			DEBUG_MSG("ERROR");
-		}
-	if (base->getParameters(command).size() == 2)
+	itChannel = server->serverChannelsMap.find(channelname);
+	if (itChannel == server->serverChannelsMap.end()){
+			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + ERR_NOSUCHCHANNEL + " " +
+			 client->getNickName() + " " + channelname + " :No such channel\r\n";
+			sendResponse(clientSocket, response);
+	}
+	else if (base->getParameters(command).size() == 2)
 	{	
+			std::string topicname = base->getParameters(command)[1];
 		 existingChannel = server->serverChannelsMap[channelname];
 	
 		//if the channel doesn't exist
@@ -96,32 +98,32 @@ void TopicCommand::executeCommand(ICommands *base, const int &clientSocket, IRC:
 
 				std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " TOPIC " + channelname + " :" + topicname + "\r\n";
 				existingChannel->setTopic(topicname);
+				std::cout << existingChannel->getTopic()<<std::endl;
 				existingChannel->sendToAllClients("TOPIC", server->serverClientsMap[clientSocket]->getNickName(), response);
 			}
 		}
 	}
 	else if (base->getParameters(command).size() == 1)
 	{
-		//if the channel doesn't exist
-		if (!server->serverChannelsMap.count(channelname))
-		{
+ 		 existingChannel = server->serverChannelsMap[channelname];
+ 		//if the client in the channel
+		if (!server->serverChannelsMap.count(channelname)) {
 			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + ERR_NOSUCHCHANNEL + " " +
-			 client->getNickName() + " " + channelname + BOLDRED + " :No such channel\r\n";
-			std::cout << "channel doesn't exist" << RESET <<std::endl;
+			 client->getNickName() + " " + channelname + " :No such channel\r\n";
 			sendResponse(clientSocket, response);
  
 		}
 		// no topic 
 		else if (existingChannel->getTopic().empty())
 		{
-			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " TOPIC " + channelname + " :" + existingChannel->getTopic() + "\r\n";
+ 			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " TOPIC " + channelname + " :" + existingChannel->getTopic() + "\r\n";
 			std::cout << "no topic" << std::endl;
 			sendResponse(clientSocket, response);
  
 		}
 		else
 		{
-			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " TOPIC " + channelname + " :" + existingChannel->getTopic() + "\r\n";
+ 			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " TOPIC " + channelname + " :" + existingChannel->getTopic() + "\r\n";
 			std::cout << "get the topic " << existingChannel << std::endl;
 			sendResponse(clientSocket, response);
 		}
