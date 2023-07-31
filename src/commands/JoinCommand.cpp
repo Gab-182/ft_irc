@@ -132,14 +132,7 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 
 		if (itChannel == server->serverChannelsMap.end())
 		{
-			//check if user is banned or not.
-			//check if channel is invite only nad if it is if the user on the list or not.
-			existingChannel = server->serverChannelsMap[channelName];
-			std::string userName = server->serverClientsMap[clientSocket]->getNickName();
-			if (existingChannel->isClientinChannel(userName) == 1)
-				sendResponse(clientSocket, ERR_USERONCHANNEL(userName));
-			else
-				joinOperatorClient(clientSocket, server, client, channelName);
+			joinOperatorClient(clientSocket, server, client, channelName);
 		}
 		else
 		{
