@@ -210,6 +210,7 @@ namespace IRC {
 			bool isClientOperator(Client* client);
 			bool isClientInvited(Client* client);
 			bool isClientBaned(Client* client);
+			bool isTopicLocked() const;
 
 			/*----------------------------------------------*/
 			std::vector<Client*> getNormalClients();
