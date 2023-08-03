@@ -44,20 +44,23 @@ void PrivMsgCommand::executeCommand(ICommands* base, const int& clientSocket, Se
 
 	std::string channelName = base->getParameters(command)[0];
 
-		// TODO: Check if the channel existed in the server's channels map
-		// TODO: send response incase of the 2 error's below
+	//if # is found this means privmsg to channel
+	//else means privmsg to user.
+	if (channelName[0] == '#')
+	{
+		std::string channelName2 = channelName.substr(1);
 		std::map<std::string, Channel *>::iterator itChannel;
-		itChannel = server->serverChannelsMap.find(channelName);
+		itChannel = server->serverChannelsMap.find(channelName2);
 		std::string nickName = server->serverClientsMap[clientSocket]->getNickName();
 
 		if (itChannel != server->serverChannelsMap.end())
 		{
-			Channel *existingChannel = server->serverChannelsMap[channelName];
+			Channel *existingChannel = server->serverChannelsMap[channelName2];
 			int found = existingChannel->isClientinChannel(nickName);
 
 			if (found == 0)
 			{
-				std::string response = ERR_USERNOTINCHANNEL(nickName, channelName);
+				std::string response = ERR_USERNOTINCHANNEL(nickName, channelName2);
 				sendResponse(clientSocket, response);
 			}
 			else 
@@ -71,13 +74,13 @@ void PrivMsgCommand::executeCommand(ICommands* base, const int& clientSocket, Se
 						message += " " + base->getParameters(command)[i];
 					}
 					
-					std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PRIVMSG " + "#" + channelName + " " + message + "\r\n";
+					std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PRIVMSG " + channelName + " " + message + "\r\n";
 					existingChannel->sendToAllClients("PRIVMSG",server->serverClientsMap[clientSocket]->getNickName(),response);
 					std::cout << "sending" << message << std::endl;
 				}
 				else
 				{
-					std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PRIVMSG " + "#" + channelName + " " + base->getParameters(command)[1] + "\r\n";
+					std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PRIVMSG " + channelName + " " + base->getParameters(command)[1] + "\r\n";
 					existingChannel->sendToAllClients("PRIVMSG",server->serverClientsMap[clientSocket]->getNickName(),response);
 					std::cout << "sending" << base->getParameters(command)[1] << std::endl;
 				}
@@ -89,19 +92,31 @@ void PrivMsgCommand::executeCommand(ICommands* base, const int& clientSocket, Se
 			sendResponse(clientSocket, response);
 		}
 			
-		// TODO: Check if the client is a member or operator inside the channel.
+	} else {
+		
+			std::string nickName = server->serverClientsMap[clientSocket]->getNickName();
+			int foundNick = server->getClients(channelName);
+			if (foundNick == 1)
+			{
+				std::string message = base->getParameters(command)[1];
+					for (unsigned int i = 2; i < base->getParameters(command).size(); i++){
+						DEBUG_MSG(base->getParameters(command)[i]);
+						message += " " + base->getParameters(command)[i];
+					}
+				//std::string reply = ":" + _client->getNickName() + "!" + _client->getUserName() + "@" + _client->getIp() + " PRIVMSG " + channelName + " :" + msg;
 
+				std::string response = ":" + nickName + "!" + server->serverClientsMap[clientSocket]->getUserName() + "@" + "localhost" + " PRIVMSG " + channelName + " :" + message + "\r\n";
+				//need to get target clientSocket and send it.
+				sendResponse(clientSocket, response);
+				DEBUG_MSG("NICK  FOUND")
 
-	/*-----------------------------------------------------------------------------------------*/
-	// If the channel name is invalid: Send a response to the client.
-	/*-----------------------------------------------------------------------------------------*/
-	// else {
-	// 	std::string response =  BOLDRED"Invalid channel name."
-	// 							BOLDWHITE "Channel names should start with '#'."
-	// 							RESET "\r\n";
-	// 	sendResponse(clientSocket, response);
-	// }
+			} else {
+				DEBUG_MSG("NICK NOT FOUND")
+				std::string response = ERR_NOSUCHNICK(channelName);
+				sendResponse(clientSocket, response);
+			}
 
+	}
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

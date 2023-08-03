@@ -96,7 +96,7 @@ void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 		return ;
 
 	std::string channelName = base->getParameters(command)[0];
-	std::string mode = base->getParameters(command)[1];
+	//std::string mode = base->getParameters(command)[1];
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
