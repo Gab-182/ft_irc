@@ -148,8 +148,10 @@ void ModeCommand::TopicMode(ICommands* base, const int& clientSocket, IRC::Serve
 void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	if (!noErrorsExist(base, clientSocket, server, client, command))
 		return ;
+	std::string mode = "";
 	if (!base->getParameters(command).empty()) 
-		std::string mode = base->getParameters(command)[1];
+		mode = base->getParameters(command)[1];
+	
 	if (mode == "+t" || mode == "-t")
 		TopicMode(base, clientSocket, server, client, command);
 	//i

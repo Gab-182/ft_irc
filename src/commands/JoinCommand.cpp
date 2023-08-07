@@ -78,7 +78,7 @@ void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Cl
 
 	//#define RPL_TOPIC(servername, nick, channel, topic) 
 	//":" + servername + " 332 " + nick + " " + channel + " :" + topic + "\n"
-	std::string response3 = ":irc 332 " + client->getNickName() + " " + channelName + " :" + "default\n";
+	std::string response3 = ":irc 332 " + client->getNickName() + " " + channelName + " :" + newChannel->getTopic() + "\r\n" ;
 	sendResponse(clientSocket,response3);
 	//after this need to add [Users ChannelName]
 	//the users 
@@ -110,7 +110,7 @@ void JoinCommand::joinMemberClient(const int& clientSocket, Server* server, Clie
 	std::string totalNicksResponse = ": 366 " + client->getNickName() + " " + channelName + " :End of /NAMES list\r\n";
 	sendResponse(clientSocket, totalNicksResponse);
 
-	std::string response3 = ":irc 332 " + client->getNickName() + " " + channelName + " :" + "default\n";
+	std::string response3 = ":irc 332 " + client->getNickName() + " " + channelName + " :" + existingChannel->getTopic() + "\r\n";
 	sendResponse(clientSocket,response3);
 }
 
