@@ -189,4 +189,17 @@ void Server::printChannels() {
 	std::cout << BOLDYELLOW << "-----------------------------------------------" << std::endl;
 }
 
+
+int Server::getClientSocket(std::string nickName) {
+	int i = 1;
+	std::map<int, Client*>::iterator it;
+	for (it = serverClientsMap.begin(); it != serverClientsMap.end() ;++it) {
+		if (it ->first && it->second) {
+			if (nickName == it->second->getNickName())
+				return (it->first);
+		}
+		i++;
+	}
+	return (0);
+}
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

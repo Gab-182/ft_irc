@@ -90,7 +90,7 @@ namespace IRC
 			int getClients(std::string nickName);
 			void printClients();
 			void printChannels();
-
+			int getClientSocket(std::string nickName);
 		/*-----------------------------------------------------------------*/
 			void create_socket(char *av);
 			void respondToClient(const int& clientSocket, Client* client, std::string& clientMsg, ICommands* commands);

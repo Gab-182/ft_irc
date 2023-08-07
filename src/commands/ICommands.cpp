@@ -18,6 +18,7 @@
 #include "../../include/commands/PartCommand.hpp"
 #include "../../include/commands/KickCommand.hpp"
 #include "../../include/commands/TopicCommand.hpp"
+#include "../../include/commands/InviteCommand.hpp"
 
 using namespace IRC;
 
@@ -147,6 +148,8 @@ void ICommands::registerCommands() {
 	_commandsMap["privmsg"] = new IRC::PrivMsgCommand();
 	_commandsMap["kick"] = new IRC::KickCommand();
 	_commandsMap["topic"] = new IRC::TopicCommand();
+	_commandsMap["invite"] = new IRC::InviteCommand();
+	
 }
 
 void ICommands::unRegisterCommands() {
@@ -162,6 +165,8 @@ void ICommands::unRegisterCommands() {
 	delete (_commandsMap["quit"]);
 	delete (_commandsMap["privmsg"]);
 	delete (_commandsMap["kick"]);
+	delete (_commandsMap["topic"]);
+	delete (_commandsMap["invite"]);
 	_commandsMap.clear();
 }
 
@@ -204,8 +209,10 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 	
 	std::vector<std::pair<std::string, std::vector<std::string> > >::iterator it;
 
+    std::cout << "InviteCommand::executeCommand" << std::endl;
 	
 	for (it = _messages.begin(); it != _messages.end(); ++it) {
+ 		   std::cout << "InviteCommand::executeCommand :3" << std::endl;
 		if (toLowerCase(it->first) == "join")
 			_commandsMap["join"]->executeCommand(this, clientSocket, server, client, it->first);
 		else if (toLowerCase(it->first) == "nick")
@@ -232,16 +239,15 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 			_commandsMap["topic"]->executeCommand(this, clientSocket, server, client, it->first);
 		else if (toLowerCase(it->first) == "kick")
 			_commandsMap["kick"]->executeCommand(this, clientSocket, server, client, it->first);
-
-			
+		else if (toLowerCase(it->first) == "invite")
+		{
+			_commandsMap["invite"]->executeCommand(this, clientSocket, server, client, it->first);
+		}	
 // TODO: implement these commands:
 // ====================================================================================================
 //		else if (toLowerCase(it->first) == "oper")
 //			_commandsMap["oper"]->executeCommand(this, clientSocket, server, client, it->first);
-//		else if (toLowerCase(it->first) == "invite")
-//			_commandsMap["invite"]->executeCommand(this, clientSocket, server, client, it->first);
-//		else if (toLowerCase(it->first) == "mode")
-//			_commandsMap["mode"]->executeCommand(this, clientSocket, server, client, it->first);
+
 		else
 			unknownCommand(clientSocket, it->first);
 	}

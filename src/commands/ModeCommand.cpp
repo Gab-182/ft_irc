@@ -90,7 +90,7 @@ bool ModeCommand::noErrorsExist(ICommands* base, const int& clientSocket, IRC::S
 	return (true);
 }
 
-void ModeCommand::TopicMode(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command)
+void ModeCommand::TopicMode(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command,std::string channelName)
 {	
 	// std::map<std::string, Channel*>::iterator it = server->serverChannelsMap.find(channelName);
 	// t set/remove the ristriction of the topic command to channel operators only
@@ -113,14 +113,14 @@ void ModeCommand::TopicMode(ICommands* base, const int& clientSocket, IRC::Serve
 	*/
 
 	//------------------------------------------------------------//
-	std::string channelName = base->getParameters(command)[0];
-	Channel* existingChannel = NULL;
-	if (channelName[0] == '#'){
-		 channelName = channelName.substr(1);}
+	// std::string channelName = base->getParameters(command)[0];
+	// Channel* existingChannel = NULL;
+	// if (channelName[0] == '#'){
+	// 	 channelName = channelName.substr(1);}
 	std::string mode = base->getParameters(command)[1];
 	const char modeChar = mode[1];
 	char modeSign = mode[0];
-	existingChannel = server->serverChannelsMap[channelName];
+	Channel* existingChannel = server->serverChannelsMap[channelName];
 	//------------------------------------------------------------//
 
 	if(existingChannel->isClientOperator(client))
@@ -130,7 +130,7 @@ void ModeCommand::TopicMode(ICommands* base, const int& clientSocket, IRC::Serve
 			//remove the restriction and delete the mode from the channel
 			existingChannel->removeMode(modeChar);
 			//send response to all clients in the channel
-			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " " + channelName + " " + mode + "\r\n"; 
+			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " #" + channelName + " " + mode + "\r\n"; 
 			existingChannel->sendToAllClients("MODE",   server->serverClientsMap[clientSocket]->getNickName() , response);
 		}
 		else if(modeSign == '+')
@@ -139,7 +139,7 @@ void ModeCommand::TopicMode(ICommands* base, const int& clientSocket, IRC::Serve
 			existingChannel->addMode(modeChar);
 			for (size_t i = 0 ; i < existingChannel->getModes().size(); i++)
 				std::cout <<  existingChannel->getModes()[i] << std::endl;
-			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " " + channelName + " " + mode + "\r\n"; 
+			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " #" + channelName + " " + mode + "\r\n"; 
 			existingChannel->sendToAllClients("MODE",  server->serverClientsMap[clientSocket]->getNickName() , response);
 		}
 	}
@@ -151,22 +151,76 @@ void ModeCommand::TopicMode(ICommands* base, const int& clientSocket, IRC::Serve
 		sendResponse(clientSocket, response);
 	}
 }
+
+void ModeCommand::InviteOnlyMode(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command, std::string channelName)
+{
+	// std::cout << "-----------------InviteOnlyMode--------------" << std::endl;
+	// std::string channelName = base->getParameters(command)[0];
+	// Channel* existingChannel = NULL;
+	// if (channelName[0] == '#'){
+	// 	 channelName = channelName.substr(1);
+	// }
+	std::string mode = base->getParameters(command)[1];
+	const char modeChar = mode[1];
+	char modeSign = mode[0];
+	Channel* existingChannel = server->serverChannelsMap[channelName];
+	if(existingChannel->isClientOperator(client))
+	{
+		if (modeSign == '-')
+		{
+			//remove the restriction and delete the mode from the channel
+			existingChannel->removeMode(modeChar);
+			//send response to all clients in the channel
+			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " #" + client->getNickName() + " #" + channelName + " " + mode + "\r\n"; 
+			existingChannel->sendToAllClients("MODE",   server->serverClientsMap[clientSocket]->getNickName() , response);
+		}
+		if(modeSign == '+')
+		{
+			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " #" + client->getNickName() + " #" + channelName + " " + mode + "\r\n"; 
+			existingChannel->sendToAllClients("MODE",  server->serverClientsMap[clientSocket]->getNickName() , response);
+		}
+	}
+	else
+	{
+		std::cout << "client is not operator MODE" << std::endl;
+		std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + ERR_CHANOPRIVSNEEDED + " #" +
+			client->getNickName() + " #" + channelName + " :You're not channel operator\r\n";
+		sendResponse(clientSocket, response);
+	}
+}
+
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	if (!noErrorsExist(base, clientSocket, server, client, command))
 		return ;
-	// std::cout << "------------------------MODE-----------------------"<< std::endl;
-	// std::cout << "mode: " << base->getParameters(command)[0] << std::endl;
-	// std::cout << "mode: " << base->getParameters(command)[1] << std::endl;
-	std::string mode ;
-	if (!base->getParameters(command).empty()) 
-		 mode = base->getParameters(command)[1];
-	std::cout << "====>> mode: " << mode << std::endl;
-	if (mode == "+t" || mode == "-t")
-		TopicMode(base, clientSocket, server, client, command);
-	//i
-	if (mode == "+i" || mode == "-i")
-		TopicMode(base, clientSocket, server, client, command);
+	//check channel name if existied or not
+	    std::cout << "InviteCommand::executeCommand 2222" << std::endl;
+	std::string channelName = base->getParameters(command)[0];
+
+	if (channelName[0] == '#'){
+		 channelName = channelName.substr(1);}
+	if (server->serverChannelsMap.find(channelName) == server->serverChannelsMap.end())
+	{
+		std::cout << "channel not exist" << std::endl;
+		std::string response = ERR_NOSUCHCHANNEL(server->serverClientsMap[clientSocket]->getNickName(),channelName);
+		sendResponse(clientSocket, response);
+		return ;
+	}
+	else
+	{
+		std::string mode ;
+		if (!base->getParameters(command).empty()) 
+			mode = base->getParameters(command)[1];
+		std::cout << "====>> mode: " << mode << std::endl;
+		if (mode == "+t" || mode == "-t")
+			TopicMode(base, clientSocket, server, client, command, channelName);
+		//i
+		else if ((mode == "+i" || mode == "-i") )
+		{
+			std::cout << "-----------------InviteOnlyMode--"<< mode <<"------------" << std::endl;
+			InviteOnlyMode(base, clientSocket, server, client, command , channelName);
+		}
+	}
 	//l
 	//k
 	//o

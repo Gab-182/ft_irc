@@ -1,19 +1,16 @@
-#ifndef MODECOMMAND_HPP
-#define MODECOMMAND_HPP
+#ifndef INVITECOMMAND_HPP
+#define INVITECOMMAND_HPP
 
 #include "ICommands.hpp"
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 namespace IRC {
-	class ModeCommand : public ICommands {
+	class InviteCommand : public ICommands {
 	public:
-		ModeCommand();
-		~ModeCommand();
+		InviteCommand();
+		~InviteCommand();
 		bool noErrorsExist(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command);
 		void executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command);
-		void TopicMode(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command,std::string channelName);
-		void InviteOnlyMode(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command, std::string channelName);
-
 	};
 }
 

@@ -278,6 +278,7 @@ void Channel::unbanUserFromChannel(Client* client) {
 /*
  * TODO: Split this function into easier to read && smaller functions.
  * */
+
 void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite) {
 	if (this->isChannelInviteOnly() && this->isClientOperator(operatorClient)) {
 
