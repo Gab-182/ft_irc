@@ -18,7 +18,9 @@
 #include "Client.hpp"
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-#define ERR_USERONCHANNEL "443" // ERR_USERONCHANNEL "<user/operator> <channel> :is already on channel"
+#define ERR_USERONCHANNEL(nick) \
+	": 443 * " + nick + " :You're already member of that channel\n\r"
+#define ERR_USERONCHANNEL1 "443"
 #define ERR_BANNEDFROMCHAN "474" // ERR_BANNEDFROMCHAN "<channel> :Cannot join channel (+b)", banned from channel
 #define ERR_BADCHANNELKEY "475" // ERR_BADCHANNELKEY "<channel> :Cannot join channel (+k)", bad channel key
 #define ERR_INVITEONLYCHAN "473" // ERR_INVITEONLYCHAN "<channel> :Cannot join channel (+i)", channel is invite only
@@ -81,6 +83,12 @@ namespace IRC {
 			 * 
 			 */
 			std::vector<std::string> getAllClients2(std::string nickName);
+
+			/**-----------------------------------------------------------------------------------------
+			 * * @brief ➤ returns/gets the target client FD.
+			 * 
+			 */
+			int getTargetClientFD(std::string nickName);
 
 			/**-----------------------------------------------------------------------------------------
 			 * * @brief ➤ send messages to all clients on the channel.
@@ -191,6 +199,13 @@ namespace IRC {
 			 ** @param server ➤ pointer to the server.
 			 **/
 			void removeClientFromChannel(Client* client, IRC::Server* server);
+
+			/**-----------------------------------------------------------------------------------------
+			 ** @brief ➤ checks if client is in channel
+			 ** @param nickName ➤ nickname of the client.
+			 ** @returns int.
+			 **/
+			int isClientinChannel(std::string nickName);
 
 			/*------------  SETTERS && GETTERS  ----------------*/
 			void setName(const std::string& name);

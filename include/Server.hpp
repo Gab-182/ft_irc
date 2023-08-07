@@ -86,6 +86,8 @@ namespace IRC
 			int getPort() const;
 
 		/*-----------------------------------------------------------------*/
+
+			int getClients(std::string nickName);
 			void printClients();
 			void printChannels();
 

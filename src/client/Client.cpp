@@ -5,9 +5,9 @@
 using namespace IRC;
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-Client::Client() : _socket(), _userName(), _nickName(), _isWelcomed(false) { }
+Client::Client() : _socket(), _userName(), _nickName(),_hostName("IRC"), _isWelcomed(false) { }
 
-Client::Client(int socket) : _socket(socket), _userName(), _nickName(), _isWelcomed(false) { }
+Client::Client(int socket) : _socket(socket), _userName(), _nickName(), _hostName("IRC"), _isWelcomed(false) { }
 
 Client::~Client() {
 	if (!this->_clientChannelsMap.empty())
@@ -143,6 +143,17 @@ void Client::printClientChannelsMap() {
 		std::cout << BOLDYELLOW << "Channel" << std::endl;
 		it->second->printChannelInfo();
 	}
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+std::string Client::getChannelName1() {
+	std::map<std::string, Channel*>::iterator it;
+	for (it = this->_clientChannelsMap.begin(); it != this->_clientChannelsMap.end(); ++it) {
+		std::cout << BOLDYELLOW << "Channel" << std::endl;
+		it->second->printChannelInfo();
+		return it->second->getChannelName();
+	}
+	return "test";
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

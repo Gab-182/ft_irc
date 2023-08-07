@@ -60,10 +60,10 @@ void Server::respondToClient(const int& clientSocket, Client* client, std::strin
 	commands->executeCommand(commands, clientSocket, this, client, "start");
 
 //	// Debugging:
-//	if (client != NULL) {
-//		this->printClients();
-//		this->printChannels();
-//	}
+	// if (client != NULL) {
+	// 	this->printClients();
+	// 	this->printChannels();
+	// }
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -162,6 +162,20 @@ void Server::printClients() {
 		}
 		i++;
 	}
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+int Server::getClients(std::string nickName) {
+	int i = 1;
+	std::map<int, Client*>::iterator it;
+	for (it = serverClientsMap.begin(); it != serverClientsMap.end() ;++it) {
+		if (it ->first && it->second) {
+			if (nickName == it->second->getNickName())
+				return (1);
+		}
+		i++;
+	}
+	return (0);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
