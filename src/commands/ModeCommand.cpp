@@ -111,11 +111,18 @@ void ModeCommand::TopicMode(ICommands* base, const int& clientSocket, IRC::Serve
 			5) send response to all clients in the channel
 
 	*/
-	Channel *existingChannel = server->serverChannelsMap[base->getParameters(command)[0]];
+
+	//------------------------------------------------------------//
 	std::string channelName = base->getParameters(command)[0];
+	Channel* existingChannel = NULL;
+	if (channelName[0] == '#'){
+		 channelName = channelName.substr(1);}
 	std::string mode = base->getParameters(command)[1];
 	const char modeChar = mode[1];
 	char modeSign = mode[0];
+	existingChannel = server->serverChannelsMap[channelName];
+	//------------------------------------------------------------//
+
 	if(existingChannel->isClientOperator(client))
 	{
 		if(modeSign == '-')
@@ -140,7 +147,7 @@ void ModeCommand::TopicMode(ICommands* base, const int& clientSocket, IRC::Serve
 	{
 		std::cout << "client is not operator MODE" << std::endl;
 		std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + ERR_CHANOPRIVSNEEDED + " " +
-			client->getNickName() + " " + channelName + " :You're not channel operator\r\n";
+			client->getNickName() + " #" + channelName + " :You're not channel operator\r\n";
 		sendResponse(clientSocket, response);
 	}
 }
@@ -148,13 +155,18 @@ void ModeCommand::TopicMode(ICommands* base, const int& clientSocket, IRC::Serve
 void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	if (!noErrorsExist(base, clientSocket, server, client, command))
 		return ;
-	std::string mode = "";
+	// std::cout << "------------------------MODE-----------------------"<< std::endl;
+	// std::cout << "mode: " << base->getParameters(command)[0] << std::endl;
+	// std::cout << "mode: " << base->getParameters(command)[1] << std::endl;
+	std::string mode ;
 	if (!base->getParameters(command).empty()) 
-		mode = base->getParameters(command)[1];
-	
+		 mode = base->getParameters(command)[1];
+	std::cout << "====>> mode: " << mode << std::endl;
 	if (mode == "+t" || mode == "-t")
 		TopicMode(base, clientSocket, server, client, command);
 	//i
+	if (mode == "+i" || mode == "-i")
+		TopicMode(base, clientSocket, server, client, command);
 	//l
 	//k
 	//o
