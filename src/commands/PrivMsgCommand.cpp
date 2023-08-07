@@ -80,9 +80,14 @@ void PrivMsgCommand::executeCommand(ICommands* base, const int& clientSocket, Se
 				}
 				else
 				{
-					std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PRIVMSG " + channelName + " " + base->getParameters(command)[1] + "\r\n";
+					std::string message = base->getParameters(command)[1];
+					for (unsigned int i = 2; i < base->getParameters(command).size(); i++){
+						DEBUG_MSG(base->getParameters(command)[i]);
+						message += " " + base->getParameters(command)[i];
+					}
+					std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PRIVMSG " + channelName + " " + message + "\r\n";
 					existingChannel->sendToAllClients("PRIVMSG",server->serverClientsMap[clientSocket]->getNickName(),response);
-					std::cout << "sending" << base->getParameters(command)[1] << std::endl;
+					std::cout << "sending " << message << std::endl;
 				}
 			}
 		}
@@ -103,11 +108,11 @@ void PrivMsgCommand::executeCommand(ICommands* base, const int& clientSocket, Se
 						DEBUG_MSG(base->getParameters(command)[i]);
 						message += " " + base->getParameters(command)[i];
 					}
-				//std::string reply = ":" + _client->getNickName() + "!" + _client->getUserName() + "@" + _client->getIp() + " PRIVMSG " + channelName + " :" + msg;
-
-				std::string response = ":" + nickName + "!" + server->serverClientsMap[clientSocket]->getUserName() + "@" + "localhost" + " PRIVMSG " + channelName + " :" + message + "\r\n";
-				//need to get target clientSocket and send it.
-				sendResponse(clientSocket, response);
+				std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PRIVMSG " + channelName + " " + message + "\r\n";
+				int targetClientSocket = server->getSocket(channelName);
+				if (targetClientSocket == -1)
+					DEBUG_MSG("ERROR: target client socket not found ERROR")
+				sendResponse(targetClientSocket, response);
 				DEBUG_MSG("NICK  FOUND")
 
 			} else {
