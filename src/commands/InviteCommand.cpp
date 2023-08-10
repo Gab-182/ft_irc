@@ -38,12 +38,6 @@ Client * getTargetClient(ICommands* base, const int& clientSocket, IRC::Server* 
             return(server->serverClientsMap[targetSocket]);
         
         return NULL;
-
-        //     user does not      
-        // check if the user is an operator
-          
-        // srach for nickname in the client map
-        // use inviteUserToChannel
 }
 
 
@@ -75,28 +69,12 @@ void InviteCommand::executeCommand(ICommands* base, const int& clientSocket, IRC
         if( getTargetClient(base, clientSocket, server,client,command) != NULL)
         {std::cout << "ClientToInvite: " << ClientToInvite->getNickName() << std::endl;
         std::cout << "Client: " << client->getNickName() << std::endl;
+         server->serverChannelsMap[channelName]->inviteUserToChannel(client,ClientToInvite);
         }
         else
         {
             std::cout << "ClientToInvite: " << "NULL" << std::endl;
         }
-    // int targetSocket = server->getClients(server->serverClientsMap[clientSocket]->getNickName());
-    //  std::map<int , Client *>::iterator itClient;
-    //  itClient = server->serverClientsMap.find(targetSocket);
-    //     Client *clientToInvite = NULL;
-    //     if (itClient == server->serverClientsMap.end())
-    //     {
-    //         //user does not exist
-    //         std::cout << "user does not exist" << std::endl;
-    //     }
-    //     else
-    //         clientToInvite = server->serverClientsMap[targetSocket];
-
-            //user does not      
-        // check if the user is an operator
-          
-        // srach for nickname in the client map
-        // use inviteUserToChannel
     }
 
 
