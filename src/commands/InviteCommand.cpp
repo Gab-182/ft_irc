@@ -45,7 +45,7 @@ void InviteCommand::executeCommand(ICommands* base, const int& clientSocket, IRC
 {
     //syntax : /invite <nickname> <channel>
     //check channel hash # and if it exists
-    std::cout << "InviteCommand::executeCommand+++++++"<< base->getParameters(command)[0] <<"  "<<  base->getParameters(command)[1]<< std::endl;
+    // std::cout << "InviteCommand::executeCommand+++++++"<< base->getParameters(command)[0] <<"  "<<  base->getParameters(command)[1]<< std::endl;
     std::string channelName = base->getParameters(command)[0];
     if(channelName[0] == '#')
     {
@@ -54,22 +54,19 @@ void InviteCommand::executeCommand(ICommands* base, const int& clientSocket, IRC
     if (server->serverChannelsMap.find(channelName) == server->serverChannelsMap.end())
     {
         //channel does not exist
-        std::cout << "channel does not exist+!" << std::endl;
         std::cout << channelName << std::endl;
-        std::cout << "channel does not exist+4" << std::endl;
         std::cout << server->serverClientsMap[clientSocket]->getNickName() << std::endl;
-        std::cout << "channel does not exist+2" << std::endl;
 		std::string response = ERR_NOSUCHCHANNEL(server->serverClientsMap[clientSocket]->getNickName(),channelName);
-        std::cout << "channel does not exist" << std::endl;
 		sendResponse(clientSocket, response);
     }
     else
     {
         Client * ClientToInvite = getTargetClient(base, clientSocket, server,client,command);
         if( getTargetClient(base, clientSocket, server,client,command) != NULL)
-        {std::cout << "ClientToInvite: " << ClientToInvite->getNickName() << std::endl;
-        std::cout << "Client: " << client->getNickName() << std::endl;
-         server->serverChannelsMap[channelName]->inviteUserToChannel(client,ClientToInvite);
+        {
+            std::cout << "ClientToInvite: " << ClientToInvite->getNickName() << std::endl;
+            std::cout << "Client: " << client->getNickName() << std::endl;
+            server->serverChannelsMap[channelName]->inviteUserToChannel(client,ClientToInvite);
         }
         else
         {

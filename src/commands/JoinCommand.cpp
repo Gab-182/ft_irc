@@ -132,18 +132,40 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 
 		if (itChannel == server->serverChannelsMap.end())
 		{
+				std::cout << "user operator" << std::endl;
 			joinOperatorClient(clientSocket, server, client, channelName);
 		}
 		else
 		{
 			//check if user is banned or not.
 			//check if channel is invite only nad if it is if the user on the list or not.
+			
 			existingChannel = server->serverChannelsMap[channelName];
 			std::string userName = server->serverClientsMap[clientSocket]->getNickName();
+
 			if (existingChannel->isClientinChannel(userName) == 1)
-				sendResponse(clientSocket, ERR_USERONCHANNEL(userName));
+			{
+				std::cout << "user is already in channel" << std::endl;
+					sendResponse(clientSocket, ERR_USERONCHANNEL(userName));
+			}
 			else
-				this->joinMemberClient(clientSocket, server, client, channelName);
+			{
+				// check if the channel is invite only or not
+				std::cout << "user is struggeling" << std::endl;
+
+				if(existingChannel->isChannelInviteOnly() == 0) // 0 means false
+				{
+					joinMemberClient(clientSocket, server, client, channelName);
+				}
+				else if(existingChannel->isInviteOnly() == 1 && existingChannel->isClientInvited(client) == 1)
+				{
+					joinMemberClient(clientSocket, server, client, channelName);
+				}
+				else
+				{
+					sendResponse(clientSocket, ERR_INVITEONLYCHAN(userName, channelName));
+				}
+			}
 		}
 	}
 	/*-----------------------------------------------------------------------------------------*/

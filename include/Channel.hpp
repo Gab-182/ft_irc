@@ -20,10 +20,12 @@
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #define ERR_USERONCHANNEL(nick) \
 	": 443 * " + nick + " :You're already member of that channel\n\r"
-#define ERR_USERONCHANNEL1 "443"
+// #define ERR_USERONCHANNEL "443"
 #define ERR_BANNEDFROMCHAN "474" // ERR_BANNEDFROMCHAN "<channel> :Cannot join channel (+b)", banned from channel
 #define ERR_BADCHANNELKEY "475" // ERR_BADCHANNELKEY "<channel> :Cannot join channel (+k)", bad channel key
-#define ERR_INVITEONLYCHAN "473" // ERR_INVITEONLYCHAN "<channel> :Cannot join channel (+i)", channel is invite only
+#define ERR_INVITEONLYCHAN(nick, channel) \
+  ": 473" +  nick + " #" + channel + " :Cannot join channel (+i)\n\r"
+   // ERR_INVITEONLYCHAN "<channel> :Cannot join channel (+i)", channel is invite only
 #define ERR_CHANNELISFULL "471" // ERR_CHANNELISFULL "<channel> :Cannot join channel (+l)", channel is full
 #define ERR_NOPRIVILEGES "481" // ERR_NOPRIVILEGES ":Permission Denied-You're not an IRC operator"
 #define RPL_INVITING "341" // RPL_INVITING "<channel> <nick>"
@@ -226,7 +228,7 @@ namespace IRC {
 			bool isClientInvited(Client* client);
 			bool isClientBaned(Client* client);
 			bool isTopicLocked() const;
-
+			bool isInviteOnly();
 			/*----------------------------------------------*/
 			std::vector<Client*> getNormalClients();
 			std::vector<Client*> getOperators();

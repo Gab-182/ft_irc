@@ -171,19 +171,19 @@ void ModeCommand::InviteOnlyMode(ICommands* base, const int& clientSocket, IRC::
 			//remove the restriction and delete the mode from the channel
 			existingChannel->removeMode(modeChar);
 			//send response to all clients in the channel
-			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " #" + client->getNickName() + " #" + channelName + " " + mode + "\r\n"; 
+			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " #" + channelName + " " + mode + "\r\n"; 
 			existingChannel->sendToAllClients("MODE",   server->serverClientsMap[clientSocket]->getNickName() , response);
 		}
 		if(modeSign == '+')
 		{
-			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " #" + client->getNickName() + " #" + channelName + " " + mode + "\r\n"; 
+			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " #" + channelName + " " + mode + "\r\n"; 
 			existingChannel->sendToAllClients("MODE",  server->serverClientsMap[clientSocket]->getNickName() , response);
 		}
 	}
 	else
 	{
 		std::cout << "client is not operator MODE" << std::endl;
-		std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + ERR_CHANOPRIVSNEEDED + " #" +
+		std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + ERR_CHANOPRIVSNEEDED + " " +
 			client->getNickName() + " #" + channelName + " :You're not channel operator\r\n";
 		sendResponse(clientSocket, response);
 	}
@@ -194,16 +194,16 @@ void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 	if (!noErrorsExist(base, clientSocket, server, client, command))
 		return ;
 	//check channel name if existied or not
-	    std::cout << "InviteCommand::executeCommand 2222" << std::endl;
 	std::string channelName = base->getParameters(command)[0];
 
 	if (channelName[0] == '#'){
-		 channelName = channelName.substr(1);}
+		 channelName = channelName.substr(1);
+	}
 	if (server->serverChannelsMap.find(channelName) == server->serverChannelsMap.end())
 	{
 		std::cout << "channel not exist" << std::endl;
 		std::string response = ERR_NOSUCHCHANNEL(server->serverClientsMap[clientSocket]->getNickName(),channelName);
-		sendResponse(clientSocket, response);
+		// sendResponse(clientSocket, response);
 		return ;
 	}
 	else

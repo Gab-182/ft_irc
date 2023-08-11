@@ -74,7 +74,6 @@
 #define RPL_TOPIC "332" // Topic is set.
 
 
-
 // user not in channel.
 #define ERR_USERNOTINCHANNEL(nick, channel) \
 	": 441 * <" + nick + "> isn't on " + channel + "\n\r"

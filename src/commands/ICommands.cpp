@@ -209,10 +209,8 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 	
 	std::vector<std::pair<std::string, std::vector<std::string> > >::iterator it;
 
-    std::cout << "InviteCommand::executeCommand" << std::endl;
 	
 	for (it = _messages.begin(); it != _messages.end(); ++it) {
- 		   std::cout << "InviteCommand::executeCommand :3" << std::endl;
 		if (toLowerCase(it->first) == "join")
 			_commandsMap["join"]->executeCommand(this, clientSocket, server, client, it->first);
 		else if (toLowerCase(it->first) == "nick")

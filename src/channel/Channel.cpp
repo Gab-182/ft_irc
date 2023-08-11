@@ -96,9 +96,12 @@ bool Channel::isChannelFull() const {
 bool Channel::isChannelInviteOnly() const {
 	std::vector<char>::const_iterator it;
 	it = std::find(_modes.begin(), _modes.end(), 'i');
+	//print modes
+	for (size_t i = 0 ; i < _modes.size(); i++)
+		std::cout <<"printing moods " << _modes[i] << std::endl;
 	if (it != _modes.end())
-		return (true);
-	return (false);
+		return (false);
+	return (true);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -127,10 +130,8 @@ bool Channel::isValidToAddToChannel(Client* client) {
 		return (false);
 	}
 	if (this->isClientOperator(client)) {
-		numericReply = ERR_USERONCHANNEL1;
-		clientAddError = BOLDRED "ERROR: "
-						 BOLDWHITE "User is already an operator of the channel."
-						 RESET "\r\n";
+			std::string errMsg = ERR_USERONCHANNEL(client->getNickName());
+
 		return (false);
 	}
 	if (this->isClientBaned(client)) {
@@ -140,13 +141,13 @@ bool Channel::isValidToAddToChannel(Client* client) {
 						 RESET "\r\n";
 		return (false);
 	}
-	if (this->isChannelInviteOnly() && !this->isClientInvited(client)) {
-		numericReply = ERR_INVITEONLYCHAN;
-		clientAddError = BOLDRED "ERROR: "
-						 BOLDWHITE "User is not invited to the channel."
-						 RESET "\r\n";
-		return (false);
-	}
+	// if (this->isChannelInviteOnly() && !this->isClientInvited(client)) {
+	// 	numericReply = ": 473";
+	// 	clientAddError = BOLDRED "ERROR: "
+	// 					 BOLDWHITE "User is not invited to the channel."
+	// 					 RESET "\r\n";
+	// 	return (false);
+	// }
 	// TODO: Add the isKeyMatchesChannelKey() function and uncomment the following lines
 
 //	if (this->isChannelProtected() && !client->isKeyMatchesChannelKey(client, this->getChannelName())) {
@@ -157,10 +158,8 @@ bool Channel::isValidToAddToChannel(Client* client) {
 //		return (false);
 //	}
 	if (this->isClientMember(client)) {
-		numericReply = ERR_USERONCHANNEL1;
-		clientAddError = BOLDRED "ERROR: "
-						 BOLDWHITE "User is already a member of the channel."
-						 RESET "\r\n";
+			std::string errMsg = ERR_USERONCHANNEL(client->getNickName());
+
 		return (false);
 	}
 
@@ -173,7 +172,7 @@ bool Channel::isValidToAddToChannel(Client* client) {
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::addMemberToChannel(Client* client) {
-	if (this->isValidToAddToChannel(client)) {
+	if (this->isValidToAddToChannel(client) ) {
 		client->addChannelToClientChannelsMap(this);
 		_members.push_back(client);
 	}
@@ -229,11 +228,7 @@ void Channel::banUserFromChannel(Client* operatorClient, Client* clientToBan, IR
 	// Check if the client who is banning is an operator of the channel.
 	if (this->isClientOperator(operatorClient)) {
 		if (this->isClientBaned(clientToBan)) {
-			std::string errMsg = ": "
-								 ERR_USERONCHANNEL1
-								 BOLDWHITE " " + clientToBan->getNickName() + " " + this->getChannelName()
-								 + BOLDRED " :User is already banned from the channel."
-								 RESET "\r\n";
+			std::string errMsg = ERR_USERONCHANNEL(clientToBan->getNickName());
 			Client::sendResponse(clientToBan->getSocket(), errMsg);
 		}
 		// Can not ban operators from a channel.
@@ -281,7 +276,7 @@ void Channel::unbanUserFromChannel(Client* client) {
 
 void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite) {
 	if (this->isChannelInviteOnly() && this->isClientOperator(operatorClient)) {
-
+			std::cout << "+- CHANNEL INVITE ONLY" <<std::endl;
 		if (this->isChannelFull()) {
 			std::string errMsg = ERR_CHANNELISFULL
 								 BOLDRED "ERROR: "
@@ -291,20 +286,13 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 		}
 
 		if (this->isClientMember(clientToInvite)) {
-			std::string errMsg = ": "
-								 ERR_USERONCHANNEL1
-								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
-								 + BOLDRED " :User is already a member of the channel."
-								   RESET "\r\n";
+			std::string errMsg = ERR_USERONCHANNEL(clientToInvite->getNickName());
 			Client::sendResponse(clientToInvite->getSocket(), errMsg);
 		}
 
 		else if (this->isClientOperator(clientToInvite)) {
-			std::string errMsg = ": "
-								 ERR_USERONCHANNEL1
-								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
-								 + BOLDRED " :User is already an operator of the channel."
-								  RESET "\r\n";
+			std::string errMsg = ERR_USERONCHANNEL(clientToInvite->getNickName());
+
 			Client::sendResponse(clientToInvite->getSocket(), errMsg);
 		}
 		else if (this->isClientBaned(clientToInvite)) {
@@ -316,14 +304,11 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 			Client::sendResponse(clientToInvite->getSocket(), errMsg);
 		}
 		else if (this->isClientInvited(clientToInvite)) {
-			std::string errMsg = ": "
-								 ERR_USERONCHANNEL1
-								 BOLDWHITE " " + clientToInvite->getNickName() + " " + this->getChannelName()
-								 + BOLDRED " :User is already invited to the channel."
-								   RESET "\r\n";
+			std::string errMsg = ERR_USERONCHANNEL(clientToInvite->getNickName());
 			Client::sendResponse(clientToInvite->getSocket(), errMsg);
 		}
 		else {
+			std::cout << "INVITE USER TO CHANNEL PUSH BACK" << std::endl;
 			clientToInvite->addChannelToClientChannelsMap(this);
 			_invites.push_back(clientToInvite->getNickName());
 			std::string inviteMsg = ": "
@@ -335,6 +320,8 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 		}
 	}
 	else {
+			std::cout << "+- ELLSSS ONLY" <<std::endl;
+
 		std::string errMsg = ": "
 							 ERR_CHANOPRIVSNEEDED
 							 BOLDWHITE " " + operatorClient->getNickName() + " " + this->getChannelName()
@@ -342,6 +329,7 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 							 RESET "\r\n";
 		Client::sendResponse(operatorClient->getSocket(), errMsg);
 	}
+			std::cout << "+- WWWW" <<std::endl;
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -381,11 +369,27 @@ bool Channel::isClientOperator(Client* client) {
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 bool Channel::isClientInvited(Client* client) {
 	std::vector<std::string>::iterator itInvited;
-	for (itInvited = _invites.begin(); itInvited != _invites.end(); ++itInvited) {
+	for (itInvited = _invites.begin(); itInvited != _invites.end(); ++itInvited)
+	{
+		std::cout << "IS INVITED " <<client->getNickName() << std::endl;
 		if ((*itInvited) == client->getNickName())
-			return true;
+		{
+			std::cout << "IS INVITED " <<client->getNickName() << std::endl;
+				return true;
+		}	
 	}
 	return false;
+}
+
+
+
+bool Channel::isInviteOnly() 
+{
+	std::vector<char>::iterator it;
+	it = std::find(_modes.begin(), _modes.end(), 'i');
+	if (it != _modes.end())
+		return (false);
+	return (true);
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
