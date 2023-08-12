@@ -1,7 +1,8 @@
 #include "../../include/commands/ModeCommand.hpp"
 #include "../../include/Client.hpp"
 #include "../../include/Server.hpp"
-
+#include <cstdlib>
+#include <iostream>
 using namespace IRC;
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -190,6 +191,56 @@ void ModeCommand::InviteOnlyMode(ICommands* base, const int& clientSocket, IRC::
 	}
 }
 
+
+void ModeCommand::LimitMode(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command, std::string channelName)
+{
+	std::string mode = base->getParameters(command)[1];
+	const char modeChar = mode[1];
+	char modeSign = mode[0];
+	Channel* existingChannel = server->serverChannelsMap[channelName];
+	if(existingChannel->isClientOperator(client))
+	{
+				std::cout << "-----------------------LIMIT----------------------" << std::endl;
+
+		if (modeSign == '-')
+		{
+			//remove the restriction and delete the mode from the channel
+			existingChannel->removeMode(modeChar);
+			//send response to all clients in the channel
+			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " #" + channelName + " " + mode + "\r\n"; 
+			existingChannel->sendToAllClients("MODE",   server->serverClientsMap[clientSocket]->getNickName() , response);
+		}
+		if(modeSign == '+')
+		{
+			existingChannel->addMode(modeChar);
+			//set limit
+			std::string limit = base->getParameters(command)[2];
+			//convert string to size_t 
+			char *p;
+			size_t limitSize = strtoul(limit.c_str(),&p,10);
+			if (*p)
+			{
+				std::cout << "not a number" << std::endl;
+				return ;
+			}
+			else
+			{
+				std::cout << "set number" << limitSize << std::endl;
+				existingChannel->setlimit(limitSize);
+				std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " #" + channelName + " " + mode + "\r\n"; 
+				existingChannel->sendToAllClients("MODE",  server->serverClientsMap[clientSocket]->getNickName() , response);
+			}
+		}
+	}
+	else
+	{
+		std::cout << "client is not operator MODE" << std::endl;
+		std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + ERR_CHANOPRIVSNEEDED + " " +
+			client->getNickName() + " #" + channelName + " :You're not channel operator\r\n";
+		sendResponse(clientSocket, response);
+	}
+}
+
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command) {
 	if (!noErrorsExist(base, clientSocket, server, client, command))
@@ -212,7 +263,6 @@ void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 		std::string mode ;
 		if (!base->getParameters(command).empty()) 
 			mode = base->getParameters(command)[1];
-		std::cout << "====>> mode: " << mode << std::endl;
 		if (mode == "+t" || mode == "-t")
 			TopicMode(base, clientSocket, server, client, command, channelName);
 		//i
@@ -221,8 +271,9 @@ void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 			std::cout << "-----------------InviteOnlyMode--"<< mode <<"------------" << std::endl;
 			InviteOnlyMode(base, clientSocket, server, client, command , channelName);
 		}
+		else if ((mode == "+l" || mode == "-l"))
+			LimitMode(base, clientSocket, server, client, command , channelName);
 	}
-	//l
 	//k
 	//o
 }

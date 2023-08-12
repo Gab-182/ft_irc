@@ -26,10 +26,12 @@
 #define ERR_INVITEONLYCHAN(nick, channel) \
   ": 473" +  nick + " #" + channel + " :Cannot join channel (+i)\n\r"
    // ERR_INVITEONLYCHAN "<channel> :Cannot join channel (+i)", channel is invite only
-#define ERR_CHANNELISFULL "471" // ERR_CHANNELISFULL "<channel> :Cannot join channel (+l)", channel is full
+// #define ERR_CHANNELISFULL "471" // ERR_CHANNELISFULL "<channel> :Cannot join channel (+l)", channel is full
 #define ERR_NOPRIVILEGES "481" // ERR_NOPRIVILEGES ":Permission Denied-You're not an IRC operator"
 #define RPL_INVITING "341" // RPL_INVITING "<channel> <nick>"
 #define ERR_CHANOPRIVSNEEDED "482" // ERR_CHANOPRIVSNEEDED "<channel> :You're not channel operator"
+#define ERR_CHANNELISFULL(channel) \
+	": 471 * #" + channel + " :Cannot join channel (+l)\n\r"
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 namespace IRC {
@@ -41,6 +43,7 @@ namespace IRC {
 			std::string _name;
 			std::string _topic;
 			std::string _key;
+			size_t 		_limit;
 			std::vector<char> _modes;
 			/*----------------------------------------------*/
 			/**
@@ -112,6 +115,7 @@ namespace IRC {
 			 * @return false ➤ if the channel is not invite only.
 			 */
 			bool isChannelInviteOnly() const;
+			bool isChannelLimitedMode()const;
 			/**-----------------------------------------------------------------------------------------
 			 * @brief ➤ If the channel is empty then delete it.
 			 ** @param server ➤ pointer to the server.
@@ -239,6 +243,8 @@ namespace IRC {
 			void printChannelInfo();
 			void printModes();
 			void printInvitees();
+			void setlimit(size_t limit);
+			size_t getlimit();
 	};
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

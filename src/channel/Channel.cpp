@@ -89,6 +89,7 @@ void Channel::ifChannelIsEmptyThenDeleteIt(IRC::Server* server) {
 bool Channel::isChannelFull() const {
 	if (_maxUsers == 0)
 		return (false);
+	std::cout << "getChannelUsersNumber() " << getChannelUsersNumber() << _limit << "-------"<< std::endl;
 	return (getChannelUsersNumber() >= _maxUsers);
 }
 
@@ -100,6 +101,15 @@ bool Channel::isChannelInviteOnly() const {
 		return (true); 
 	return (false); // If the channel is not invite only.
 }
+
+bool Channel::isChannelLimitedMode() const {
+	std::vector<char>::const_iterator it;
+	it = std::find(_modes.begin(), _modes.end(), 'l');
+	if (it != _modes.end())
+		return (true); 
+	return (false); 
+}
+
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 bool Channel::isChannelProtected() const {
@@ -120,10 +130,8 @@ bool Channel::isValidToAddToChannel(Client* client) {
 	std::string errMsg;
 
 	if (this->isChannelFull()) {
-		numericReply = ERR_CHANNELISFULL;
-		clientAddError = BOLDRED "ERROR: "
-						 BOLDWHITE "Channel is full."
-						 RESET "\r\n";
+		std::cout << "Channel is full" << std::endl;
+		std::string errMsg = ERR_CHANNELISFULL(this->getChannelName());
 		return (false);
 	}
 	if (this->isClientOperator(client)) {
@@ -276,11 +284,7 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 	if (this->isChannelInviteOnly() && this->isClientOperator(operatorClient)) 
 	 {
 		if (this->isChannelFull()) {
-			std::string errMsg = ERR_CHANNELISFULL
-								 BOLDRED "ERROR: "
-								 BOLDWHITE "Can not invite user, channel is full."
-								 RESET "\r\n";
-			Client::sendResponse(operatorClient->getSocket(), errMsg);
+			Client::sendResponse(operatorClient->getSocket(), ERR_CHANNELISFULL(this->getChannelName()));
 		}
 
 		if (this->isClientMember(clientToInvite)) {
@@ -374,6 +378,8 @@ bool Channel::isClientInvited(Client* client) {
 	}
 	return false;
 }
+
+
 
 
 
@@ -527,7 +533,8 @@ void Channel::printChannelInfo() {
 	for (itModes = _modes.begin(); itModes != _modes.end(); ++itModes)
 		std::cout << BOLDWHITE << *itModes << BOLDYELLOW << " - ";
 
-
+	std::cout << BOLDYELLOW << std::endl << "Channel LIMIT: " << BOLDWHITE << _limit << std::endl;
+	std::cout << BOLDCYAN << getChannelUsersNumber() << BOLDYELLOW << " users in the channel." << std::endl;
 	std::cout << BOLDYELLOW << "Channel key: " << BOLDWHITE << _key << std::endl;
 	std::cout << BOLDYELLOW << "Channel max users: " << BOLDWHITE << _maxUsers << std::endl;
 
@@ -599,4 +606,15 @@ void Channel::printInvitees()
 		std::cout << BOLDWHITE << *it << BOLDYELLOW << " - ";
 	std::cout << BOLDYELLOW << "Printing END invitees " << std::endl;
 
+}
+
+
+void Channel::setlimit(size_t limit)
+{
+	_limit = limit;
+}
+
+size_t Channel::getlimit()
+{
+	return _limit;
 }
