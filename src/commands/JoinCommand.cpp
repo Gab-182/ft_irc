@@ -121,7 +121,8 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 		return;
 
 	std::string channelName = base->getParameters(command)[0];
-	if (channelName[0] == '#') {
+	if (channelName[0] == '#') 
+	{
 		channelName = channelName.substr(1); // Remove the '#' character from the channel name.
 
 		/*-----------------------------------------------------------------------------------------*/
@@ -150,21 +151,36 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 			}
 			else
 			{
-				// check if the channel is invite only or not
-				std::cout << "user is struggeling" << std::endl;
-
-				if(existingChannel->isChannelInviteOnly() == 0) // 0 means false
-				{
-					joinMemberClient(clientSocket, server, client, channelName);
-				}
-				else if(existingChannel->isInviteOnly() == 1 && existingChannel->isClientInvited(client) == 1)
-				{
-					joinMemberClient(clientSocket, server, client, channelName);
-				}
+				//check if user is banned or not.
+				//check if channel is invite only nad if it is if the user on the list or not.
+				existingChannel = server->serverChannelsMap[channelName];
+				//print modes
+				existingChannel->printModes();
+				existingChannel->printInvitees();
+				std::string userName = server->serverClientsMap[clientSocket]->getNickName();
+				if (existingChannel->isClientinChannel(userName) == 1)
+					sendResponse(clientSocket, ERR_USERONCHANNEL(userName));
+				else if(existingChannel->isChannelInviteOnly() && existingChannel->isClientInvited(client))
+					this->joinMemberClient(clientSocket, server, client, channelName);
+				else if(!existingChannel->isChannelInviteOnly()) //channel is not invite only
+					this->joinMemberClient(clientSocket, server, client, channelName);
 				else
-				{
 					sendResponse(clientSocket, ERR_INVITEONLYCHAN(userName, channelName));
-				}
+				// // check if the channel is invite only or not
+				// std::cout << "user is struggeling" << std::endl;
+
+				// if(existingChannel->isChannelInviteOnly() == 0) // 0 means false
+				// {
+				// 	joinMemberClient(clientSocket, server, client, channelName);
+				// }
+				// else if(existingChannel->isInviteOnly() == 1 && existingChannel->isClientInvited(client) == 1)
+				// {
+				// 	joinMemberClient(clientSocket, server, client, channelName);
+				// }
+				// else
+				// {
+				// 	sendResponse(clientSocket, ERR_INVITEONLYCHAN(userName, channelName));
+				// }
 			}
 		}
 	}

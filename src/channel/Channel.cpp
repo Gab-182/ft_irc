@@ -96,12 +96,9 @@ bool Channel::isChannelFull() const {
 bool Channel::isChannelInviteOnly() const {
 	std::vector<char>::const_iterator it;
 	it = std::find(_modes.begin(), _modes.end(), 'i');
-	//print modes
-	for (size_t i = 0 ; i < _modes.size(); i++)
-		std::cout <<"printing moods " << _modes[i] << std::endl;
-	if (it != _modes.end())
-		return (false);
-	return (true);
+	if (it != _modes.end()) // If the channel is invite only.
+		return (true); 
+	return (false); // If the channel is not invite only.
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -275,8 +272,9 @@ void Channel::unbanUserFromChannel(Client* client) {
  * */
 
 void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite) {
-	if (this->isChannelInviteOnly() && this->isClientOperator(operatorClient)) {
-			std::cout << "+- CHANNEL INVITE ONLY" <<std::endl;
+
+	if (this->isChannelInviteOnly() && this->isClientOperator(operatorClient)) 
+	 {
 		if (this->isChannelFull()) {
 			std::string errMsg = ERR_CHANNELISFULL
 								 BOLDRED "ERROR: "
@@ -320,8 +318,6 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 		}
 	}
 	else {
-			std::cout << "+- ELLSSS ONLY" <<std::endl;
-
 		std::string errMsg = ": "
 							 ERR_CHANOPRIVSNEEDED
 							 BOLDWHITE " " + operatorClient->getNickName() + " " + this->getChannelName()
@@ -329,7 +325,6 @@ void Channel::inviteUserToChannel(Client* operatorClient, Client* clientToInvite
 							 RESET "\r\n";
 		Client::sendResponse(operatorClient->getSocket(), errMsg);
 	}
-			std::cout << "+- WWWW" <<std::endl;
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -369,14 +364,13 @@ bool Channel::isClientOperator(Client* client) {
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 bool Channel::isClientInvited(Client* client) {
 	std::vector<std::string>::iterator itInvited;
-	for (itInvited = _invites.begin(); itInvited != _invites.end(); ++itInvited)
+	if (_invites.empty())
+		return false;
+	for (itInvited = _invites.begin(); itInvited != _invites.end(); ++itInvited) //to do protection from empty vector
 	{
 		std::cout << "IS INVITED " <<client->getNickName() << std::endl;
 		if ((*itInvited) == client->getNickName())
-		{
-			std::cout << "IS INVITED " <<client->getNickName() << std::endl;
 				return true;
-		}	
 	}
 	return false;
 }
@@ -581,4 +575,28 @@ bool Channel::isTopicLocked() const
 	if (it != _modes.end())
 		return true;
 	return false;
+}
+
+//print modes only
+void Channel::printModes()
+{
+	// print modes
+	std::vector<char>::const_iterator it;
+	std::cout << BOLDYELLOW << "Printing modes " << std::endl;
+	for (it = _modes.begin(); it != _modes.end(); ++it)
+		std::cout << BOLDWHITE << *it << BOLDYELLOW << " - ";
+	std::cout << BOLDYELLOW << "Printing END modes " << std::endl;
+
+}
+
+//print invitees
+void Channel::printInvitees()
+{
+	// print modes
+	std::vector<std::string>::const_iterator it;
+	std::cout << BOLDYELLOW << "Printing invitees " << std::endl;
+	for (it = _invites.begin(); it != _invites.end(); ++it)
+		std::cout << BOLDWHITE << *it << BOLDYELLOW << " - ";
+	std::cout << BOLDYELLOW << "Printing END invitees " << std::endl;
+
 }

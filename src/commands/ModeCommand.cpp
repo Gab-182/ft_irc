@@ -176,6 +176,7 @@ void ModeCommand::InviteOnlyMode(ICommands* base, const int& clientSocket, IRC::
 		}
 		if(modeSign == '+')
 		{
+			existingChannel->addMode(modeChar);
 			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " #" + channelName + " " + mode + "\r\n"; 
 			existingChannel->sendToAllClients("MODE",  server->serverClientsMap[clientSocket]->getNickName() , response);
 		}
