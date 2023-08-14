@@ -584,6 +584,16 @@ bool Channel::isTopicLocked() const
 	return false;
 }
 
+bool Channel::isPasswordLocked() const
+{
+	// GET TOPIC IF FIND T IN MODE VECTOR THEN IT IS LOCKED
+	std::vector<char>::const_iterator it;
+	it = std::find(_modes.begin(), _modes.end(), 'k');
+	if (it != _modes.end())
+		return true;
+	return false;
+}
+
 //print modes only
 void Channel::printModes()
 {

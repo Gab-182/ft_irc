@@ -48,6 +48,8 @@
 #define ERR_PASSWDMISMATCH "464" // Password incorrect.
 #define ERR_NEEDMOREPARAMS "461" // Not enough parameters.
 
+
+
 // Nick command replies (see RFC).
 #define ERR_NONICKNAMEGIVEN "431" // No nickname given.
 #define ERR_ERRONEUSNICKNAME "432" // Erroneous nickname.

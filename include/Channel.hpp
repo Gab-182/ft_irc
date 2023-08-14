@@ -22,7 +22,8 @@
 	": 443 * " + nick + " :You're already member of that channel\n\r"
 // #define ERR_USERONCHANNEL "443"
 #define ERR_BANNEDFROMCHAN "474" // ERR_BANNEDFROMCHAN "<channel> :Cannot join channel (+b)", banned from channel
-#define ERR_BADCHANNELKEY "475" // ERR_BADCHANNELKEY "<channel> :Cannot join channel (+k)", bad channel key
+#define ERR_BADCHANNELKEY(nick, channel) \
+	": 475 " + nick + " " + channel + " :Bad channel key\n"
 #define ERR_INVITEONLYCHAN(nick, channel) \
   ": 473" +  nick + " #" + channel + " :Cannot join channel (+i)\n\r"
    // ERR_INVITEONLYCHAN "<channel> :Cannot join channel (+i)", channel is invite only
@@ -32,6 +33,7 @@
 #define ERR_CHANOPRIVSNEEDED "482" // ERR_CHANOPRIVSNEEDED "<channel> :You're not channel operator"
 #define ERR_CHANNELISFULL(channel) \
 	": 471 * #" + channel + " :Cannot join channel (+l)\n\r"
+
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 namespace IRC {
@@ -233,6 +235,7 @@ namespace IRC {
 			bool isClientBaned(Client* client);
 			bool isTopicLocked() const;
 			bool isInviteOnly();
+			bool isPasswordLocked() const;
 			/*----------------------------------------------*/
 			std::vector<Client*> getNormalClients();
 			std::vector<Client*> getOperators();

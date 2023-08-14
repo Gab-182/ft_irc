@@ -158,7 +158,9 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 				existingChannel->printModes();
 				existingChannel->printInvitees();
 				std::string userName = server->serverClientsMap[clientSocket]->getNickName();
-				if (existingChannel->isChannelLimitedMode() && (existingChannel->getlimit() <= existingChannel->getChannelUsersNumber()))
+				if (existingChannel->isPasswordLocked() == true && base->getParameters(command)[1] != existingChannel->getKey())
+					sendResponse(clientSocket, ERR_BADCHANNELKEY(userName, channelName));
+				else if (existingChannel->isChannelLimitedMode() && (existingChannel->getlimit() <= existingChannel->getChannelUsersNumber()))
 					sendResponse(clientSocket, ERR_CHANNELISFULL(channelName));
 				else if (existingChannel->isClientinChannel(userName) == 1)
 					sendResponse(clientSocket, ERR_USERONCHANNEL(userName));
