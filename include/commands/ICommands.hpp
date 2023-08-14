@@ -47,6 +47,8 @@
 // Pass command replies (see RFC).
 #define ERR_PASSWDMISMATCH "464" // Password incorrect.
 #define ERR_NEEDMOREPARAMS "461" // Not enough parameters.
+#define RPL_UMODEIS(nick, modes) \
+": 221 " + nick + " :" + modes + "\r\n"
 
 
 
@@ -68,7 +70,7 @@
 // Channel command replies (see RFC).
 #define ERR_NOTONCHANNEL "442" // You're not on that channel.
 #define ERR_NOSUCHCHANNEL(nick, channel) \
-	": 403 " + nick + " " + channel + " :No such channel.\n\r"
+	": 403 " + nick + " " + channel + " :No such channel.\r\n"
 #define ERR_CHANOPRIVSNEEDED "482" // You're not channel operator.
 
 //Topic Command
@@ -78,12 +80,12 @@
 
 // user not in channel.
 #define ERR_USERNOTINCHANNEL(nick, channel) \
-	": 441 * <" + nick + "> isn't on " + channel + "\n\r"
+	": 441 * <" + nick + "> isn't on " + channel + "\r\n"
 	 
 //WHOIS command replies (see RFC).
 #define RPL_WHOISUSER "311" // Whois user, <nick> <user> <host> * :<real name>.
 #define ERR_NOSUCHNICK(nick) \
-	": 401 " + nick + " :No such nick\n"
+	": 401 " + nick + " :No such nick\r\n"
 #define RPL_WHOISSERVER "312" // Whois server reply.
 #define RPL_ENDOFWHOIS "318" // End of whois reply.
 #define RPL_WHOISCHANNELS "319" // list of channels a user is in.

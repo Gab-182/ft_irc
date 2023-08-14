@@ -296,16 +296,15 @@ void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 
 	if (channelName[0] == '#'){
 		 channelName = channelName.substr(1);
-	}
+	
 	if (server->serverChannelsMap.find(channelName) == server->serverChannelsMap.end())
 	{
 		std::cout << "channel not exist" << std::endl;
 		std::string response = ERR_NOSUCHCHANNEL(server->serverClientsMap[clientSocket]->getNickName(),channelName);
-		// sendResponse(clientSocket, response);
+		sendResponse(clientSocket, response);
 		return ;
 	}
-	else
-	{
+	else {
 		std::string mode ;
 		if (!base->getParameters(command).empty()) 
 			mode = base->getParameters(command)[1];
@@ -321,7 +320,27 @@ void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 			LimitMode(base, clientSocket, server, client, command , channelName);
 		else if ((mode == "+k" || mode == "-k"))
 			PasswordMode(base, clientSocket, server, client, command , channelName);
+		}
+	
+
+	} else {
+		//check if the nick is valid or not
+		if (base->getParameters(command)[1].empty() == true)
+		{
+			std::string mode = "+i";
+			std::string response = ":" + channelName + " MODE " + channelName + " :+i\r\n";
+			sendResponse(clientSocket,response);
+		}
+		else
+		{
+			std::string mode = base->getParameters(command)[1];
+			std::string response = ":" + channelName + " MODE " + channelName + " :" + mode + "\r\n";
+			sendResponse(clientSocket, response);
+		}
+	
 	}
+
+	
 	//k
 	//o
 }
