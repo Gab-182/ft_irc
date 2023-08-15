@@ -228,6 +228,14 @@ namespace IRC {
 			std::string getKey();
 			size_t getMaxUsers() const;
 			size_t getChannelUsersNumber() const;
+			/**
+			 * @brief ➤ move the client from the members vector to the operators vector.
+			*/
+			void memberToOperator(Client* client);
+			/**
+			 * @brief ➤ move the client from the operators vector to the members vector.
+			*/
+			void operatorToMember(Client* client);
 
 			bool isClientMember(Client* client);
 			bool isClientOperator(Client* client);

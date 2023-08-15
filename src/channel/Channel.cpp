@@ -183,8 +183,28 @@ void Channel::addMemberToChannel(Client* client) {
 	}
 }
 
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Channel::memberToOperator(Client* client) {
+	if (this->isClientMember(client)) {
+		std::vector<Client *>::iterator it;
+		it = std::find(_members.begin(), _members.end(), client);
+		_members.erase(it);
+		_operators.push_back(client);
+	}
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+void Channel::operatorToMember(Client* client) {
+	if (this->isClientOperator(client)) {
+		std::vector<Client *>::iterator it;
+		it = std::find(_operators.begin(), _operators.end(), client);
+		_operators.erase(it);
+		_members.push_back(client);
+	}
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void Channel::removeMemberFromChannel(Client* client, IRC::Server* server) {
 	std::vector<Client *>::iterator it;
 	it = std::find(_members.begin(), _members.end(), client);
