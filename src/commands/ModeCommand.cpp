@@ -312,7 +312,7 @@ void ModeCommand::OperMode(ICommands* base, const int& clientSocket, IRC::Server
 			//remove the restriction and delete the mode from the channel
 			existingChannel->removeMode(modeChar);
 			//existingChannel->removeOperatorFromChannel(targetClientObject, server);
-			existingChannel->addMemberToChannel(targetClientObject);
+			existingChannel->operatorToMember(targetClientObject);
 			//send response to all clients in the channel
 			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " #" + channelName + " " + mode + " " + targetClient + "\r\n"; 
 			existingChannel->sendToAllClients("MODE",   server->serverClientsMap[clientSocket]->getNickName() , response);
@@ -321,8 +321,8 @@ void ModeCommand::OperMode(ICommands* base, const int& clientSocket, IRC::Server
 		{
 			existingChannel->addMode(modeChar);
 			//
-			existingChannel->addOperatorToChannel(targetClientObject);
-			existingChannel->removeMemberFromChannel(targetClientObject, server);
+			existingChannel->memberToOperator(targetClientObject);
+			// existingChannel->removeMemberFromChannel(targetClientObject, server);
 			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " #" + channelName + " " + mode + " " + targetClient + "\r\n"; 
 			existingChannel->sendToAllClients("MODE",  server->serverClientsMap[clientSocket]->getNickName() , response);
 		}
