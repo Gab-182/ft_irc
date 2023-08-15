@@ -55,13 +55,13 @@ void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Cl
 	server->serverChannelsMap.insert(std::pair<std::string, Channel *>(channelName, newChannel));
 
 	newChannel->addOperatorToChannel(client);
-	std::string operMsg = ":"
-							RPL_YOUREOPER " "
-							BOLDGREEN " Successfully joined channel: ["
-							+ channelName
-							+ "] as an operator."
-							+ RESET "\r\n";
-	sendResponse(clientSocket, operMsg);
+	// std::string operMsg = ":"
+	// 						RPL_YOUREOPER " "
+	// 						BOLDGREEN " Successfully joined channel: ["
+	// 						+ channelName
+	// 						+ "] as an operator."
+	// 						+ RESET "\r\n";
+	// sendResponse(clientSocket, operMsg);
 
 	std::string msgToAll = ":"
 							+ server->serverClientsMap[clientSocket]->getNickName()
@@ -69,11 +69,12 @@ void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Cl
 							+ channelName +
 							"\r\n";
 	newChannel->sendToAllClients("JOIN", server->serverClientsMap[clientSocket]->getNickName(), msgToAll);
-	std::string allClients = newChannel->getAllClients(server->serverClientsMap[clientSocket]->getNickName());
-	std::string userListResponse = ": 353 " + client->getNickName() + " = " + channelName + " :" + allClients + "\r\n";
+	//td::string allClients = newChannel->getAllClients(server->serverClientsMap[clientSocket]->getNickName());
+
+	std::string userListResponse = ": 353 " + client->getNickName() + " = #" + channelName + " :@" + client->getNickName() + "\r\n";
     sendResponse(clientSocket, userListResponse);
 	//topic
-	std::string totalNicksResponse = ": 366 " + client->getNickName() + " " + channelName + " :End of /NAMES list.\r\n";
+	std::string totalNicksResponse = ": 366 " + client->getNickName() + " #" + channelName + " :End of /NAMES list.\r\n";
 	sendResponse(clientSocket, totalNicksResponse);
 
 	//#define RPL_TOPIC(servername, nick, channel, topic) 

@@ -15,7 +15,7 @@ namespace IRC {
 		void InviteOnlyMode(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command, std::string channelName);
 		void LimitMode(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command, std::string channelName);
 		void PasswordMode(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command, std::string channelName);
-
+		void OperMode(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command, std::string channelName);
 	};
 }
 

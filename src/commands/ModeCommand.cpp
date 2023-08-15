@@ -243,28 +243,23 @@ void ModeCommand::LimitMode(ICommands* base, const int& clientSocket, IRC::Serve
 
 void ModeCommand::PasswordMode(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command, std::string channelName)
 {
-	// std::cout << "-----------------InviteOnlyMode--------------" << std::endl;
-	// std::string channelName = base->getParameters(command)[0];
-	// Channel* existingChannel = NULL;
-	// if (channelName[0] == '#'){
-	// 	 channelName = channelName.substr(1);
-	// }
-// 	 *** [ +k ]
-//  *** Set/Remove Channel Key (Password) (+k):
-//  ***	# Client sends: MODE #channel +k password
-//  ***	# Server responds: :server.name 324 yourNick #channel +k password
-//  *** ——————————————————————-----------------------------------———————————————————————
 	std::string mode = base->getParameters(command)[1];
 	const char modeChar = mode[1];
 	char modeSign = mode[0];
 	std::string password = base->getParameters(command)[2];
 	Channel* existingChannel = server->serverChannelsMap[channelName];
+		if (password.empty())
+	{
+		DEBUG_MSG("ERROR PASSWORD CANT BE EMPTY")
+		return ;
+	}
 	if(existingChannel->isClientOperator(client))
 	{
 		if (modeSign == '-')
 		{
 			//remove the restriction and delete the mode from the channel
 			existingChannel->removeMode(modeChar);
+			existingChannel->setKey(NULL);
 			//send response to all clients in the channel
 			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " #" + channelName + " " + mode + "\r\n"; 
 			existingChannel->sendToAllClients("MODE",   server->serverClientsMap[clientSocket]->getNickName() , response);
@@ -275,6 +270,60 @@ void ModeCommand::PasswordMode(ICommands* base, const int& clientSocket, IRC::Se
 			existingChannel->setKey(password);
 			DEBUG_MSG(existingChannel->getKey());
 			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " #" + channelName + " " + mode + " " + password + "\r\n"; 
+			existingChannel->sendToAllClients("MODE",  server->serverClientsMap[clientSocket]->getNickName() , response);
+		}
+	}
+	else
+	{
+		std::cout << "client is not operator MODE" << std::endl;
+		std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + ERR_CHANOPRIVSNEEDED + " " +
+			client->getNickName() + " #" + channelName + " :You're not channel operator\r\n";
+		sendResponse(clientSocket, response);
+	}
+}
+
+void ModeCommand::OperMode(ICommands* base, const int& clientSocket, IRC::Server* server, Client* client, const std::string& command, std::string channelName)
+{
+	std::string mode = base->getParameters(command)[1];
+	const char modeChar = mode[1];
+	char modeSign = mode[0];
+	std::string targetClient = base->getParameters(command)[2];
+	Channel* existingChannel = server->serverChannelsMap[channelName];
+	if (targetClient.empty())
+	{
+		DEBUG_MSG("ERROR PASSWORD CANT BE EMPTY")
+		return ;
+	}
+	if (existingChannel->isClientinChannel(targetClient) == 0)
+	{
+			DEBUG_MSG("NICK NOT FOUND")
+			std::string response = ERR_NOSUCHNICK(targetClient);
+			sendResponse(clientSocket, response);
+			return ;
+	}
+	if(existingChannel->isClientOperator(client))
+	{
+		//we get target client object
+		int targetClientSocket = server->getClientSocket(targetClient);
+		Client* targetClientObject = server->serverClientsMap[targetClientSocket];
+
+		if (modeSign == '-')
+		{
+			//remove the restriction and delete the mode from the channel
+			existingChannel->removeMode(modeChar);
+			//existingChannel->removeOperatorFromChannel(targetClientObject, server);
+			existingChannel->addMemberToChannel(targetClientObject);
+			//send response to all clients in the channel
+			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " #" + channelName + " " + mode + " " + targetClient + "\r\n"; 
+			existingChannel->sendToAllClients("MODE",   server->serverClientsMap[clientSocket]->getNickName() , response);
+		}
+		if(modeSign == '+')
+		{
+			existingChannel->addMode(modeChar);
+			//
+			existingChannel->addOperatorToChannel(targetClientObject);
+			existingChannel->removeMemberFromChannel(targetClientObject, server);
+			std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " " + RPL_CHANNELMODEIS + " " + client->getNickName() + " #" + channelName + " " + mode + " " + targetClient + "\r\n"; 
 			existingChannel->sendToAllClients("MODE",  server->serverClientsMap[clientSocket]->getNickName() , response);
 		}
 	}
@@ -320,6 +369,8 @@ void ModeCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::
 			LimitMode(base, clientSocket, server, client, command , channelName);
 		else if ((mode == "+k" || mode == "-k"))
 			PasswordMode(base, clientSocket, server, client, command , channelName);
+		else if ((mode == "+o" || mode == "-o"))
+			OperMode(base, clientSocket, server, client, command , channelName);
 		}
 	
 
