@@ -265,7 +265,7 @@ void ModeCommand::PasswordMode(ICommands* base, const int& clientSocket, IRC::Se
 			existingChannel->sendToAllClients("MODE",   server->serverClientsMap[clientSocket]->getNickName() , response);
 		}
 		if(modeSign == '+')
-		{
+		{ 
 			existingChannel->addMode(modeChar);
 			existingChannel->setKey(password);
 			DEBUG_MSG(existingChannel->getKey());
