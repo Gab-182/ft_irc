@@ -4,16 +4,6 @@
 
 using namespace IRC;
 
-/**
- ** TODO: Handle the case when the user tries to join multiple channels at once
- ** TODO: Handle the case when the user tries to join a channel that doesn't exist
- ** TODO: Handle the case when the user tries to join a channel that they're already in
- ** TODO: Handle the case when the user tries to join a channel that they're banned from
- ** TODO: Handle the case when the user tries to join a channel that has a key and they don't provide the key
- ** TODO: Handle the case when the user tries to join a channel that has a key and they provide the wrong key
- ** TODO: Handle the case when the user tries to join a channel that has a key and they provide the right key
- **
- **/
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 PartCommand::PartCommand() : ICommands() { }
 
@@ -55,7 +45,7 @@ void PartCommand::partOperatorClient(const int& clientSocket, Server* server, Cl
 	Channel *existingChannel = server->serverChannelsMap[channelName];
 	std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PART :" + channelName + "\r\n";
 	sendResponse(clientSocket, response);
-	std::string response2 = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PART #" + channelName + " :leaving";
+	std::string response2 = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PART #" + channelName + " :leaving " + "\r\n";
 	existingChannel->sendToAllClients("PART", server->serverClientsMap[clientSocket]->getNickName(), response2);
 	existingChannel->removeOperatorFromChannel(client, server);
 }
