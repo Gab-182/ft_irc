@@ -27,7 +27,20 @@ void CapCommand::executeCommand(ICommands* base, const int& clientSocket, IRC::S
 	if (toLowerCase(getCapType()) == "ls")
 		sendResponse(clientSocket, "CAP * ACK :302 CAP LS\r\n");
 
-	else if (toLowerCase(getCapType()) == "end")
+	else if (toLowerCase(getCapType()) == "end") {
 		sendResponse(clientSocket, "CAP * ACK :CAP END\r\n");
+
+		// Welcome client
+		if (client->isClientRegistered(clientSocket, server)) {
+			std::map<int, Client*>::iterator itClient;
+			itClient = server->serverClientsMap.find(clientSocket);
+			if (itClient != server->serverClientsMap.end()) {
+				if (!itClient->second->isClientWelcomed()) {
+					ICommands::welcomeMessage(clientSocket, server);
+					itClient->second->welcomeClient(true);
+				}
+			}
+		}
+	}
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/

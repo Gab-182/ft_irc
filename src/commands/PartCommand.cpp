@@ -55,7 +55,7 @@ void PartCommand::partOperatorClient(const int& clientSocket, Server* server, Cl
 	Channel *existingChannel = server->serverChannelsMap[channelName];
 	std::string response = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PART :" + channelName + "\r\n";
 	sendResponse(clientSocket, response);
-	std::string response2 = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PART " + channelName + " :leaving";
+	std::string response2 = ":" + server->serverClientsMap[clientSocket]->getNickName() + " PART " + channelName + " :leaving " + "\r\n";
 	existingChannel->sendToAllClients("PART", server->serverClientsMap[clientSocket]->getNickName(), response2);
 	existingChannel->removeOperatorFromChannel(client, server);
 }

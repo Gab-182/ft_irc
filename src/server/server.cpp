@@ -166,27 +166,23 @@ void Server::printClients() {
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 int Server::getClients(std::string nickName) {
-	int i = 1;
 	std::map<int, Client*>::iterator it;
 	for (it = serverClientsMap.begin(); it != serverClientsMap.end() ;++it) {
 		if (it ->first && it->second) {
 			if (nickName == it->second->getNickName())
 				return (1);
 		}
-		i++;
 	}
 	return (0);
 }
 
 int	Server::getSocket(std::string nickName)	{
-	int i = 1;
 	std::map<int, Client*>::iterator it;
 	for (it = serverClientsMap.begin(); it != serverClientsMap.end() ;++it) {
 		if (it ->first && it->second) {
 			if (nickName == it->second->getNickName())
 				return (it->second->getSocket());
 		}
-		i++;
 	}
 	return (-1);
 }
