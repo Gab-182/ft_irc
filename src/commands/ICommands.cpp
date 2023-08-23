@@ -19,6 +19,7 @@
 #include "../../include/commands/KickCommand.hpp"
 #include "../../include/commands/TopicCommand.hpp"
 #include "../../include/commands/InviteCommand.hpp"
+#include "../../include/commands/NoticeCommand.hpp"
 
 using namespace IRC;
 
@@ -149,7 +150,7 @@ void ICommands::registerCommands() {
 	_commandsMap["kick"] = new IRC::KickCommand();
 	_commandsMap["topic"] = new IRC::TopicCommand();
 	_commandsMap["invite"] = new IRC::InviteCommand();
-	
+	_commandsMap["notice"] = new IRC::NoticeCommand();
 }
 
 void ICommands::unRegisterCommands() {
@@ -167,6 +168,7 @@ void ICommands::unRegisterCommands() {
 	delete (_commandsMap["kick"]);
 	delete (_commandsMap["topic"]);
 	delete (_commandsMap["invite"]);
+	delete (_commandsMap["notice"]);
 	_commandsMap.clear();
 }
 
@@ -238,9 +240,9 @@ void ICommands::executeCommand(ICommands* base, const int& clientSocket, Server*
 		else if (toLowerCase(it->first) == "kick")
 			_commandsMap["kick"]->executeCommand(this, clientSocket, server, client, it->first);
 		else if (toLowerCase(it->first) == "invite")
-		{
 			_commandsMap["invite"]->executeCommand(this, clientSocket, server, client, it->first);
-		}	
+		else if (toLowerCase(it->first) == "notice")
+			_commandsMap["notice"]->executeCommand(this, clientSocket, server, client, it->first);	
 // TODO: implement these commands:
 // ====================================================================================================
 //		else if (toLowerCase(it->first) == "oper")

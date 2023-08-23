@@ -438,7 +438,7 @@ void Channel::removeClientFromChannel(Client* client, IRC::Server* server) {
 void Channel::sendToAllClients(std::string commandName, std::string nickName,std::string msg) {
 	std::vector<Client*>::iterator itMember;
 	for (itMember = _members.begin(); itMember != _members.end(); ++itMember) {
-		if (commandName == "PRIVMSG" || commandName == "PART")
+		if (commandName == "PRIVMSG" || commandName == "PART" || commandName == "NOTICE")
 		{
 			if ((*itMember)->getNickName() != nickName)
 				Client::sendResponse((*itMember)->getSocket(), msg);
@@ -450,7 +450,7 @@ void Channel::sendToAllClients(std::string commandName, std::string nickName,std
 
 	std::vector<Client*>::iterator itOperator;
 	for (itOperator = _operators.begin(); itOperator != _operators.end(); ++itOperator) {
-		if (commandName == "PRIVMSG" || commandName == "PART")
+		if (commandName == "PRIVMSG" || commandName == "PART" || commandName == "NOTICE")
 		{
 			if ((*itOperator)->getNickName() != nickName)
 				Client::sendResponse((*itOperator)->getSocket(), msg);
