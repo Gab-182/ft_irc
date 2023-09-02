@@ -144,17 +144,14 @@ void Server::multi_connection(ICommands* commands) {
  				std::cout << "Error accept" << std::endl;
  				exit(1);
  			}
-			DEBUG_MSG("Connection accepted")
-			DEBUG_MSG("Connection accepted111")
  			this->sockets.push_back(this->client_socket);
-			DEBUG_MSG("Connection accepted121")
  			clientMsg = ""; // Initialize message for new client socket
  		}
 		/*--------------------------------------------------------------------------------------------------*/
 		// Check for client activity
 
 		for (size_t i = 0; i < this->sockets.size(); i++) {
-			clientMsg = ""; // Reset message for next response
+			// clientMsg = ""; // Reset message for next response
  			int clientSocket = this->sockets[i];
 
 			/*-----------------------------------------------------------*/
@@ -176,11 +173,26 @@ void Server::multi_connection(ICommands* commands) {
  					this->sockets.erase(this->sockets.begin() + i);
  					continue;
  				}
+				else
+				{
+					if (buffer[res - 1] != '\n')
+					{
+						if(buffer[res] == '\0')
+							std::cout << "null" << std::endl;
+						std::cout << "not nl" <<  std::endl;
+						clientMsg += buffer;
+					}
+					else
+					{
+						buffer[res] = '\0';
+						std::cout << "nl nl" << std::endl;
+						clientMsg += buffer;
+						std::memset(buffer, 0, 1024);
+						respondToClient(clientSocket, itClient->second, clientMsg, commands);
+						clientMsg = "";
+					}
 
- 				buffer[res] = '\0';
- 				clientMsg += buffer;
- 				std::memset(buffer, 0, 1024);
-				respondToClient(clientSocket, itClient->second, clientMsg, commands);
+				}
 			}
 		}
 	}
