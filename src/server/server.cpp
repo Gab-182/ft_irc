@@ -1,9 +1,10 @@
 #include "../../include/Server.hpp"
 #include "../../include/Client.hpp"
 #include "../../include/commands/ICommands.hpp"
-
+#include <csignal> 
 using namespace IRC;
 
+bool ClosingFlag = false;
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 Server::Server() :
 	port(), servpass(), sockets(0), master_socket(), client_socket() { }
@@ -26,6 +27,34 @@ void Server::setServPass(std::string pass){servpass = pass;}
 std::string Server::getServPass() const {return servpass;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+
+
+
+
+void Server::removeClientFromServer(const int& clientSocket, Server* server, Client* client) {
+	// First: remove the client from all channels he is in.
+	client->removeClientFromAllChannels(clientSocket, server, client);
+	
+	// Second: remove the client from the server.
+	std::map<int, Client*>::iterator it;
+	it = server->serverClientsMap.find(clientSocket);
+	if (it != server->serverClientsMap.end()) {
+		server->serverClientsMap.erase(it);
+	}
+}
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+
+
+void signalHandler(int signum) {
+	std::cout << std::endl << BOLDRED << "Interrupt signal (" << signum << ") received." << RESET << std::endl;
+	std::cout << BOLDRED << "Exiting..."<< signum << RESET << std::endl;
+	//remove all clients from the server
+	ClosingFlag = true;
+	
+}
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+
 // socket -> bind -> listen 
 void Server::create_socket(char *av)
 {
@@ -75,12 +104,20 @@ void Server::multi_connection(ICommands* commands) {
  	struct sockaddr_in clientadd;
  	socklen_t size = sizeof(clientadd);
  	std::string clientMsg; // String to store client messages
+	
 	/*--------------------------------------------------------------------------------------------------*/
+	
+	// Set the signal handler for SIGINT
+	
+	// init sigint 
+	signal(SIGINT, signalHandler);
+
 	while (1) {
+	/*--------------------------------------------------------------------------------------------------*/
 		FD_ZERO(&fdset);						// Clear the socket set
 		FD_SET(this->master_socket, &fdset);	// Add master socket to set
 		max_sd = this->master_socket;			// Set the max sd to the master socket
-
+		
 		/*--------------------------------------------------------------------------------------------------*/
  		// Add child sockets to set
 		std::vector<int>::iterator it;
@@ -93,7 +130,21 @@ void Server::multi_connection(ICommands* commands) {
 		}
 		/*--------------------------------------------------------------------------------------------------*/
 		if (select(max_sd + 1, &fdset, NULL, NULL, NULL) == -1) {
- 			std::cout << "Error select" << std::endl;
+ 			//
+			if (ClosingFlag == true)
+			{
+				
+				std::cout << BOLDGREEN << "--Server is running on port: " << BOLDWHITE << SIGINT << RESET << std::endl;
+				//delete 
+				std::map<int, Client*>::iterator it;
+				for (it = serverClientsMap.begin(); it != serverClientsMap.end() ;++it) {
+					if (it ->first && it->second) {
+						delete (it->second);
+					}
+				}
+				close(this->client_socket);
+			}
+			std::cout << "Error select" << std::endl;
  			exit(1);
  		}
 		/*--------------------------------------------------------------------------------------------------*/
@@ -162,6 +213,7 @@ void Server::printClients() {
 		}
 		i++;
 	}
+
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -211,3 +263,4 @@ int Server::getClientSocket(std::string nickName) {
 	return (0);
 }
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+

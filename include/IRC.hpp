@@ -26,4 +26,10 @@
 
 /*-------------------------*/
 
+#include <iostream>
+#include <csignal>
+#include <cstdlib>
+
+/*-------------------------*/
+
 #endif

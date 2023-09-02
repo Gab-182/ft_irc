@@ -17,6 +17,9 @@
 # include <map>
 #include <vector>
 #include <algorithm>
+/*-------------------------*/
+
+#include <cstdlib>
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 #include "./Channel.hpp"
@@ -64,7 +67,6 @@ namespace IRC
 			int master_socket;
 			int client_socket;
 			std::vector <std::string> msg;
-
 		public:
 			Server();
 			~Server();
@@ -96,8 +98,12 @@ namespace IRC
 			void create_socket(char *av);
 			void respondToClient(const int& clientSocket, Client* client, std::string& clientMsg, ICommands* commands);
 			void multi_connection(IRC::ICommands* commands);
-	};
-}
+		/*-----------------------------------------------------------------*/
+		void removeClientFromServer(const int& clientSocket, Server* server, Client* client);
+		
+		/*-----------------------------------------------------------------*/
+};
+};
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 
 #endif
