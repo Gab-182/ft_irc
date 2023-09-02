@@ -28,24 +28,6 @@ std::string Server::getServPass() const {return servpass;}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 
-
-
-
-void Server::removeClientFromServer(const int& clientSocket, Server* server, Client* client) {
-	// First: remove the client from all channels he is in.
-	client->removeClientFromAllChannels(clientSocket, server, client);
-	
-	// Second: remove the client from the server.
-	std::map<int, Client*>::iterator it;
-	it = server->serverClientsMap.find(clientSocket);
-	if (it != server->serverClientsMap.end()) {
-		server->serverClientsMap.erase(it);
-	}
-}
-
-/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
-
-
 void signalHandler(int signum) {
 	std::cout << std::endl << BOLDRED << "Interrupt signal (" << signum << ") received." << RESET << std::endl;
 	std::cout << BOLDRED << "Exiting..."<< signum << RESET << std::endl;
@@ -130,19 +112,28 @@ void Server::multi_connection(ICommands* commands) {
 		}
 		/*--------------------------------------------------------------------------------------------------*/
 		if (select(max_sd + 1, &fdset, NULL, NULL, NULL) == -1) {
- 			//
 			if (ClosingFlag == true)
 			{
 				
 				std::cout << BOLDGREEN << "--Server is running on port: " << BOLDWHITE << SIGINT << RESET << std::endl;
-				//delete 
+				//delete all clients
 				std::map<int, Client*>::iterator it;
 				for (it = serverClientsMap.begin(); it != serverClientsMap.end() ;++it) {
 					if (it ->first && it->second) {
 						delete (it->second);
 					}
 				}
+				//delete all channels
+				std::map<std::string, Channel*>::iterator it2;
+				for (it2 = serverChannelsMap.begin(); it2 != serverChannelsMap.end() ;++it2) {
+					if (!(it2 ->first.empty()))
+						delete (it2->second);
+				}
+				commands->unRegisterCommands();
+
 				close(this->client_socket);
+				delete (this);
+				delete (commands);
 			}
 			std::cout << "Error select" << std::endl;
  			exit(1);
@@ -154,7 +145,9 @@ void Server::multi_connection(ICommands* commands) {
  				exit(1);
  			}
 			DEBUG_MSG("Connection accepted")
+			DEBUG_MSG("Connection accepted111")
  			this->sockets.push_back(this->client_socket);
+			DEBUG_MSG("Connection accepted121")
  			clientMsg = ""; // Initialize message for new client socket
  		}
 		/*--------------------------------------------------------------------------------------------------*/

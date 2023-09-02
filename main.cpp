@@ -14,6 +14,10 @@ int main(int ac,char **av) {
 	Server* ircServer = new IRC::Server();
 	ICommands* commands = new IRC::ICommands();
 
+
+	// Allocate memory for all the objects of the commands classes.
+	commands->registerCommands();
+
 	//TODO: check if the port is a number and if the password is a number
 	if(ac == 3) {
 		ircServer->setServPass(av[2]);

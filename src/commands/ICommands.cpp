@@ -172,6 +172,7 @@ void ICommands::unRegisterCommands() {
 	_commandsMap.clear();
 }
 
+
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 void ICommands::unknownCommand(int clientSocket,  const std::string& command) {
 	std::string response = ":"
