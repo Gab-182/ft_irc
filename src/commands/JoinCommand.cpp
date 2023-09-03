@@ -55,16 +55,23 @@ void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Cl
 	server->serverChannelsMap.insert(std::pair<std::string, Channel *>(channelName, newChannel));
 
 	newChannel->addOperatorToChannel(client);
+
+		std::string memberMsg = BOLDGREEN " Successfully joined channel: ["
+							+ channelName
+							+ "] as a operator."
+							+ RESET "\r\n";
+	sendResponse(clientSocket, memberMsg);
+
 	std::string msgToAll = ":"
 							+ server->serverClientsMap[clientSocket]->getNickName()
 							+ " JOIN #"
 							+ channelName +
 							"\r\n";
 	newChannel->sendToAllClients("JOIN", server->serverClientsMap[clientSocket]->getNickName(), msgToAll);
-
-	std::string userListResponse = ": 353 " + client->getNickName() + " = #" + channelName + " :@" + client->getNickName() + "\r\n";
+	std::string userListResponse = ": 353 " + client->getNickName() + " = " + channelName + " :@" + client->getNickName() + "\r\n";
     sendResponse(clientSocket, userListResponse);
-	std::string totalNicksResponse = ": 366 " + client->getNickName() + " #" + channelName + " :End of /NAMES list.\r\n";
+
+	std::string totalNicksResponse = ": 366 " + client->getNickName() + " " + channelName + " :End of /NAMES list\r\n";
 	sendResponse(clientSocket, totalNicksResponse);
 	std::cout << "---------------------121----------"<<std::endl;
 	std::string response3 = ":irc 332 " + client->getNickName() + " " + channelName + " :" + newChannel->getTopic() + "\r\n" ;
@@ -137,10 +144,19 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 				// existingChannel->printModes();
 				// existingChannel->printInvitees();
 				std::string userName = server->serverClientsMap[clientSocket]->getNickName();
-				std::cout << "base->getParameters(command)[1].empty() : " << base->getParameters(command)[1].empty() << std::endl;
-				// exit(0);
-				if (!base->getParameters(command)[1].empty() && existingChannel->isPasswordLocked() == true && base->getParameters(command)[1] != existingChannel->getKey())
-					sendResponse(clientSocket, ERR_BADCHANNELKEY(userName, channelName));
+
+				// std::cout << "SIZE -->"<<base->getParameters(command).size() << std::endl;
+				if(existingChannel->isPasswordLocked() == true) {
+					if (base->getParameters(command).size() != 2  || existingChannel->isPasswordCorrect(base->getParameters(command)[1]) == false)
+					{
+						std::cout << "pass check" << std::endl;
+							sendResponse(clientSocket, ERR_BADCHANNELKEY(userName, channelName));
+					}
+					else {
+						joinMemberClient(clientSocket, server, client, channelName);
+						//sendResponse(clientSocket, RPL_CHANNELMODEIS(userName, channelName, existingChannel->getModes()));
+					}
+				}
 				else if (existingChannel->isChannelLimitedMode() && (existingChannel->getlimit() <= existingChannel->getChannelUsersNumber()))
 					sendResponse(clientSocket, ERR_CHANNELISFULL(channelName));
 				else if (existingChannel->isClientinChannel(userName) == 1)

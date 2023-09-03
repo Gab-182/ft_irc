@@ -465,6 +465,16 @@ void Channel::sendToAllClients(std::string commandName, std::string nickName,std
 	}
 }
 
+
+
+/*————————————————————————————--------------------------------------------------------------——————————————————————————*/
+
+bool Channel::isPasswordCorrect(std::string password) const{
+	if (password == _key)
+		return (true);
+	return (false);
+}
+
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 std::string Channel::getAllClients(std::string nickName) {
 	std::vector<Client*>::iterator itMember;

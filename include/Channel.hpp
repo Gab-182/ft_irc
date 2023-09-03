@@ -242,6 +242,7 @@ namespace IRC {
 			bool isClientInvited(Client* client);
 			bool isClientBaned(Client* client);
 			bool isTopicLocked() const;
+			bool isPasswordCorrect(std::string password) const;
 			bool isInviteOnly();
 			bool isPasswordLocked() const;
 			/*----------------------------------------------*/
