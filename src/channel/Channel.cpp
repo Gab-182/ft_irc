@@ -619,28 +619,28 @@ bool Channel::isPasswordLocked() const
 }
 
 //print modes only
-void Channel::printModes()
-{
-	// print modes
-	std::vector<char>::const_iterator it;
-	std::cout << BOLDYELLOW << "Printing modes " << std::endl;
-	for (it = _modes.begin(); it != _modes.end(); ++it)
-		std::cout << BOLDWHITE << *it << BOLDYELLOW << " - ";
-	std::cout << BOLDYELLOW << "Printing END modes " << std::endl;
+// void Channel::printModes()
+// {
+// 	// print modes
+// 	std::vector<char>::const_iterator it;
+// 	std::cout << BOLDYELLOW << "Printing modes " << std::endl;
+// 	for (it = _modes.begin(); it != _modes.end(); ++it)
+// 		std::cout << BOLDWHITE << *it << BOLDYELLOW << " - ";
+// 	std::cout << BOLDYELLOW << "Printing END modes " << std::endl;
 
-}
+// }
 
 //print invitees
-void Channel::printInvitees()
-{
-	// print modes
-	std::vector<std::string>::const_iterator it;
-	std::cout << BOLDYELLOW << "Printing invitees " << std::endl;
-	for (it = _invites.begin(); it != _invites.end(); ++it)
-		std::cout << BOLDWHITE << *it << BOLDYELLOW << " - ";
-	std::cout << BOLDYELLOW << "Printing END invitees " << std::endl;
+// void Channel::printInvitees()
+// {
+// 	// print modes
+// 	std::vector<std::string>::const_iterator it;
+// 	std::cout << BOLDYELLOW << "Printing invitees " << std::endl;
+// 	for (it = _invites.begin(); it != _invites.end(); ++it)
+// 		std::cout << BOLDWHITE << *it << BOLDYELLOW << " - ";
+// 	std::cout << BOLDYELLOW << "Printing END invitees " << std::endl;
 
-}
+// }
 
 
 void Channel::setlimit(size_t limit)

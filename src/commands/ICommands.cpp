@@ -44,14 +44,9 @@ ICommands::ICommands() : _messages(), _commandsMap() {}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 ICommands::~ICommands() {
-	std::cout << BOLDRED << "ICommands destructor called" << RESET << std::endl;
-
 	if (!this->_messages.empty()) {
 		this->_messages.clear();
 	}
-	if (!this->_commandsMap.empty())
-		this->_commandsMap.clear();
-
 	this->unRegisterCommands();
 }
 

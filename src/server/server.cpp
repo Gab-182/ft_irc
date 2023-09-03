@@ -5,11 +5,32 @@
 using namespace IRC;
 
 bool ClosingFlag = false;
+
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 Server::Server() :
 	port(), servpass(), sockets(0), master_socket(), client_socket() { }
 
-Server::~Server(){}
+Server::~Server(){
+
+	std::map<int, Client*>::iterator it;
+	for (it = serverClientsMap.begin(); it != serverClientsMap.end() ;++it) {
+		if (it ->first && it->second) {
+			delete (it->second);
+			
+		}
+	}
+	serverClientsMap.clear();
+
+	//delete all channels
+	std::map<std::string, Channel*>::iterator it2;
+	for (it2 = serverChannelsMap.begin(); it2 != serverChannelsMap.end() ;++it2) {
+		if (!(it2 ->first.empty()))
+			delete (it2->second);
+	}
+	serverChannelsMap.clear();
+	this->sockets.clear();
+	this->msg.clear();
+}
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 int Server::getPort() const{return port;}
@@ -38,7 +59,7 @@ void signalHandler(int signum) {
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
 
 // socket -> bind -> listen 
-void Server::create_socket(char *av)
+void Server::create_socket(char *av, ICommands* commands)
 {
 	struct sockaddr_in sockin = {};
 	this->port = atoi(av);
@@ -54,6 +75,8 @@ void Server::create_socket(char *av)
 	//bind the socket to the port
 	if(bind(this->master_socket,(sockaddr*)&sockin,sizeof(sockin)) == -1) {
 		std::cout << "Error bind" << std::endl;
+		delete (commands);
+		delete (this);
 		exit(1);
 	}
 	//backlog is the number of connection that can be waiting while the
@@ -115,25 +138,10 @@ void Server::multi_connection(ICommands* commands) {
 			if (ClosingFlag == true)
 			{
 				
-				std::cout << BOLDGREEN << "--Server is running on port: " << BOLDWHITE << SIGINT << RESET << std::endl;
-				//delete all clients
-				std::map<int, Client*>::iterator it;
-				for (it = serverClientsMap.begin(); it != serverClientsMap.end() ;++it) {
-					if (it ->first && it->second) {
-						delete (it->second);
-					}
-				}
-				//delete all channels
-				std::map<std::string, Channel*>::iterator it2;
-				for (it2 = serverChannelsMap.begin(); it2 != serverChannelsMap.end() ;++it2) {
-					if (!(it2 ->first.empty()))
-						delete (it2->second);
-				}
-				commands->unRegisterCommands();
-
 				close(this->client_socket);
-				delete (this);
 				delete (commands);
+				delete (this);
+				exit(1);
 			}
 			std::cout << "Error select" << std::endl;
  			exit(1);
@@ -176,16 +184,10 @@ void Server::multi_connection(ICommands* commands) {
 				else
 				{
 					if (buffer[res - 1] != '\n')
-					{
-						if(buffer[res] == '\0')
-							std::cout << "null" << std::endl;
-						std::cout << "not nl" <<  std::endl;
 						clientMsg += buffer;
-					}
 					else
 					{
 						buffer[res] = '\0';
-						std::cout << "nl nl" << std::endl;
 						clientMsg += buffer;
 						std::memset(buffer, 0, 1024);
 						respondToClient(clientSocket, itClient->second, clientMsg, commands);

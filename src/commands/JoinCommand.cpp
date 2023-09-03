@@ -55,38 +55,21 @@ void JoinCommand::joinOperatorClient(const int& clientSocket, Server* server, Cl
 	server->serverChannelsMap.insert(std::pair<std::string, Channel *>(channelName, newChannel));
 
 	newChannel->addOperatorToChannel(client);
-	// std::string operMsg = ":"
-	// 						RPL_YOUREOPER " "
-	// 						BOLDGREEN " Successfully joined channel: ["
-	// 						+ channelName
-	// 						+ "] as an operator."
-	// 						+ RESET "\r\n";
-	// sendResponse(clientSocket, operMsg);
-
 	std::string msgToAll = ":"
 							+ server->serverClientsMap[clientSocket]->getNickName()
 							+ " JOIN #"
 							+ channelName +
 							"\r\n";
 	newChannel->sendToAllClients("JOIN", server->serverClientsMap[clientSocket]->getNickName(), msgToAll);
-	//td::string allClients = newChannel->getAllClients(server->serverClientsMap[clientSocket]->getNickName());
 
 	std::string userListResponse = ": 353 " + client->getNickName() + " = #" + channelName + " :@" + client->getNickName() + "\r\n";
     sendResponse(clientSocket, userListResponse);
-	//topic
 	std::string totalNicksResponse = ": 366 " + client->getNickName() + " #" + channelName + " :End of /NAMES list.\r\n";
 	sendResponse(clientSocket, totalNicksResponse);
 	std::cout << "---------------------121----------"<<std::endl;
-
-	//#define RPL_TOPIC(servername, nick, channel, topic) 
-	//":" + servername + " 332 " + nick + " " + channel + " :" + topic + "\n"
 	std::string response3 = ":irc 332 " + client->getNickName() + " " + channelName + " :" + newChannel->getTopic() + "\r\n" ;
 	sendResponse(clientSocket,response3);
 	std::cout << "---------------------131----------"<<std::endl;
-	//after this need to add [Users ChannelName]
-	//the users 
-	//Irssi: #cha1: Total of 2 nicks [1 ops, 0 halfops, 0 voices, 1  normal]
-	//time and date when channelName was created
 }
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -133,8 +116,6 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 		std::map<std::string, Channel *>::iterator itChannel;
 		itChannel = server->serverChannelsMap.find(channelName);
 		Channel *existingChannel = NULL;
-			std::cout << "HELL00"<<std::endl;
-
 		if (itChannel == server->serverChannelsMap.end())
 		{
 				std::cout << "user operator" << std::endl;
@@ -142,11 +123,6 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 		}
 		else
 		{
-			std::cout << "HELL2"<<std::endl;
-
-			//check if user is banned or not.
-			//check if channel is invite only nad if it is if the user on the list or not.
-			
 			existingChannel = server->serverChannelsMap[channelName];
 			std::string userName = server->serverClientsMap[clientSocket]->getNickName();
 
@@ -157,14 +133,13 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 			}
 			else
 			{
-				//check if user is banned or not.
-				//check if channel is invite only nad if it is if the user on the list or not.
 				existingChannel = server->serverChannelsMap[channelName];
-				//print modes
-				existingChannel->printModes();
-				existingChannel->printInvitees();
+				// existingChannel->printModes();
+				// existingChannel->printInvitees();
 				std::string userName = server->serverClientsMap[clientSocket]->getNickName();
-				if (existingChannel->isPasswordLocked() == true && base->getParameters(command)[1] != existingChannel->getKey())
+				std::cout << "base->getParameters(command)[1].empty() : " << base->getParameters(command)[1].empty() << std::endl;
+				// exit(0);
+				if (!base->getParameters(command)[1].empty() && existingChannel->isPasswordLocked() == true && base->getParameters(command)[1] != existingChannel->getKey())
 					sendResponse(clientSocket, ERR_BADCHANNELKEY(userName, channelName));
 				else if (existingChannel->isChannelLimitedMode() && (existingChannel->getlimit() <= existingChannel->getChannelUsersNumber()))
 					sendResponse(clientSocket, ERR_CHANNELISFULL(channelName));
@@ -176,27 +151,9 @@ void JoinCommand::executeCommand(ICommands* base, const int& clientSocket, Serve
 					this->joinMemberClient(clientSocket, server, client, channelName);
 				else
 					sendResponse(clientSocket, ERR_INVITEONLYCHAN(userName, channelName));
-				// // check if the channel is invite only or not
-				// std::cout << "user is struggeling" << std::endl;
-
-				// if(existingChannel->isChannelInviteOnly() == 0) // 0 means false
-				// {
-				// 	joinMemberClient(clientSocket, server, client, channelName);
-				// }
-				// else if(existingChannel->isInviteOnly() == 1 && existingChannel->isClientInvited(client) == 1)
-				// {
-				// 	joinMemberClient(clientSocket, server, client, channelName);
-				// }
-				// else
-				// {
-				// 	sendResponse(clientSocket, ERR_INVITEONLYCHAN(userName, channelName));
-				// }
 			}
 		}
 	}
-	/*-----------------------------------------------------------------------------------------*/
-	// If the channel name is invalid: Send a response to the client.
-	/*-----------------------------------------------------------------------------------------*/
 	else {
 		std::string response =  BOLDRED"Invalid channel name."
 								BOLDWHITE "Channel names should start with '#'."

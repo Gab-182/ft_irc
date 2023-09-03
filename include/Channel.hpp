@@ -252,7 +252,7 @@ namespace IRC {
 
 			/*----------------------------------------------*/
 			void printChannelInfo();
-			void printModes();
+			// void printModes();
 			void printInvitees();
 			void setlimit(size_t limit);
 			size_t getlimit();

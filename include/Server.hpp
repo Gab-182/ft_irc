@@ -18,7 +18,6 @@
 #include <vector>
 #include <algorithm>
 /*-------------------------*/
-
 #include <cstdlib>
 
 /*————————————————————————————--------------------------------------------------------------——————————————————————————*/
@@ -95,7 +94,7 @@ namespace IRC
 			void printChannels();
 			int getClientSocket(std::string nickName);
 		/*-----------------------------------------------------------------*/
-			void create_socket(char *av);
+			void create_socket(char *av, ICommands* commands);
 			void respondToClient(const int& clientSocket, Client* client, std::string& clientMsg, ICommands* commands);
 			void multi_connection(IRC::ICommands* commands);
 		/*-----------------------------------------------------------------*/
